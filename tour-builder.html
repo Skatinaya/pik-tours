@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Собрать тур</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="tour.css"/>
+  <style>
+    /* ── BUILDER PAGE ── */
+    .page-hero {
+      background: linear-gradient(135deg, #0f1a14 0%, #1a2e1f 100%);
+      padding: 70px 32px 50px; text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .page-hero-tag {
+      display: inline-block; background: rgba(42,122,74,0.18);
+      border: 1px solid rgba(42,122,74,0.4); color: #5fc48a;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 5px 16px; border-radius: 20px; margin-bottom: 18px;
+    }
+    .page-hero h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(24px, 4vw, 42px); font-weight: 700;
+      color: #fff; margin-bottom: 14px; line-height: 1.15;
+    }
+    .page-hero p {
+      font-size: 15px; color: rgba(255,255,255,0.5);
+      max-width: 560px; margin: 0 auto; line-height: 1.7;
+    }
+
+    /* STEP INDICATOR */
+    .steps-nav {
+      display: flex; justify-content: center; gap: 0;
+      margin: 36px auto 0; max-width: 600px;
+    }
+    .step-indicator {
+      flex: 1; text-align: center; position: relative; padding-bottom: 20px;
+    }
+    .step-indicator::after {
+      content: ''; position: absolute; bottom: 8px; left: 50%; right: -50%;
+      height: 2px; background: rgba(255,255,255,0.08);
+    }
+    .step-indicator:last-child::after { display: none; }
+    .step-indicator.active::after { background: #2A7A4A; }
+    .step-indicator.done::after { background: #2A7A4A; }
+    .step-dot {
+      width: 32px; height: 32px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; position: relative; z-index: 1;
+      background: rgba(255,255,255,0.06); border: 2px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.3); transition: all 0.3s;
+    }
+    .step-indicator.active .step-dot {
+      background: #2A7A4A; border-color: #2A7A4A; color: #fff;
+    }
+    .step-indicator.done .step-dot {
+      background: #1f5e38; border-color: #1f5e38; color: #fff;
+    }
+    .step-name {
+      display: block; font-size: 10px; font-weight: 600;
+      color: rgba(255,255,255,0.25); margin-top: 8px;
+      letter-spacing: 0.04em; text-transform: uppercase;
+    }
+    .step-indicator.active .step-name { color: #5fc48a; }
+    .step-indicator.done .step-name { color: rgba(255,255,255,0.45); }
+
+    /* WIZARD PANELS */
+    .wizard-panel { display: none; animation: fadeIn 0.25s ease; }
+    .wizard-panel.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+    .panel-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 36px 32px; margin-bottom: 20px;
+    }
+    .panel-title {
+      font-family: 'Unbounded', sans-serif; font-size: 17px;
+      font-weight: 700; color: #fff; margin-bottom: 8px;
+    }
+    .panel-sub {
+      font-size: 13px; color: rgba(255,255,255,0.4);
+      margin-bottom: 28px; line-height: 1.6;
+    }
+
+    /* ZONE PICKER */
+    .zone-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .zone-card {
+      background: rgba(255,255,255,0.04); border: 2px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 24px 16px; text-align: center;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .zone-card:hover { border-color: rgba(42,122,74,0.4); background: rgba(42,122,74,0.06); }
+    .zone-card.selected { border-color: #2A7A4A; background: rgba(42,122,74,0.12); }
+    .zone-emoji { font-size: 36px; margin-bottom: 10px; }
+    .zone-label { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .zone-hint { font-size: 11px; color: rgba(255,255,255,0.35); }
+
+    /* DATES */
+    .date-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: rgba(255,255,255,0.5); letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 7px;
+    }
+    .field input, .field select, .field textarea {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 10px;
+      padding: 11px 14px; color: #fff; font-size: 13px;
+      font-family: 'Inter', sans-serif; outline: none;
+      transition: border-color 0.15s; box-sizing: border-box;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      border-color: rgba(42,122,74,0.6);
+    }
+    .field input::placeholder { color: rgba(255,255,255,0.2); }
+    .field select option { background: #1a2e1f; }
+
+    /* SERVICES SELECTOR */
+    .svc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .svc-card {
+      display: flex; align-items: center; gap: 14px;
+      background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.07);
+      border-radius: 14px; padding: 16px; cursor: pointer; transition: all 0.2s;
+    }
+    .svc-card:hover { border-color: rgba(42,122,74,0.35); }
+    .svc-card.selected { border-color: #2A7A4A; background: rgba(42,122,74,0.08); }
+    .svc-emoji { font-size: 28px; flex-shrink: 0; }
+    .svc-info { flex: 1; min-width: 0; }
+    .svc-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px; }
+    .svc-desc-short { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .svc-price-tag { font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700; color: #5fc48a; white-space: nowrap; }
+    .svc-check {
+      width: 22px; height: 22px; border-radius: 6px;
+      border: 2px solid rgba(255,255,255,0.15); flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; transition: all 0.2s;
+    }
+    .svc-card.selected .svc-check {
+      background: #2A7A4A; border-color: #2A7A4A; color: #fff;
+    }
+
+    .svc-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .svc-filter {
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6); padding: 6px 14px; border-radius: 20px;
+      font-size: 11px; font-weight: 500; cursor: pointer; transition: all 0.15s;
+    }
+    .svc-filter:hover, .svc-filter.active {
+      background: rgba(42,122,74,0.2); border-color: rgba(42,122,74,0.5); color: #5fc48a;
+    }
+
+    /* INVITE */
+    .invite-methods { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .invite-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 22px 18px; text-align: center;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .invite-card:hover { border-color: rgba(42,122,74,0.4); background: rgba(42,122,74,0.06); }
+    .invite-emoji { font-size: 32px; margin-bottom: 10px; }
+    .invite-name { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .invite-desc { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5; }
+
+    .invite-link-box {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 12px 16px; margin-top: 18px;
+    }
+    .invite-link-url {
+      flex: 1; font-size: 12px; color: rgba(255,255,255,0.5);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .invite-copy-btn {
+      background: #2A7A4A; color: #fff; border: none;
+      padding: 7px 16px; border-radius: 7px; font-size: 11px;
+      font-weight: 600; cursor: pointer; white-space: nowrap;
+    }
+
+    /* SUMMARY */
+    .summary-row {
+      display: flex; align-items: center; gap: 12px;
+      padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .summary-row:last-child { border-bottom: none; }
+    .summary-emoji { font-size: 20px; flex-shrink: 0; }
+    .summary-label { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .summary-value { font-size: 13px; font-weight: 600; color: #fff; }
+    .summary-total {
+      display: flex; justify-content: space-between; align-items: center;
+      background: rgba(42,122,74,0.1); border: 1px solid rgba(42,122,74,0.3);
+      border-radius: 12px; padding: 18px 20px; margin-top: 24px;
+    }
+    .summary-total-label { font-size: 13px; color: rgba(255,255,255,0.6); }
+    .summary-total-price {
+      font-family: 'Unbounded', sans-serif; font-size: 22px;
+      font-weight: 700; color: #5fc48a;
+    }
+
+    /* TELEGRAM CTA */
+    .tg-cta {
+      background: linear-gradient(135deg, #229ED9 0%, #1a7ab5 100%);
+      border: none; color: #fff; padding: 16px 32px;
+      border-radius: 14px; font-size: 14px; font-weight: 700;
+      font-family: 'Unbounded', sans-serif; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      width: 100%; transition: transform 0.1s, filter 0.15s; margin-top: 16px;
+      text-decoration: none;
+    }
+    .tg-cta:hover { filter: brightness(1.1); }
+    .tg-cta:active { transform: scale(0.99); }
+    .tg-icon { font-size: 20px; }
+    .tg-sub {
+      text-align: center; font-size: 11px; color: rgba(255,255,255,0.3);
+      margin-top: 10px; line-height: 1.5;
+    }
+
+    .btn-open-tour {
+      background: #2A7A4A; color: #fff; border: none;
+      padding: 14px 28px; border-radius: 12px;
+      font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700;
+      cursor: pointer; width: 100%; margin-top: 10px; transition: background 0.15s;
+    }
+    .btn-open-tour:hover { background: #1f5e38; }
+
+    /* NAV BUTTONS */
+    .wizard-nav {
+      display: flex; justify-content: space-between; gap: 14px;
+      margin-top: 32px; padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+    .btn-back {
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6); padding: 12px 24px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-back:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .btn-next {
+      background: #2A7A4A; color: #fff; border: none;
+      padding: 12px 32px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      transition: background 0.15s; margin-left: auto;
+    }
+    .btn-next:hover { background: #1f5e38; }
+    .btn-next:disabled { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.2); cursor: not-allowed; }
+
+    /* MY TOUR SIDEBAR */
+    .builder-layout { display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+    .tour-sidebar {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 24px 20px; position: sticky; top: 80px;
+    }
+    .tour-sidebar h3 {
+      font-family: 'Unbounded', sans-serif; font-size: 13px;
+      font-weight: 700; color: #fff; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .tour-sidebar-empty {
+      text-align: center; padding: 24px 0;
+      font-size: 12px; color: rgba(255,255,255,0.25);
+    }
+    .sidebar-item {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 12px;
+    }
+    .sidebar-item:last-child { border-bottom: none; }
+    .sidebar-item-name { color: rgba(255,255,255,0.7); }
+    .sidebar-item-price { color: #5fc48a; font-weight: 600; }
+    .sidebar-item-remove {
+      color: rgba(255,255,255,0.2); cursor: pointer; margin-left: 8px;
+      font-size: 14px; transition: color 0.15s;
+    }
+    .sidebar-item-remove:hover { color: #e55; }
+    .sidebar-total {
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      display: flex; justify-content: space-between;
+      font-size: 13px; font-weight: 700; color: #fff;
+    }
+    .sidebar-total span { color: #5fc48a; font-family: 'Unbounded', sans-serif; }
+
+    .tg-mini-cta {
+      display: flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, rgba(34,158,217,0.15), rgba(34,158,217,0.05));
+      border: 1px solid rgba(34,158,217,0.3);
+      border-radius: 10px; padding: 12px 14px; margin-top: 16px;
+    }
+    .tg-mini-icon { font-size: 20px; flex-shrink: 0; }
+    .tg-mini-text { font-size: 11px; color: rgba(255,255,255,0.5); line-height: 1.4; }
+    .tg-mini-text b { color: rgba(255,255,255,0.8); }
+
+    /* Success overlay */
+    .success-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(8,15,11,0.92); z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .success-overlay.show { display: flex; }
+    .success-box {
+      background: #111e16; border: 1px solid rgba(42,122,74,0.4);
+      border-radius: 20px; padding: 48px 40px; text-align: center;
+      max-width: 460px; animation: popIn 0.35s ease;
+    }
+    @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+    .success-icon { font-size: 52px; margin-bottom: 16px; }
+    .success-box h2 {
+      font-family: 'Unbounded', sans-serif; font-size: 20px;
+      font-weight: 700; color: #fff; margin-bottom: 12px;
+    }
+    .success-box p { font-size: 14px; color: rgba(255,255,255,0.5); line-height: 1.7; margin-bottom: 24px; }
+
+    @media (max-width: 900px) {
+      .builder-layout { grid-template-columns: 1fr; }
+      .tour-sidebar { position: static; }
+      .zone-grid { grid-template-columns: repeat(2, 1fr); }
+      .invite-methods { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      .zone-grid { grid-template-columns: 1fr 1fr; }
+      .date-row { grid-template-columns: 1fr; }
+      .panel-card { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Каталог</a>
+    <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Собрать тур</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-tag">Конструктор туров</div>
+  <h1>Собери свой тур<br>из реальных услуг</h1>
+  <p>Выбери зону, даты, добавь жильё, гидов, активности — и пригласи друзей или открой тур для всех. Telegram-бот PIK поможет организовать поездку.</p>
+
+  <!-- STEP INDICATOR -->
+  <div class="steps-nav" id="stepsNav">
+    <div class="step-indicator active" data-step="1">
+      <span class="step-dot">1</span>
+      <span class="step-name">Зона</span>
+    </div>
+    <div class="step-indicator" data-step="2">
+      <span class="step-dot">2</span>
+      <span class="step-name">Даты</span>
+    </div>
+    <div class="step-indicator" data-step="3">
+      <span class="step-dot">3</span>
+      <span class="step-name">Услуги</span>
+    </div>
+    <div class="step-indicator" data-step="4">
+      <span class="step-dot">4</span>
+      <span class="step-name">Участники</span>
+    </div>
+    <div class="step-indicator" data-step="5">
+      <span class="step-dot">5</span>
+      <span class="step-name">Готово</span>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="padding-top: 36px;">
+<div class="builder-layout">
+<div>
+
+  <!-- STEP 1: ZONE -->
+  <div class="wizard-panel active" id="step1">
+    <div class="panel-card">
+      <div class="panel-title">Куда едем?</div>
+      <div class="panel-sub">Выбери одну или несколько зон для тура</div>
+      <div class="zone-grid">
+        <div class="zone-card" data-zone="ski" onclick="toggleZone(this)">
+          <div class="zone-emoji">⛷️</div>
+          <div class="zone-label">Горы</div>
+          <div class="zone-hint">Лыжи, сноуборд, ски-тур</div>
+        </div>
+        <div class="zone-card" data-zone="river" onclick="toggleZone(this)">
+          <div class="zone-emoji">🏞️</div>
+          <div class="zone-label">Реки</div>
+          <div class="zone-hint">Рафтинг, каяк, водопады</div>
+        </div>
+        <div class="zone-card" data-zone="meadow" onclick="toggleZone(this)">
+          <div class="zone-emoji">🌿</div>
+          <div class="zone-label">Луга</div>
+          <div class="zone-hint">Конные, квадро, параплан</div>
+        </div>
+        <div class="zone-card" data-zone="sea" onclick="toggleZone(this)">
+          <div class="zone-emoji">🌊</div>
+          <div class="zone-label">Море</div>
+          <div class="zone-hint">Дайвинг, яхта, серфинг</div>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <div></div>
+      <button class="btn-next" id="btn1" disabled onclick="goStep(2)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- STEP 2: DATES -->
+  <div class="wizard-panel" id="step2">
+    <div class="panel-card">
+      <div class="panel-title">Когда и на сколько?</div>
+      <div class="panel-sub">Укажи даты и количество участников</div>
+      <div class="date-row">
+        <div class="field">
+          <label>Дата начала</label>
+          <input type="date" id="dateStart"/>
+        </div>
+        <div class="field">
+          <label>Дата окончания</label>
+          <input type="date" id="dateEnd"/>
+        </div>
+      </div>
+      <div class="date-row">
+        <div class="field">
+          <label>Количество участников</label>
+          <select id="participants">
+            <option value="1">1 человек — соло</option>
+            <option value="2" selected>2 человека — пара</option>
+            <option value="3-4">3–4 — компания</option>
+            <option value="5-8">5–8 — группа</option>
+            <option value="9+">9+ — большая группа</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Название тура</label>
+          <input type="text" id="tourName" placeholder="Горный уикенд с друзьями"/>
+        </div>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="goStep(1)">← Назад</button>
+      <button class="btn-next" onclick="goStep(3)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- STEP 3: SERVICES -->
+  <div class="wizard-panel" id="step3">
+    <div class="panel-card">
+      <div class="panel-title">Что включить в тур?</div>
+      <div class="panel-sub">Выбери услуги из каталога PIK — они войдут в программу тура</div>
+
+      <div class="svc-filter-row">
+        <button class="svc-filter active" onclick="filterSvc('all', this)">Все</button>
+        <button class="svc-filter" onclick="filterSvc('hotel', this)">🏨 Жильё</button>
+        <button class="svc-filter" onclick="filterSvc('guide', this)">🧭 Гиды</button>
+        <button class="svc-filter" onclick="filterSvc('rental', this)">🏍️ Прокат</button>
+        <button class="svc-filter" onclick="filterSvc('food', this)">🍽️ Питание</button>
+        <button class="svc-filter" onclick="filterSvc('camp', this)">⛺ Кемпинг</button>
+        <button class="svc-filter" onclick="filterSvc('transfer', this)">🚐 Трансфер</button>
+        <button class="svc-filter" onclick="filterSvc('gear', this)">🎒 Снаряжение</button>
+      </div>
+
+      <div class="svc-grid" id="svcGrid">
+        <!-- JS populated -->
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="goStep(2)">← Назад</button>
+      <button class="btn-next" onclick="goStep(4)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- STEP 4: INVITE -->
+  <div class="wizard-panel" id="step4">
+    <div class="panel-card">
+      <div class="panel-title">Кто поедет?</div>
+      <div class="panel-sub">Пригласи друзей или открой тур для всех желающих</div>
+
+      <div class="invite-methods">
+        <div class="invite-card" onclick="shareViaTelegram()">
+          <div class="invite-emoji">✈️</div>
+          <div class="invite-name">Telegram</div>
+          <div class="invite-desc">Отправь ссылку друзьям в личку или группу — бот создаст чат тура</div>
+        </div>
+        <div class="invite-card" onclick="copyLink()">
+          <div class="invite-emoji">🔗</div>
+          <div class="invite-name">Ссылка</div>
+          <div class="invite-desc">Скопируй ссылку и отправь куда угодно — WhatsApp, ВК, Instagram</div>
+        </div>
+        <div class="invite-card" onclick="openPublic()">
+          <div class="invite-emoji">🌍</div>
+          <div class="invite-name">Открытый тур</div>
+          <div class="invite-desc">Опубликуй тур на PIK — незнакомые люди смогут присоединиться</div>
+        </div>
+        <div class="invite-card" onclick="justMe()">
+          <div class="invite-emoji">🧑</div>
+          <div class="invite-name">Только я</div>
+          <div class="invite-desc">Собираю тур для себя — потом пригласить можно будет в любой момент</div>
+        </div>
+      </div>
+
+      <div class="invite-link-box" id="inviteLinkBox" style="display:none;">
+        <span class="invite-link-url" id="inviteLinkUrl">pik.tours/join/abc123</span>
+        <button class="invite-copy-btn" onclick="doCopy()">Скопировать</button>
+      </div>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="goStep(3)">← Назад</button>
+      <button class="btn-next" onclick="goStep(5)">Далее →</button>
+    </div>
+  </div>
+
+  <!-- STEP 5: SUMMARY -->
+  <div class="wizard-panel" id="step5">
+    <div class="panel-card">
+      <div class="panel-title" id="summaryTitle">Ваш тур</div>
+      <div class="panel-sub">Проверьте и опубликуйте — или отправьте через Telegram-бот PIK</div>
+
+      <div id="summaryContent">
+        <!-- JS rendered -->
+      </div>
+
+      <div class="summary-total" id="summaryTotal">
+        <span class="summary-total-label">Общая стоимость (на чел.)</span>
+        <span class="summary-total-price" id="summaryPrice">0 ₽</span>
+      </div>
+
+      <!-- TELEGRAM CTA -->
+      <a class="tg-cta" href="https://t.me/PIKtoursBot" target="_blank">
+        <span class="tg-icon">✈️</span>
+        Открыть в Telegram-боте PIK
+      </a>
+      <div class="tg-sub">Бот создаст групповой чат, пришлёт программу, напомнит про сборы и поможет с вопросами</div>
+
+      <button class="btn-open-tour" onclick="publishTour()">Опубликовать тур на PIK</button>
+    </div>
+    <div class="wizard-nav">
+      <button class="btn-back" onclick="goStep(4)">← Назад</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- SIDEBAR: MY TOUR -->
+<div class="tour-sidebar" id="tourSidebar">
+  <h3>🗺️ Мой тур</h3>
+  <div id="sidebarContent">
+    <div class="tour-sidebar-empty">Добавляй услуги — они появятся здесь</div>
+  </div>
+  <div class="sidebar-total" id="sidebarTotal" style="display:none;">
+    <span>Итого:</span>
+    <span id="sidebarPrice">0 ₽</span>
+  </div>
+  <div class="tg-mini-cta">
+    <span class="tg-mini-icon">🤖</span>
+    <div class="tg-mini-text"><b>Telegram-бот PIK</b><br/>Подберёт услуги, создаст чат тура и напомнит о сборах</div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">🎉</div>
+    <h2>Тур опубликован!</h2>
+    <p>Теперь его видят все на платформе PIK. Откройте Telegram-бот, чтобы управлять участниками и получать уведомления.</p>
+    <a class="tg-cta" href="https://t.me/PIKtoursBot" target="_blank" style="display:inline-flex;width:auto;margin:0;">
+      <span class="tg-icon">✈️</span> Открыть Telegram-бот
+    </a>
+    <div style="margin-top:16px;">
+      <a href="catalog.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;">← Вернуться к каталогу</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── STATE ──
+const state = {
+  zones: [],
+  dateStart: '',
+  dateEnd: '',
+  participants: '2',
+  tourName: '',
+  services: [],
+  inviteMode: ''
+};
+
+// ── SERVICES CATALOG ──
+const SERVICES = [
+  { id: 1, emoji: '🏨', name: 'Горное шале «Вершина»', type: 'hotel', price: 4500, unit: 'ночь', desc: 'Домик на 6 чел, камин, сауна' },
+  { id: 2, emoji: '⛺', name: 'Глэмпинг «Река»', type: 'camp', price: 2800, unit: 'ночь', desc: 'Шатры у реки, душ, барбекю' },
+  { id: 3, emoji: '🧭', name: 'Гид Алексей — треккинг', type: 'guide', price: 3500, unit: 'день', desc: 'Горные маршруты, для новичков' },
+  { id: 4, emoji: '🏍️', name: 'Прокат квадроциклов', type: 'rental', price: 2500, unit: 'час', desc: '5 квадроциклов, инструктаж' },
+  { id: 5, emoji: '🐴', name: 'Конная прогулка «Рассвет»', type: 'rental', price: 1800, unit: 'чел', desc: 'По утренним лугам, группы до 8' },
+  { id: 6, emoji: '🍽️', name: 'Кафе «Горный воздух»', type: 'food', price: 800, unit: 'чел/день', desc: 'Горячие блюда, ланч-боксы' },
+  { id: 7, emoji: '🚐', name: 'Трансфер в горы', type: 'transfer', price: 3200, unit: 'машина', desc: 'Минивэн до 8 мест' },
+  { id: 8, emoji: '🤿', name: 'Инструктор по дайвингу', type: 'guide', price: 5500, unit: 'чел', desc: 'PADI, снаряжение включено' },
+  { id: 9, emoji: '🏕️', name: 'Домики у моря «Бухта»', type: 'hotel', price: 5900, unit: 'ночь', desc: 'На берегу, вид на скалы' },
+  { id: 10, emoji: '🧥', name: 'Горнолыжный комплект (Ozon)', type: 'gear', price: 15400, unit: 'комплект', desc: 'Куртка, штаны, перчатки, шлем' },
+  { id: 11, emoji: '👟', name: 'Трекинговые ботинки (Ozon)', type: 'gear', price: 7200, unit: 'пара', desc: 'Vibram, водонепроницаемые' },
+  { id: 12, emoji: '🤿', name: 'Набор для сноркелинга (Ozon)', type: 'gear', price: 3200, unit: 'комплект', desc: 'Маска, трубка, ласты' },
+];
+
+// ── ZONE PICKER ──
+function toggleZone(el) {
+  el.classList.toggle('selected');
+  state.zones = [...document.querySelectorAll('.zone-card.selected')].map(c => c.dataset.zone);
+  document.getElementById('btn1').disabled = state.zones.length === 0;
+}
+
+// ── STEP NAVIGATION ──
+function goStep(n) {
+  // Save current data
+  state.dateStart = document.getElementById('dateStart')?.value || state.dateStart;
+  state.dateEnd = document.getElementById('dateEnd')?.value || state.dateEnd;
+  state.participants = document.getElementById('participants')?.value || state.participants;
+  state.tourName = document.getElementById('tourName')?.value || state.tourName;
+
+  document.querySelectorAll('.wizard-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('step' + n).classList.add('active');
+
+  document.querySelectorAll('.step-indicator').forEach(s => {
+    const sn = +s.dataset.step;
+    s.classList.remove('active', 'done');
+    if (sn === n) s.classList.add('active');
+    else if (sn < n) s.classList.add('done');
+  });
+
+  if (n === 3) renderServices();
+  if (n === 5) renderSummary();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── SERVICES ──
+function renderServices(filter) {
+  filter = filter || 'all';
+  const grid = document.getElementById('svcGrid');
+  grid.innerHTML = SERVICES
+    .filter(s => filter === 'all' || s.type === filter)
+    .map(s => {
+      const sel = state.services.find(x => x.id === s.id) ? 'selected' : '';
+      return `<div class="svc-card ${sel}" data-type="${s.type}" onclick="toggleSvc(${s.id})">
+        <span class="svc-emoji">${s.emoji}</span>
+        <div class="svc-info">
+          <div class="svc-name">${s.name}</div>
+          <div class="svc-desc-short">${s.desc}</div>
+        </div>
+        <span class="svc-price-tag">${s.price.toLocaleString()} ₽</span>
+        <span class="svc-check">${sel ? '✓' : ''}</span>
+      </div>`;
+    }).join('');
+}
+
+function filterSvc(type, btn) {
+  document.querySelectorAll('.svc-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderServices(type);
+}
+
+function toggleSvc(id) {
+  const idx = state.services.findIndex(s => s.id === id);
+  if (idx >= 0) state.services.splice(idx, 1);
+  else state.services.push(SERVICES.find(s => s.id === id));
+  renderServices(document.querySelector('.svc-filter.active')?.textContent.includes('Все') ? 'all' :
+    document.querySelector('.svc-filter.active')?.textContent.includes('Жильё') ? 'hotel' :
+    document.querySelector('.svc-filter.active')?.textContent.includes('Гиды') ? 'guide' :
+    document.querySelector('.svc-filter.active')?.textContent.includes('Прокат') ? 'rental' :
+    document.querySelector('.svc-filter.active')?.textContent.includes('Питание') ? 'food' :
+    document.querySelector('.svc-filter.active')?.textContent.includes('Кемпинг') ? 'camp' :
+    document.querySelector('.svc-filter.active')?.textContent.includes('Трансфер') ? 'transfer' :
+    document.querySelector('.svc-filter.active')?.textContent.includes('Снаряжение') ? 'gear' : 'all');
+  updateSidebar();
+}
+
+// ── SIDEBAR ──
+function updateSidebar() {
+  const box = document.getElementById('sidebarContent');
+  const total = document.getElementById('sidebarTotal');
+  const priceEl = document.getElementById('sidebarPrice');
+
+  if (state.services.length === 0) {
+    box.innerHTML = '<div class="tour-sidebar-empty">Добавляй услуги — они появятся здесь</div>';
+    total.style.display = 'none';
+    return;
+  }
+
+  box.innerHTML = state.services.map(s =>
+    `<div class="sidebar-item">
+      <span class="sidebar-item-name">${s.emoji} ${s.name}</span>
+      <span class="sidebar-item-price">${s.price.toLocaleString()} ₽</span>
+      <span class="sidebar-item-remove" onclick="removeSvc(${s.id})">✕</span>
+    </div>`
+  ).join('');
+
+  const sum = state.services.reduce((a, s) => a + s.price, 0);
+  priceEl.textContent = sum.toLocaleString() + ' ₽';
+  total.style.display = 'flex';
+}
+
+function removeSvc(id) {
+  state.services = state.services.filter(s => s.id !== id);
+  updateSidebar();
+  // Refresh grid if on step 3
+  if (document.getElementById('step3').classList.contains('active')) {
+    renderServices();
+  }
+}
+
+// ── INVITE ──
+function shareViaTelegram() {
+  state.inviteMode = 'telegram';
+  const link = 'pik.tours/join/' + Math.random().toString(36).substr(2, 6);
+  document.getElementById('inviteLinkUrl').textContent = link;
+  document.getElementById('inviteLinkBox').style.display = 'flex';
+  window.open('https://t.me/share/url?url=' + encodeURIComponent('https://' + link) + '&text=' + encodeURIComponent('Присоединяйся к моему туру на PIK! 🏔️'), '_blank');
+}
+function copyLink() {
+  state.inviteMode = 'link';
+  const link = 'pik.tours/join/' + Math.random().toString(36).substr(2, 6);
+  document.getElementById('inviteLinkUrl').textContent = link;
+  document.getElementById('inviteLinkBox').style.display = 'flex';
+  doCopy();
+}
+function openPublic() {
+  state.inviteMode = 'public';
+  document.getElementById('inviteLinkBox').style.display = 'none';
+}
+function justMe() {
+  state.inviteMode = 'solo';
+  document.getElementById('inviteLinkBox').style.display = 'none';
+}
+function doCopy() {
+  const url = document.getElementById('inviteLinkUrl').textContent;
+  navigator.clipboard?.writeText('https://' + url);
+  const btn = document.querySelector('.invite-copy-btn');
+  btn.textContent = '✓ Скопировано';
+  setTimeout(() => btn.textContent = 'Скопировать', 2000);
+}
+
+// ── SUMMARY ──
+const ZONE_NAMES = { ski: '⛷️ Горы', river: '🏞️ Реки', meadow: '🌿 Луга', sea: '🌊 Море' };
+const INVITE_NAMES = { telegram: 'Через Telegram', link: 'По ссылке', public: 'Открытый тур', solo: 'Только я' };
+
+function renderSummary() {
+  const title = state.tourName || 'Мой тур на PIK';
+  document.getElementById('summaryTitle').textContent = title;
+
+  let html = '';
+  html += `<div class="summary-row"><span class="summary-emoji">📍</span><div><div class="summary-label">Зона</div><div class="summary-value">${state.zones.map(z => ZONE_NAMES[z]).join(', ') || 'Не выбрано'}</div></div></div>`;
+  html += `<div class="summary-row"><span class="summary-emoji">📅</span><div><div class="summary-label">Даты</div><div class="summary-value">${state.dateStart || '?'} — ${state.dateEnd || '?'}</div></div></div>`;
+  html += `<div class="summary-row"><span class="summary-emoji">👥</span><div><div class="summary-label">Участники</div><div class="summary-value">${state.participants}</div></div></div>`;
+  html += `<div class="summary-row"><span class="summary-emoji">📨</span><div><div class="summary-label">Приглашение</div><div class="summary-value">${INVITE_NAMES[state.inviteMode] || 'Не выбрано'}</div></div></div>`;
+
+  if (state.services.length) {
+    html += `<div style="margin-top:18px;margin-bottom:8px;font-size:11px;font-weight:600;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.06em;">Услуги в туре</div>`;
+    state.services.forEach(s => {
+      html += `<div class="summary-row"><span class="summary-emoji">${s.emoji}</span><div><div class="summary-value">${s.name}</div><div class="summary-label">${s.price.toLocaleString()} ₽ / ${s.unit}</div></div></div>`;
+    });
+  }
+
+  document.getElementById('summaryContent').innerHTML = html;
+  const sum = state.services.reduce((a, s) => a + s.price, 0);
+  document.getElementById('summaryPrice').textContent = sum.toLocaleString() + ' ₽';
+}
+
+function publishTour() {
+  document.getElementById('successOverlay').classList.add('show');
+}
+</script>
+</body>
+</html>
