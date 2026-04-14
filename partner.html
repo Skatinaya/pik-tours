@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Добавить услугу</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="tour.css"/>
+  <style>
+    /* ── PARTNER PAGE ── */
+    .page-hero {
+      background: linear-gradient(135deg, #0f1a14 0%, #1a2e1f 100%);
+      padding: 70px 32px 50px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .page-hero-tag {
+      display: inline-block;
+      background: rgba(42,122,74,0.18);
+      border: 1px solid rgba(42,122,74,0.4);
+      color: #5fc48a; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 16px; border-radius: 20px; margin-bottom: 18px;
+    }
+    .page-hero h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(24px, 4vw, 42px);
+      font-weight: 700; color: #fff;
+      margin-bottom: 14px; line-height: 1.15;
+    }
+    .page-hero p {
+      font-size: 15px; color: rgba(255,255,255,0.5);
+      max-width: 540px; margin: 0 auto; line-height: 1.7;
+    }
+
+    /* STEPS */
+    .steps-row {
+      display: flex; gap: 0;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; overflow: hidden;
+      margin-bottom: 44px;
+    }
+    .step-item {
+      flex: 1; padding: 22px 20px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .step-item:last-child { border-right: none; }
+    .step-num {
+      width: 28px; height: 28px; border-radius: 50%;
+      background: rgba(42,122,74,0.2); border: 1px solid rgba(42,122,74,0.4);
+      color: #5fc48a; font-size: 11px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .step-text h4 {
+      font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 3px;
+    }
+    .step-text p {
+      font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5;
+    }
+
+    /* FORM LAYOUT */
+    .form-wrap {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 28px;
+      align-items: start;
+    }
+    .form-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 36px 32px;
+    }
+    .form-section-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px; font-weight: 700; color: #fff;
+      margin-bottom: 22px; padding-bottom: 12px;
+      border-bottom: 1px solid rgba(255,255,255,0.07);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .form-section-title .icon {
+      width: 26px; height: 26px; border-radius: 8px;
+      background: rgba(42,122,74,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px;
+    }
+
+    /* FIELDS */
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .field { margin-bottom: 18px; }
+    .field label {
+      display: block; font-size: 11px; font-weight: 600;
+      color: rgba(255,255,255,0.5); letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 7px;
+    }
+    .field label .req { color: #5fc48a; margin-left: 2px; }
+    .field input,
+    .field select,
+    .field textarea {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 10px; padding: 11px 14px;
+      color: #fff; font-size: 13px; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.15s, background 0.15s;
+      box-sizing: border-box;
+    }
+    .field input:focus,
+    .field select:focus,
+    .field textarea:focus {
+      border-color: rgba(42,122,74,0.6);
+      background: rgba(42,122,74,0.07);
+    }
+    .field input::placeholder,
+    .field textarea::placeholder { color: rgba(255,255,255,0.2); }
+    .field select option { background: #1a2e1f; color: #fff; }
+    .field textarea { resize: vertical; min-height: 90px; line-height: 1.5; }
+
+    /* PRICE ROW */
+    .price-row { display: grid; grid-template-columns: 1fr 130px; gap: 10px; }
+
+    /* UPLOAD ZONE */
+    .upload-zone {
+      border: 2px dashed rgba(255,255,255,0.12);
+      border-radius: 12px; padding: 28px 20px;
+      text-align: center; cursor: pointer;
+      transition: all 0.2s;
+    }
+    .upload-zone:hover {
+      border-color: rgba(42,122,74,0.5);
+      background: rgba(42,122,74,0.06);
+    }
+    .upload-zone .upload-icon { font-size: 28px; margin-bottom: 8px; }
+    .upload-zone p {
+      font-size: 12px; color: rgba(255,255,255,0.4); line-height: 1.5; margin: 0;
+    }
+    .upload-zone p b { color: #5fc48a; }
+    .upload-zone input[type="file"] { display: none; }
+
+    /* TOGGLE */
+    .toggle-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 16px; border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      margin-bottom: 18px;
+    }
+    .toggle-switch {
+      width: 40px; height: 22px; background: rgba(255,255,255,0.1);
+      border-radius: 11px; position: relative; cursor: pointer;
+      flex-shrink: 0; margin-top: 2px; transition: background 0.2s;
+    }
+    .toggle-switch input { display: none; }
+    .toggle-switch .knob {
+      width: 16px; height: 16px; background: rgba(255,255,255,0.5);
+      border-radius: 50%; position: absolute; top: 3px; left: 3px;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .toggle-switch input:checked ~ .knob {
+      transform: translateX(18px); background: #fff;
+    }
+    .toggle-switch input:checked + .knob { transform: translateX(18px); }
+    .toggle-switch.on { background: #2A7A4A; }
+    .toggle-text h5 {
+      font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 3px;
+    }
+    .toggle-text p {
+      font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.5;
+    }
+
+    /* SIDEBAR */
+    .sidebar-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 28px 24px;
+      position: sticky; top: 80px;
+    }
+    .sidebar-card h3 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px; font-weight: 700; color: #fff;
+      margin-bottom: 18px;
+    }
+    .perk-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .perk-icon {
+      width: 32px; height: 32px; border-radius: 9px;
+      background: rgba(42,122,74,0.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; flex-shrink: 0;
+    }
+    .perk-text h5 {
+      font-size: 12px; font-weight: 600; color: #fff; margin-bottom: 2px;
+    }
+    .perk-text p {
+      font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.4;
+    }
+    .divider {
+      border: none; border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 20px 0;
+    }
+    .commission-badge {
+      background: linear-gradient(135deg, rgba(42,122,74,0.2), rgba(95,196,138,0.1));
+      border: 1px solid rgba(42,122,74,0.35);
+      border-radius: 12px; padding: 16px;
+      text-align: center;
+    }
+    .commission-badge .pct {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 28px; font-weight: 700; color: #5fc48a; margin-bottom: 4px;
+    }
+    .commission-badge p {
+      font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5;
+    }
+
+    /* SUBMIT */
+    .btn-submit {
+      width: 100%; background: #2A7A4A; color: #fff; border: none;
+      padding: 15px 28px; border-radius: 12px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px; font-weight: 700; cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      margin-top: 8px;
+    }
+    .btn-submit:hover { background: #1f5e38; }
+    .btn-submit:active { transform: scale(0.99); }
+    .form-note {
+      font-size: 11px; color: rgba(255,255,255,0.3);
+      text-align: center; margin-top: 12px; line-height: 1.5;
+    }
+
+    /* SUCCESS STATE */
+    .success-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(8,15,11,0.92);
+      z-index: 1000;
+      align-items: center; justify-content: center;
+    }
+    .success-overlay.show { display: flex; }
+    .success-box {
+      background: #111e16; border: 1px solid rgba(42,122,74,0.4);
+      border-radius: 20px; padding: 48px 40px;
+      text-align: center; max-width: 420px;
+      animation: popIn 0.35s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.9); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .success-icon { font-size: 52px; margin-bottom: 16px; }
+    .success-box h2 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 20px; font-weight: 700; color: #fff; margin-bottom: 12px;
+    }
+    .success-box p {
+      font-size: 14px; color: rgba(255,255,255,0.5);
+      line-height: 1.7; margin-bottom: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .form-wrap { grid-template-columns: 1fr; }
+      .sidebar-card { position: static; }
+      .steps-row { flex-direction: column; border-radius: 14px; }
+      .step-item { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+      .step-item:last-child { border-bottom: none; }
+    }
+    @media (max-width: 600px) {
+      .field-row { grid-template-columns: 1fr; }
+      .form-card { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;">Каталог</a>
+    <a href="partner.html" class="btn-primary" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;">+ Добавить услугу</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-tag">Для партнёров</div>
+  <h1>Зарегистрируй<br>свою услугу</h1>
+  <p>Стань частью туристической экосистемы PIK — получай бронирования, создавай туры и зарабатывай вместе с другими партнёрами.</p>
+</div>
+
+<div class="section" style="padding-top: 40px;">
+
+  <!-- HOW IT WORKS -->
+  <div class="steps-row">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div class="step-text">
+        <h4>Заполни форму</h4>
+        <p>Описание, локация, цена и контакты — займёт 5 минут</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div class="step-text">
+        <h4>Появись в каталоге</h4>
+        <p>Твоя услуга доступна всем туристам и организаторам туров</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div class="step-text">
+        <h4>Собери тур</h4>
+        <p>Объедини свои и чужие услуги — сделай готовый маршрут</p>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">4</div>
+      <div class="step-text">
+        <h4>Получай доход</h4>
+        <p>Прямые брони и % с туров, в которые входит твоя услуга</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM + SIDEBAR -->
+  <form class="form-wrap" id="partnerForm" onsubmit="submitForm(event)">
+
+    <!-- MAIN FORM -->
+    <div>
+      <!-- BLOCK 1: О УСЛУГЕ -->
+      <div class="form-card" style="margin-bottom: 20px;">
+        <div class="form-section-title">
+          <span class="icon">🏷️</span> О вашей услуге
+        </div>
+
+        <div class="field">
+          <label>Тип услуги <span class="req">*</span></label>
+          <select required>
+            <option value="" disabled selected>Выберите категорию</option>
+            <option value="hotel">🏨 Жильё / Гостиница</option>
+            <option value="camp">⛺ Кемпинг / Глэмпинг</option>
+            <option value="guide">🧭 Гид / Экскурсовод</option>
+            <option value="rental">🏍️ Прокат техники / Снаряжения</option>
+            <option value="food">🍽️ Питание / Кафе / Доставка</option>
+            <option value="transfer">🚐 Трансфер / Такси</option>
+            <option value="event">🎉 Мероприятие / Активность</option>
+            <option value="photo">📷 Фото / Видео съёмка</option>
+            <option value="blogger">📱 Блогер / Контент</option>
+            <option value="other">⚡ Другое</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label>Название услуги <span class="req">*</span></label>
+          <input type="text" placeholder="Например: Горное шале «Вершина»" required/>
+        </div>
+
+        <div class="field">
+          <label>Описание <span class="req">*</span></label>
+          <textarea placeholder="Расскажите о своей услуге: что предлагаете, что включено, для кого подходит..." required style="min-height: 110px;"></textarea>
+        </div>
+
+        <div class="field-row">
+          <div class="field" style="margin-bottom:0">
+            <label>Вместимость / Объём</label>
+            <input type="text" placeholder="Например: до 8 человек"/>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Длительность</label>
+            <input type="text" placeholder="Например: 2 часа / 3 дня"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- BLOCK 2: ЛОКАЦИЯ -->
+      <div class="form-card" style="margin-bottom: 20px;">
+        <div class="form-section-title">
+          <span class="icon">📍</span> Локация
+        </div>
+
+        <div class="field">
+          <label>Страна <span class="req">*</span></label>
+          <input type="text" placeholder="Россия" required/>
+        </div>
+
+        <div class="field-row">
+          <div class="field" style="margin-bottom:0">
+            <label>Регион / Oblast <span class="req">*</span></label>
+            <input type="text" placeholder="Краснодарский край" required/>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Населённый пункт <span class="req">*</span></label>
+            <input type="text" placeholder="Архыз / Сочи / Роза Хутор" required/>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 16px;">
+          <label>Точный адрес или ориентир</label>
+          <input type="text" placeholder="Ул. Горная 12 или «рядом с кордоном Уруп»"/>
+        </div>
+
+        <div class="field">
+          <label>Зона на карте PIK</label>
+          <select>
+            <option value="" disabled selected>Выберите зону (опционально)</option>
+            <option value="ski">⛷️ Горная / Лыжная зона</option>
+            <option value="river">🏞️ Речная / Водопадная зона</option>
+            <option value="meadow">🌿 Луговая / Степная зона</option>
+            <option value="sea">🌊 Морское / Прибрежная зона</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- BLOCK 3: ЦЕНА -->
+      <div class="form-card" style="margin-bottom: 20px;">
+        <div class="form-section-title">
+          <span class="icon">💰</span> Цена
+        </div>
+
+        <div class="price-row">
+          <div class="field" style="margin-bottom:0">
+            <label>Стоимость <span class="req">*</span></label>
+            <input type="number" placeholder="3 500" min="0" required/>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Единица</label>
+            <select>
+              <option value="person">₽ / чел</option>
+              <option value="night">₽ / ночь</option>
+              <option value="hour">₽ / час</option>
+              <option value="day">₽ / день</option>
+              <option value="group">₽ / группа</option>
+              <option value="car">₽ / машина</option>
+            </select>
+          </div>
+        </div>
+        <div class="field" style="margin-top: 16px;">
+          <label>Что включено в цену</label>
+          <input type="text" placeholder="Снаряжение, инструктаж, завтрак..."/>
+        </div>
+      </div>
+
+      <!-- BLOCK 4: КОНТАКТЫ -->
+      <div class="form-card" style="margin-bottom: 20px;">
+        <div class="form-section-title">
+          <span class="icon">📞</span> Контакты
+        </div>
+
+        <div class="field">
+          <label>Имя или название организации <span class="req">*</span></label>
+          <input type="text" placeholder="Иван Петров / ИП «Горный гид»" required/>
+        </div>
+
+        <div class="field-row">
+          <div class="field" style="margin-bottom:0">
+            <label>Телефон <span class="req">*</span></label>
+            <input type="tel" placeholder="+7 999 123-45-67" required/>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>Email</label>
+            <input type="email" placeholder="ivan@example.com"/>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top: 16px;">
+          <label>Telegram</label>
+          <input type="text" placeholder="@username или +7 999 000-00-00"/>
+        </div>
+
+        <div class="field">
+          <label>Сайт / Соцсети</label>
+          <input type="url" placeholder="https://instagram.com/..."/>
+        </div>
+      </div>
+
+      <!-- BLOCK 5: ФОТО -->
+      <div class="form-card" style="margin-bottom: 20px;">
+        <div class="form-section-title">
+          <span class="icon">📷</span> Фотографии
+        </div>
+        <div class="upload-zone" onclick="document.getElementById('photoInput').click()">
+          <input type="file" id="photoInput" multiple accept="image/*" onchange="handlePhotos(event)"/>
+          <div class="upload-icon">🖼️</div>
+          <p><b>Нажмите, чтобы загрузить фото</b><br/>или перетащите файлы сюда<br/>JPG, PNG, WEBP — до 10 МБ каждый</p>
+        </div>
+        <div id="photoPreview" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:12px;"></div>
+      </div>
+
+      <!-- BLOCK 6: ТУР -->
+      <div class="form-card">
+        <div class="form-section-title">
+          <span class="icon">🗺️</span> Создать тур
+        </div>
+
+        <div class="toggle-row">
+          <label class="toggle-switch" id="tourToggle" onclick="toggleTour()">
+            <input type="checkbox" id="tourCheck"/>
+            <span class="knob"></span>
+          </label>
+          <div class="toggle-text">
+            <h5>Хочу создать тур на основе своей услуги</h5>
+            <p>Объедини свою услугу с жильём, гидами, прокатом от других партнёров — сделай готовый маршрут и предлагай его туристам.</p>
+          </div>
+        </div>
+
+        <div id="tourFields" style="display:none;">
+          <div class="field">
+            <label>Название тура</label>
+            <input type="text" placeholder="Например: «Горный уикенд с квадроциклами»"/>
+          </div>
+          <div class="field">
+            <label>Продолжительность тура</label>
+            <input type="text" placeholder="3 дня / 2 ночи"/>
+          </div>
+          <div class="field">
+            <label>Какие услуги хотите добавить в тур?</label>
+            <textarea placeholder="Укажите, что ещё нужно в маршруте: жильё, питание, другие активности — мы поможем подобрать партнёров" style="min-height:80px;"></textarea>
+          </div>
+          <div class="field">
+            <label>Целевая аудитория</label>
+            <select>
+              <option value="">Выберите аудиторию</option>
+              <option>Семьи с детьми</option>
+              <option>Пары / романтические туры</option>
+              <option>Корпоративные группы</option>
+              <option>Молодёжь / студенты</option>
+              <option>Опытные туристы / спорт</option>
+              <option>Блогеры / контент-мейкеры</option>
+              <option>Все категории</option>
+            </select>
+          </div>
+
+          <div class="toggle-row" style="margin-top: 8px;">
+            <label class="toggle-switch" id="ambassadorToggle" onclick="toggleAmbassador()">
+              <input type="checkbox" id="ambassadorCheck"/>
+              <span class="knob"></span>
+            </label>
+            <div class="toggle-text">
+              <h5>Открыть тур для совместного продвижения</h5>
+              <p>Блогеры и амбассадоры смогут продвигать ваш тур и получать 15–25% комиссии с каждого бронирования.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SIDEBAR -->
+    <div class="sidebar-card">
+      <h3>Преимущества партнёров PIK</h3>
+
+      <div class="perk-item">
+        <div class="perk-icon">🌍</div>
+        <div class="perk-text">
+          <h5>Глобальная аудитория</h5>
+          <p>Туристы со всего мира находят услуги через платформу PIK</p>
+        </div>
+      </div>
+
+      <div class="perk-item">
+        <div class="perk-icon">🤝</div>
+        <div class="perk-text">
+          <h5>Коллаборации с партнёрами</h5>
+          <p>Объединяйся с гидами, отелями, прокатами — создавайте туры вместе</p>
+        </div>
+      </div>
+
+      <div class="perk-item">
+        <div class="perk-icon">📊</div>
+        <div class="perk-text">
+          <h5>Личный кабинет</h5>
+          <p>Управление бронями, аналитика, чат с туристами</p>
+        </div>
+      </div>
+
+      <div class="perk-item">
+        <div class="perk-icon">📱</div>
+        <div class="perk-text">
+          <h5>Продвижение через блогеров</h5>
+          <p>Сеть амбассадоров PIK продвигает услуги партнёров</p>
+        </div>
+      </div>
+
+      <hr class="divider"/>
+
+      <div class="commission-badge">
+        <div class="pct">0 ₽</div>
+        <p>Регистрация бесплатна.<br/>Комиссия только с успешных бронирований.</p>
+      </div>
+
+      <hr class="divider"/>
+
+      <button type="submit" class="btn-submit">Отправить заявку →</button>
+      <p class="form-note">Рассмотрим в течение 24 часов и свяжемся по указанным контактам</p>
+    </div>
+
+  </form>
+</div>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-box">
+    <div class="success-icon">🎉</div>
+    <h2>Заявка отправлена!</h2>
+    <p>Мы свяжемся с вами в течение 24 часов. Спасибо, что становитесь частью PIK.</p>
+    <a href="catalog.html" class="btn-primary" style="display:inline-block;padding:13px 28px;border-radius:10px;font-size:13px;font-weight:600;">Смотреть каталог</a>
+  </div>
+</div>
+
+<script>
+function toggleTour() {
+  const check = document.getElementById('tourCheck');
+  const fields = document.getElementById('tourFields');
+  const sw = document.getElementById('tourToggle');
+  check.checked = !check.checked;
+  fields.style.display = check.checked ? 'block' : 'none';
+  sw.classList.toggle('on', check.checked);
+}
+function toggleAmbassador() {
+  const check = document.getElementById('ambassadorCheck');
+  const sw = document.getElementById('ambassadorToggle');
+  check.checked = !check.checked;
+  sw.classList.toggle('on', check.checked);
+}
+function handlePhotos(e) {
+  const preview = document.getElementById('photoPreview');
+  preview.innerHTML = '';
+  Array.from(e.target.files).slice(0, 8).forEach(file => {
+    const url = URL.createObjectURL(file);
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.cssText = 'width:80px;height:80px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.1);';
+    preview.appendChild(img);
+  });
+}
+function submitForm(e) {
+  e.preventDefault();
+  document.getElementById('successOverlay').classList.add('show');
+}
+</script>
+</body>
+</html>

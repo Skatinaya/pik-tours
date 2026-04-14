@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Каталог услуг</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="tour.css"/>
+  <style>
+    /* ── CATALOG EXTRA ── */
+    .page-hero {
+      background: linear-gradient(135deg, #0f1a14 0%, #1a2e1f 100%);
+      padding: 70px 32px 50px;
+      text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .page-hero-tag {
+      display: inline-block;
+      background: rgba(42,122,74,0.18);
+      border: 1px solid rgba(42,122,74,0.4);
+      color: #5fc48a; font-size: 11px; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 5px 16px; border-radius: 20px; margin-bottom: 18px;
+    }
+    .page-hero h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(26px, 4vw, 44px);
+      font-weight: 700; color: #fff;
+      margin-bottom: 14px; line-height: 1.15;
+    }
+    .page-hero p {
+      font-size: 15px; color: rgba(255,255,255,0.5);
+      max-width: 540px; margin: 0 auto 28px; line-height: 1.7;
+    }
+    .hero-btns { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: #2A7A4A; color: #fff; border: none;
+      padding: 12px 28px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #1f5e38; }
+    .btn-outline {
+      background: transparent; color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 12px 28px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+    /* FILTERS */
+    .filters-bar {
+      max-width: 1100px; margin: 0 auto;
+      padding: 32px 32px 0;
+      display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+    }
+    .filter-label {
+      font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.4);
+      letter-spacing: 0.06em; text-transform: uppercase; margin-right: 4px;
+    }
+    .filter-btn {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6);
+      padding: 7px 16px; border-radius: 20px;
+      font-size: 12px; font-weight: 500; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: rgba(42,122,74,0.2);
+      border-color: rgba(42,122,74,0.5);
+      color: #5fc48a;
+    }
+
+    /* SERVICE CARD */
+    .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    .service-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s, background 0.2s;
+    }
+    .service-card:hover {
+      border-color: rgba(42,122,74,0.45);
+      background: rgba(42,122,74,0.06);
+      transform: translateY(-3px);
+    }
+    .service-thumb {
+      width: 100%; height: 160px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px;
+      background: linear-gradient(135deg, #1a2a20 0%, #0f1a14 100%);
+    }
+    .service-body { padding: 18px 20px 20px; }
+    .service-meta {
+      display: flex; gap: 8px; align-items: center; margin-bottom: 10px;
+    }
+    .service-type {
+      background: rgba(42,122,74,0.15);
+      color: #5fc48a; font-size: 10px; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      padding: 3px 10px; border-radius: 10px;
+    }
+    .service-location {
+      font-size: 11px; color: rgba(255,255,255,0.35);
+      display: flex; align-items: center; gap: 3px;
+    }
+    .service-name {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 14px; font-weight: 700; color: #fff;
+      margin-bottom: 7px; line-height: 1.3;
+    }
+    .service-desc {
+      font-size: 12px; color: rgba(255,255,255,0.5);
+      line-height: 1.6; margin-bottom: 16px;
+    }
+    .service-footer {
+      display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    }
+    .service-price {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 16px; font-weight: 700; color: #fff;
+    }
+    .service-price span { font-size: 10px; color: rgba(255,255,255,0.35); font-family: 'Inter', sans-serif; font-weight: 400; }
+    .service-btns { display: flex; gap: 8px; }
+    .btn-add {
+      background: #2A7A4A; color: #fff; border: none;
+      padding: 7px 14px; border-radius: 7px;
+      font-size: 11px; font-weight: 600; cursor: pointer;
+      white-space: nowrap; transition: background 0.15s;
+    }
+    .btn-add:hover { background: #1f5e38; }
+    .btn-more {
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6);
+      padding: 7px 12px; border-radius: 7px;
+      font-size: 11px; font-weight: 500; cursor: pointer;
+      transition: all 0.15s;
+    }
+    .btn-more:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    /* TOUR BUILDER STRIP */
+    .builder-strip {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px; padding: 28px 32px;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; flex-wrap: wrap; margin-top: 50px;
+    }
+    .builder-strip h3 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px;
+    }
+    .builder-strip p {
+      font-size: 13px; color: rgba(255,255,255,0.45); max-width: 500px; line-height: 1.6;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: flex; gap: 0;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 14px; overflow: hidden;
+      margin-bottom: 50px;
+    }
+    .stat-item {
+      flex: 1; padding: 22px 24px;
+      border-right: 1px solid rgba(255,255,255,0.07);
+      text-align: center;
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 26px; font-weight: 700; color: #2A7A4A; margin-bottom: 4px;
+    }
+    .stat-label { font-size: 11px; color: rgba(255,255,255,0.4); font-weight: 500; letter-spacing: 0.04em; }
+
+    @media (max-width: 600px) {
+      .filters-bar { padding: 24px 16px 0; }
+      .stats-row { flex-wrap: wrap; }
+      .stat-item { min-width: 50%; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.07); }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;">Каталог</a>
+    <a href="partner.html" class="btn-primary" style="padding:8px 18px;font-size:12px;border-radius:8px;">+ Добавить услугу</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="page-hero">
+  <div class="page-hero-tag">Маркетплейс услуг</div>
+  <h1>Все услуги<br>в одном месте</h1>
+  <p>Гостиницы, кемпинги, гиды, прокаты, рестораны — добавляй в тур любые услуги от проверенных партнёров.</p>
+  <div class="hero-btns">
+    <a href="partner.html" class="btn-primary">Зарегистрировать услугу</a>
+    <a href="index.html" class="btn-outline">← Вернуться к карте</a>
+  </div>
+</div>
+
+<!-- FILTERS -->
+<div class="filters-bar">
+  <span class="filter-label">Тип:</span>
+  <button class="filter-btn active" onclick="filterCards('all', this)">Все</button>
+  <button class="filter-btn" onclick="filterCards('hotel', this)">🏨 Жильё</button>
+  <button class="filter-btn" onclick="filterCards('guide', this)">🧭 Гиды</button>
+  <button class="filter-btn" onclick="filterCards('rental', this)">🏍️ Прокаты</button>
+  <button class="filter-btn" onclick="filterCards('food', this)">🍽️ Питание</button>
+  <button class="filter-btn" onclick="filterCards('camp', this)">⛺ Кемпинги</button>
+  <button class="filter-btn" onclick="filterCards('transfer', this)">🚐 Трансфер</button>
+</div>
+
+<div class="section" style="padding-top:28px;">
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-item"><div class="stat-num">124</div><div class="stat-label">Услуг в каталоге</div></div>
+    <div class="stat-item"><div class="stat-num">38</div><div class="stat-label">Партнёров</div></div>
+    <div class="stat-item"><div class="stat-num">12</div><div class="stat-label">Локаций</div></div>
+    <div class="stat-item"><div class="stat-num">4.8★</div><div class="stat-label">Средний рейтинг</div></div>
+  </div>
+
+  <div class="catalog-grid" id="catalog-grid">
+
+    <!-- ЖИЛЬЁ -->
+    <div class="service-card" data-type="hotel">
+      <div class="service-thumb">🏨</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Жильё</span>
+          <span class="service-location">📍 Горный район</span>
+        </div>
+        <div class="service-name">Горное шале «Вершина»</div>
+        <div class="service-desc">Уютный домик на 6 человек у подножия горы. Камин, сауна, панорамные окна, завтрак включён.</div>
+        <div class="service-footer">
+          <div class="service-price">4 500 ₽ <span>/ ночь</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Шале «Вершина»')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="camp">
+      <div class="service-thumb">⛺</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Кемпинг</span>
+          <span class="service-location">📍 Речная долина</span>
+        </div>
+        <div class="service-name">Глэмпинг «Река»</div>
+        <div class="service-desc">Шатры с кроватями прямо у реки. Душ, генератор, барбекю, Wi-Fi. Трансфер от трассы включён.</div>
+        <div class="service-footer">
+          <div class="service-price">2 800 ₽ <span>/ ночь</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Глэмпинг «Река»')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="guide">
+      <div class="service-thumb">🧭</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Гид</span>
+          <span class="service-location">📍 Горные маршруты</span>
+        </div>
+        <div class="service-name">Гид Алексей — треккинг</div>
+        <div class="service-desc">10 лет в горах. Веду группы к водопадам, озёрам, на вершины. Есть маршруты для детей и новичков.</div>
+        <div class="service-footer">
+          <div class="service-price">3 500 ₽ <span>/ день</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Гид Алексей')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="rental">
+      <div class="service-thumb">🏍️</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Прокат</span>
+          <span class="service-location">📍 Луговая зона</span>
+        </div>
+        <div class="service-name">Прокат квадроциклов</div>
+        <div class="service-desc">5 квадроциклов разных классов. Инструктаж, шлем, защита, маршрутная карта. Аренда от 2 часов.</div>
+        <div class="service-footer">
+          <div class="service-price">2 500 ₽ <span>/ час</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Квадроциклы')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="rental">
+      <div class="service-thumb">🐴</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Прокат</span>
+          <span class="service-location">📍 Луговая зона</span>
+        </div>
+        <div class="service-name">Конная прогулка «Рассвет»</div>
+        <div class="service-desc">Прогулка на лошадях по утренним лугам. Инструктор, снаряжение, фото включены. Группы до 8 человек.</div>
+        <div class="service-footer">
+          <div class="service-price">1 800 ₽ <span>/ чел</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Конная прогулка')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="food">
+      <div class="service-thumb">🍽️</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Питание</span>
+          <span class="service-location">📍 Центральная база</span>
+        </div>
+        <div class="service-name">Кафе «Горный воздух»</div>
+        <div class="service-desc">Горячие блюда, традиционная кухня, ланч-боксы с собой. Работаем с 7:00. Доставка в лагерь.</div>
+        <div class="service-footer">
+          <div class="service-price">800 ₽ <span>/ чел/день</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Питание «Горный воздух»')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="transfer">
+      <div class="service-thumb">🚐</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Трансфер</span>
+          <span class="service-location">📍 Аэропорт / Вокзал</span>
+        </div>
+        <div class="service-name">Трансфер в горы</div>
+        <div class="service-desc">Минивэн до 8 мест. Аэропорт, ж/д вокзал, встреча с табличкой. Детские кресла по запросу.</div>
+        <div class="service-footer">
+          <div class="service-price">3 200 ₽ <span>/ машина</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Трансфер')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="guide">
+      <div class="service-thumb">🤿</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Гид</span>
+          <span class="service-location">📍 Побережье</span>
+        </div>
+        <div class="service-name">Инструктор по дайвингу</div>
+        <div class="service-desc">Сертифицированный инструктор PADI. Обучение с нуля и погружения для опытных. Снаряжение включено.</div>
+        <div class="service-footer">
+          <div class="service-price">5 500 ₽ <span>/ чел</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Дайвинг-инструктор')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="service-card" data-type="hotel">
+      <div class="service-thumb">🏕️</div>
+      <div class="service-body">
+        <div class="service-meta">
+          <span class="service-type">Жильё</span>
+          <span class="service-location">📍 Морское побережье</span>
+        </div>
+        <div class="service-name">Домики у моря «Бухта»</div>
+        <div class="service-desc">5 деревянных домиков прямо на берегу. Вид на скалы, собственный пляж, мангал. Бронь от 2 ночей.</div>
+        <div class="service-footer">
+          <div class="service-price">5 900 ₽ <span>/ ночь</span></div>
+          <div class="service-btns">
+            <button class="btn-more">Подробнее</button>
+            <button class="btn-add" onclick="addToTour(this, 'Домики «Бухта»')">+ В тур</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- TOUR BUILDER -->
+  <div class="builder-strip">
+    <div>
+      <h3>Собери свой тур из этих услуг</h3>
+      <p>Добавляй услуги в тур, комбинируй жильё, гидов и активности — создай готовый маршрут для своей аудитории или для себя.</p>
+    </div>
+    <a href="partner.html" class="btn-primary">Создать тур →</a>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div id="toast" style="
+  position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(20px);
+  background:#2A7A4A; color:#fff; padding:12px 24px; border-radius:30px;
+  font-size:13px; font-weight:600; opacity:0; transition:all 0.3s; z-index:999;
+  white-space:nowrap; pointer-events:none;">
+</div>
+
+<script>
+function filterCards(type, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.service-card').forEach(card => {
+    card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
+  });
+}
+
+function addToTour(btn, name) {
+  const toast = document.getElementById('toast');
+  toast.textContent = '✓ «' + name + '» добавлено в тур';
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
+  btn.textContent = '✓ Добавлено';
+  btn.style.background = '#1a5c38';
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateX(-50%) translateY(20px)';
+  }, 2500);
+}
+</script>
+</body>
+</html>
