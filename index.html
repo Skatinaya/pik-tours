@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Туры в горах, реках, на равнинах и море</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%; height: 100%;
+      overflow: hidden;
+      background: #080f0b;
+      font-family: 'Inter', sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* ── FULL-SCREEN IMAGE ── */
+    #scene {
+      position: fixed;
+      inset: 0;
+      width: 100%; height: 100%;
+    }
+
+    #panorama {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      object-position: center;
+      display: block;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* ── DARK VIGNETTE ── */
+    #vignette {
+      position: fixed; inset: 0;
+      background: radial-gradient(ellipse 80% 80% at 50% 50%, transparent 40%, rgba(0,0,0,0.45) 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    /* ── SVG HOTSPOT LAYER ── */
+    #hotspots {
+      position: fixed; inset: 0;
+      width: 100%; height: 100%;
+      z-index: 10;
+      cursor: crosshair;
+    }
+
+    .zone {
+      fill: transparent;
+      cursor: pointer;
+      transition: fill 0.2s;
+    }
+    .zone:hover  { fill: rgba(255,255,255,0.08); }
+    .zone.active { fill: rgba(255,255,255,0.13); }
+
+    /* ── HOVER TOOLTIP ── */
+    #tooltip {
+      position: fixed;
+      z-index: 50;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+    #tooltip.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .tt-inner {
+      background: rgba(8, 15, 11, 0.82);
+      backdrop-filter: blur(18px) saturate(1.6);
+      -webkit-backdrop-filter: blur(18px) saturate(1.6);
+      border: 1px solid rgba(255,255,255,0.13);
+      border-radius: 14px;
+      padding: 14px 18px 16px;
+      min-width: 200px;
+      max-width: 240px;
+    }
+    .tt-icon { font-size: 22px; margin-bottom: 6px; }
+    .tt-name {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .tt-items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .tt-items li {
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      padding-left: 12px;
+      position: relative;
+    }
+    .tt-items li::before {
+      content: '·';
+      position: absolute;
+      left: 2px;
+      color: #2A7A4A;
+    }
+    .tt-cta {
+      display: block;
+      margin-top: 12px;
+      padding: 8px 0;
+      background: #2A7A4A;
+      color: #fff;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      border-radius: 7px;
+      text-decoration: none;
+      pointer-events: auto;
+      transition: background 0.15s;
+    }
+    .tt-cta:hover, .tt-cta:active { background: #1f5e38; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 32px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%, transparent 100%);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 9px;
+      text-decoration: none;
+    }
+    .logo svg { width: 28px; height: 28px; }
+    .logo-text {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: #fff; letter-spacing: 0.1em;
+    }
+    .nav-hint {
+      font-family: 'Inter', sans-serif;
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 0.04em;
+    }
+    .nav-btn {
+      background: rgba(42,122,74,0.85);
+      color: #fff; border: none;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .nav-btn:hover { background: #2A7A4A; }
+
+    /* ── PULSE MARKERS ── */
+    .marker {
+      position: fixed;
+      z-index: 15;
+      pointer-events: none;
+      transform: translate(-50%, -50%);
+    }
+    .marker-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0.9;
+      position: relative;
+    }
+    .marker-dot::after {
+      content: '';
+      position: absolute;
+      inset: -5px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,0.5);
+      animation: ping 2s ease-out infinite;
+    }
+    @keyframes ping {
+      0%   { transform: scale(1); opacity: 0.7; }
+      70%  { transform: scale(2.2); opacity: 0; }
+      100% { transform: scale(2.2); opacity: 0; }
+    }
+    .marker-label {
+      position: absolute;
+      top: 16px; left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.75);
+      background: rgba(0,0,0,0.4);
+      backdrop-filter: blur(6px);
+      padding: 3px 8px;
+      border-radius: 10px;
+    }
+
+    /* ── BOTTOM INSTRUCTION ── */
+    #instruction {
+      position: fixed;
+      bottom: 26px; left: 50%;
+      transform: translateX(-50%);
+      z-index: 80;
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,0,0,0.48);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      padding: 9px 20px;
+      color: rgba(255,255,255,0.6);
+      font-size: 12px; font-weight: 500;
+      letter-spacing: 0.02em;
+      transition: opacity 0.5s;
+      pointer-events: none;
+    }
+    #instruction.fade { opacity: 0; }
+    #instr-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #2A7A4A;
+      animation: pulse 1.8s ease-in-out infinite;
+      flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50% { opacity:0.4; transform:scale(1.5); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="#">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="14,2 27,26 1,26" fill="#2A7A4A"/>
+      <polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/>
+    </svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <span class="nav-hint">Наведи на зону → нажми для выбора тура</span>
+  <button class="nav-btn" onclick="window.location.href='ski.html'">Подобрать тур</button>
+</nav>
+
+<!-- SCENE -->
+<div id="scene">
+  <img id="panorama" src="img/panorama_seamless.webp" alt="PIK панорама"/>
+  <div id="vignette"></div>
+
+  <!-- HOTSPOT SVG — 4 zones mapped to image content -->
+  <svg id="hotspots" viewBox="0 0 1000 563" preserveAspectRatio="xMidYMid slice">
+
+    <!-- ZONE 1: Ski / Snow peaks — top-left -->
+    <polygon class="zone" id="z-ski"
+      data-page="ski.html"
+      data-name="Горные лыжи"
+      data-icon="⛷️"
+      data-tours="Горные лыжи и сноуборд|Хели-ски с вертолёта|Фрирайд по целине|Альпинизм|Ночёвка 3000 м"
+      points="0,0 370,0 320,280 170,563 0,563"/>
+
+    <!-- ZONE 2: River / Waterfall / Forest — center -->
+    <polygon class="zone" id="z-river"
+      data-page="river.html"
+      data-name="Реки и водопады"
+      data-icon="🏔️"
+      data-tours="Треккинг к водопаду|Рафтинг по горной реке|Кемпинг у воды|Конные маршруты|Фотосафари"
+      points="370,0 680,0 650,563 170,563 320,280"/>
+
+    <!-- ZONE 3: Meadow / Horses / Quads — center-right -->
+    <polygon class="zone" id="z-meadow"
+      data-page="meadow.html"
+      data-name="Луга и приключения"
+      data-icon="🌿"
+      data-tours="Квадроциклы по тропам|Конные прогулки|Снегоходы|Велотуры|Глэмпинг у реки"
+      points="680,0 820,0 820,563 650,563"/>
+
+    <!-- ZONE 4: Sea / Cliffs / Kayaks — right -->
+    <polygon class="zone" id="z-sea"
+      data-page="sea.html"
+      data-name="Море и побережье"
+      data-icon="🌊"
+      data-tours="SUP и каякинг|Яхтинг вдоль скал|Кайтсёрфинг|Дайвинг|Морская рыбалка"
+      points="820,0 1000,0 1000,563 820,563"/>
+  </svg>
+</div>
+
+<!-- PULSE MARKERS — pinned to image zones -->
+<div class="marker" id="m-ski"    style="left:14%; top:30%">
+  <div class="marker-dot"></div>
+  <div class="marker-label">Лыжи</div>
+</div>
+<div class="marker" id="m-river"  style="left:40%; top:52%">
+  <div class="marker-dot"></div>
+  <div class="marker-label">Водопад · Река</div>
+</div>
+<div class="marker" id="m-meadow" style="left:62%; top:72%">
+  <div class="marker-dot"></div>
+  <div class="marker-label">Лошади · Квадро</div>
+</div>
+<div class="marker" id="m-sea"    style="left:88%; top:62%">
+  <div class="marker-dot"></div>
+  <div class="marker-label">Море</div>
+</div>
+
+<!-- HOVER TOOLTIP -->
+<div id="tooltip">
+  <div class="tt-inner">
+    <div class="tt-icon" id="tt-icon"></div>
+    <div class="tt-name" id="tt-name"></div>
+    <ul class="tt-items" id="tt-items"></ul>
+    <a class="tt-cta" id="tt-cta" href="#">Смотреть все туры →</a>
+  </div>
+</div>
+
+<!-- INSTRUCTION -->
+<div id="instruction">
+  <div id="instr-dot"></div>
+  Наведи на горы, реку, луга или море
+</div>
+
+<script>
+  const tooltip  = document.getElementById('tooltip');
+  const ttIcon   = document.getElementById('tt-icon');
+  const ttName   = document.getElementById('tt-name');
+  const ttItems  = document.getElementById('tt-items');
+  const ttCta    = document.getElementById('tt-cta');
+  const instr    = document.getElementById('instruction');
+
+  let instrHidden = false;
+  let activeZone  = null;
+
+  function showTip(zone, mx, my) {
+    const icon   = zone.dataset.icon;
+    const name   = zone.dataset.name;
+    const tours  = zone.dataset.tours.split('|');
+    const page   = zone.dataset.page;
+
+    ttIcon.textContent = icon;
+    ttName.textContent = name;
+    ttItems.innerHTML  = tours.map(t => `<li>${t}</li>`).join('');
+    ttCta.href         = page;
+    ttCta.textContent  = `Смотреть туры →`;
+
+    tooltip.classList.add('show');
+    posTip(mx, my);
+
+    if (!instrHidden) { instrHidden = true; instr.classList.add('fade'); }
+  }
+
+  function posTip(mx, my) {
+    const W = window.innerWidth, H = window.innerHeight;
+    const tip = tooltip.getBoundingClientRect();
+    const tw = tip.width  || 240;
+    const th = tip.height || 220;
+    const MARGIN = 16;
+    let left = mx + 20;
+    let top  = my - th / 2;
+    if (left + tw + MARGIN > W) left = mx - tw - 20;
+    if (top < MARGIN) top = MARGIN;
+    if (top + th + MARGIN > H) top = H - th - MARGIN;
+    tooltip.style.left = left + 'px';
+    tooltip.style.top  = top  + 'px';
+  }
+
+  function hideTip() {
+    tooltip.classList.remove('show');
+    activeZone = null;
+    document.querySelectorAll('.zone').forEach(z => z.classList.remove('active'));
+  }
+
+  // Mouse interaction
+  const svg = document.getElementById('hotspots');
+
+  svg.addEventListener('mousemove', e => {
+    const els  = document.elementsFromPoint(e.clientX, e.clientY);
+    const zone = els.find(el => el.classList && el.classList.contains('zone'));
+    if (zone) {
+      if (activeZone !== zone) {
+        document.querySelectorAll('.zone').forEach(z => z.classList.remove('active'));
+        zone.classList.add('active');
+        activeZone = zone;
+        showTip(zone, e.clientX, e.clientY);
+      } else {
+        posTip(e.clientX, e.clientY);
+      }
+    } else {
+      hideTip();
+    }
+  });
+
+  svg.addEventListener('mouseleave', hideTip);
+
+  // Click → navigate to tour page
+  svg.addEventListener('click', e => {
+    const els  = document.elementsFromPoint(e.clientX, e.clientY);
+    const zone = els.find(el => el.classList && el.classList.contains('zone'));
+    if (zone) window.location.href = zone.dataset.page;
+  });
+
+  // Touch — tap once to show tooltip, tap again to navigate
+  svg.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const t = e.touches[0];
+    const els  = document.elementsFromPoint(t.clientX, t.clientY);
+    const zone = els.find(el => el.classList && el.classList.contains('zone'));
+    if (!zone) { hideTip(); return; }
+    if (activeZone === zone) {
+      // second tap → go
+      window.location.href = zone.dataset.page;
+    } else {
+      document.querySelectorAll('.zone').forEach(z => z.classList.remove('active'));
+      zone.classList.add('active');
+      activeZone = zone;
+      showTip(zone, t.clientX, t.clientY);
+    }
+  }, { passive: false });
+</script>
+</body>
+</html>

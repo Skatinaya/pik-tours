@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Море и побережье</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="tour.css"/>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <a class="back-btn" href="index.html">← Назад к карте</a>
+</nav>
+
+<div class="hero">
+  <img class="hero-img" src="img/panorama_seamless.webp" alt="Море и побережье" style="object-position:90% center"/>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-tag"><span class="tag-icon">🌊</span> Море и скалы</div>
+    <h1 class="hero-title">Море, скалы<br>и открытая вода</h1>
+    <p class="hero-sub">Каяки вдоль скалистых берегов, яхтинг, дайвинг в бирюзовых водах и кайтсёрфинг на закате.</p>
+  </div>
+</div>
+
+<div class="section">
+  <div class="section-label">Все туры</div>
+  <div class="section-title">Выбери свой маршрут</div>
+
+  <div class="tours-grid">
+
+    <div class="tour-card">
+      <div class="card-thumb-placeholder">🛶</div>
+      <div class="card-body">
+        <div class="card-duration">1 день</div>
+        <div class="card-title">Каякинг вдоль скал</div>
+        <div class="card-desc">Маршрут по морским пещерам и бухтам вдоль скалистого побережья. Снаряжение и инструктор включены.</div>
+        <div class="card-footer">
+          <div class="card-price">5 000 ₽ <span>/ чел</span></div>
+          <button class="card-btn">Записаться</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-card">
+      <div class="card-thumb-placeholder">⛵</div>
+      <div class="card-body">
+        <div class="card-duration">3 дня</div>
+        <div class="card-title">Яхтинг вдоль побережья</div>
+        <div class="card-desc">Парусная яхта, уединённые бухты, закат над водой. Экипаж на борту, питание и каюты включены.</div>
+        <div class="card-footer">
+          <div class="card-price">35 000 ₽ <span>/ чел</span></div>
+          <button class="card-btn">Записаться</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-card">
+      <div class="card-thumb-placeholder">🏄</div>
+      <div class="card-body">
+        <div class="card-duration">2 дня</div>
+        <div class="card-title">SUP-бординг</div>
+        <div class="card-desc">Прогулка на сапе вдоль берега в спокойной воде. Для новичков и опытных — разные маршруты.</div>
+        <div class="card-footer">
+          <div class="card-price">4 000 ₽ <span>/ чел</span></div>
+          <button class="card-btn">Записаться</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-card">
+      <div class="card-thumb-placeholder">🤿</div>
+      <div class="card-body">
+        <div class="card-duration">1 день</div>
+        <div class="card-title">Дайвинг в бирюзовых водах</div>
+        <div class="card-desc">Погружение с аквалангом у скалистого берега. Инструктор, оборудование и подводная фотосъёмка.</div>
+        <div class="card-footer">
+          <div class="card-price">9 000 ₽ <span>/ чел</span></div>
+          <button class="card-btn">Записаться</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-card">
+      <div class="card-thumb-placeholder">🪁</div>
+      <div class="card-body">
+        <div class="card-duration">3 дня</div>
+        <div class="card-title">Кайтсёрфинг — обучение</div>
+        <div class="card-desc">С нуля до первого полёта за 3 дня. Инструктор, снаряжение, видеоразбор полётов.</div>
+        <div class="card-footer">
+          <div class="card-price">18 000 ₽ <span>/ чел</span></div>
+          <button class="card-btn">Записаться</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="tour-card">
+      <div class="card-thumb-placeholder">🎣</div>
+      <div class="card-body">
+        <div class="card-duration">1 день</div>
+        <div class="card-title">Морская рыбалка на рассвете</div>
+        <div class="card-desc">Выход в море на рассвете. Снасти, лодка, капитан и завтрак из свежего улова прямо на борту.</div>
+        <div class="card-footer">
+          <div class="card-price">6 000 ₽ <span>/ чел</span></div>
+          <button class="card-btn">Записаться</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="amb-strip">
+    <div class="amb-strip-text">
+      <h3>Ты блогер или гид? Создай свой морской тур</h3>
+      <p>VIP-доступ к конструктору туров — собери маршрут, опубликуй под своим именем и получай 15–25% с каждой продажи.</p>
+    </div>
+    <button class="amb-strip-btn" onclick="window.location.href='index.html'">Стать партнёром PIK →</button>
+  </div>
+</div>
+
+</body>
+</html>
