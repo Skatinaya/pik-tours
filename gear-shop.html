@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Снаряжение</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="tour.css"/>
+  <style>
+    /* ── HERO ── */
+    .shop-hero {
+      background: linear-gradient(160deg, #0a1a10 0%, #0f2218 50%, #0a1a10 100%);
+      padding: 70px 32px 56px; text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      position: relative; overflow: hidden;
+    }
+    .shop-hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 100%, rgba(42,122,74,.18) 0%, transparent 70%);
+    }
+    .hero-tag {
+      display: inline-block; background: rgba(42,122,74,.18);
+      border: 1px solid rgba(42,122,74,.4); color: #5fc48a;
+      font-size: 11px; font-weight: 600; letter-spacing: .1em;
+      text-transform: uppercase; padding: 5px 16px; border-radius: 20px; margin-bottom: 18px;
+      position: relative;
+    }
+    .shop-hero h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(26px, 4vw, 46px); font-weight: 700;
+      color: #fff; margin-bottom: 14px; line-height: 1.12; position: relative;
+    }
+    .shop-hero p {
+      font-size: 15px; color: rgba(255,255,255,.5);
+      max-width: 580px; margin: 0 auto 28px; line-height: 1.7; position: relative;
+    }
+    .hero-badges {
+      display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+      position: relative;
+    }
+    .hero-badge {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 30px; padding: 8px 18px; font-size: 12px; color: rgba(255,255,255,.7);
+    }
+    .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: #5fc48a; }
+
+    /* ── ZONE FILTER BAR ── */
+    .zone-bar {
+      display: flex; gap: 0; overflow-x: auto;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      background: rgba(8,15,11,.95); padding: 0 32px;
+      position: sticky; top: 60px; z-index: 90;
+    }
+    .zone-tab {
+      padding: 14px 22px; font-size: 13px; font-weight: 600; cursor: pointer;
+      border-bottom: 2px solid transparent; color: rgba(255,255,255,.4);
+      white-space: nowrap; transition: all .15s;
+    }
+    .zone-tab:hover { color: rgba(255,255,255,.7); }
+    .zone-tab.active { color: #5fc48a; border-bottom-color: #2A7A4A; }
+
+    /* ── LAYOUT ── */
+    .shop-layout {
+      display: grid; grid-template-columns: 240px 1fr; gap: 28px;
+      max-width: 1200px; margin: 0 auto; padding: 36px 32px 80px;
+    }
+
+    /* ── SIDEBAR FILTERS ── */
+    .filter-sidebar { position: sticky; top: 110px; align-self: start; }
+    .filter-section { margin-bottom: 28px; }
+    .filter-section-title {
+      font-size: 10px; font-weight: 700; color: rgba(255,255,255,.4);
+      text-transform: uppercase; letter-spacing: .08em; margin-bottom: 12px;
+    }
+    .filter-check {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 0; cursor: pointer; font-size: 13px;
+      color: rgba(255,255,255,.6); transition: color .15s;
+    }
+    .filter-check:hover { color: #fff; }
+    .filter-check input { accent-color: #2A7A4A; width: 15px; height: 15px; cursor: pointer; }
+    .filter-check.checked { color: #fff; }
+    .price-range { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .price-input {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px; padding: 8px 10px; color: #fff; font-size: 12px;
+      font-family: 'Inter', sans-serif; outline: none; width: 100%; box-sizing: border-box;
+    }
+    .price-input:focus { border-color: rgba(42,122,74,.6); }
+
+    /* ── GEAR GRID ── */
+    .gear-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+    }
+
+    /* ── GEAR CARD ── */
+    .gear-card {
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px; overflow: hidden;
+      transition: border-color .2s, transform .2s;
+    }
+    .gear-card:hover { border-color: rgba(42,122,74,.4); transform: translateY(-3px); }
+    .gear-thumb {
+      height: 180px; background: linear-gradient(135deg, #1a2a20 0%, #0f1a14 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 60px; position: relative;
+    }
+    .gear-badge-wrap {
+      position: absolute; top: 12px; left: 12px; display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .gear-badge {
+      font-size: 9px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
+      padding: 3px 9px; border-radius: 10px;
+    }
+    .gb-zone { background: rgba(42,122,74,.25); color: #5fc48a; border: 1px solid rgba(42,122,74,.4); }
+    .gb-delivery { background: rgba(0,91,255,.2); color: #7cb3ff; border: 1px solid rgba(0,91,255,.35); }
+    .gb-rent { background: rgba(180,120,0,.2); color: #ffd060; border: 1px solid rgba(180,120,0,.3); }
+    .gb-new { background: rgba(200,60,60,.2); color: #ff9090; border: 1px solid rgba(200,60,60,.3); }
+
+    .gear-body { padding: 18px 20px 20px; }
+    .gear-cat {
+      font-size: 10px; font-weight: 600; color: rgba(255,255,255,.35);
+      text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px;
+    }
+    .gear-name {
+      font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700;
+      color: #fff; margin-bottom: 6px; line-height: 1.3;
+    }
+    .gear-desc { font-size: 12px; color: rgba(255,255,255,.5); line-height: 1.6; margin-bottom: 14px; }
+    .gear-specs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+    .gear-spec {
+      font-size: 10px; background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.08); border-radius: 6px;
+      padding: 3px 9px; color: rgba(255,255,255,.5);
+    }
+    .gear-footer { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .gear-price-wrap { flex: 1; }
+    .gear-price {
+      font-family: 'Unbounded', sans-serif; font-size: 17px;
+      font-weight: 700; color: #fff; display: block;
+    }
+    .gear-price-rent {
+      font-size: 11px; color: rgba(255,255,255,.35); margin-top: 2px;
+    }
+    .gear-actions { display: flex; gap: 7px; }
+    .btn-buy {
+      background: #005bff; color: #fff; border: none;
+      padding: 8px 14px; border-radius: 9px; font-size: 11px;
+      font-weight: 700; text-decoration: none; cursor: pointer;
+      transition: background .15s; white-space: nowrap; display: inline-flex;
+      align-items: center; gap: 5px;
+    }
+    .btn-buy:hover { background: #0048d4; }
+    .btn-rent-sm {
+      background: rgba(255,255,255,.07); color: rgba(255,255,255,.7);
+      border: 1px solid rgba(255,255,255,.12); padding: 8px 12px;
+      border-radius: 9px; font-size: 11px; font-weight: 600;
+      cursor: pointer; transition: all .15s; white-space: nowrap;
+    }
+    .btn-rent-sm:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+    /* Delivery strip */
+    .delivery-strip {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,91,255,.07); border-top: 1px solid rgba(0,91,255,.15);
+      padding: 10px 20px; font-size: 11px; color: rgba(255,255,255,.5);
+    }
+    .delivery-strip b { color: #7cb3ff; }
+
+    /* ── RESULTS COUNT ── */
+    .results-bar {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 20px;
+    }
+    .results-count { font-size: 12px; color: rgba(255,255,255,.35); }
+    .sort-select {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      color: rgba(255,255,255,.6); padding: 6px 12px; border-radius: 8px;
+      font-size: 12px; font-family: 'Inter', sans-serif; outline: none; cursor: pointer;
+    }
+    .sort-select option { background: #1a2e1f; }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      text-align: center; padding: 60px 20px;
+      font-size: 13px; color: rgba(255,255,255,.3);
+    }
+    .empty-state .empty-icon { font-size: 40px; margin-bottom: 12px; }
+
+    /* ── PROMO BLOCK ── */
+    .promo-block {
+      background: linear-gradient(135deg, rgba(42,122,74,.15), rgba(95,196,138,.06));
+      border: 1px solid rgba(42,122,74,.25); border-radius: 16px;
+      padding: 28px 28px; margin-bottom: 28px;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+    .promo-icon { font-size: 36px; flex-shrink: 0; }
+    .promo-text h3 {
+      font-family: 'Unbounded', sans-serif; font-size: 14px;
+      font-weight: 700; color: #fff; margin-bottom: 6px;
+    }
+    .promo-text p { font-size: 12px; color: rgba(255,255,255,.45); line-height: 1.6; max-width: 480px; }
+    .promo-text a {
+      color: #5fc48a; font-weight: 600; font-size: 12px; text-decoration: none;
+    }
+    .promo-text a:hover { text-decoration: underline; }
+
+    /* ── CART TOAST ── */
+    #cartToast {
+      position: fixed; bottom: 32px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #2A7A4A; color: #fff; padding: 12px 24px; border-radius: 30px;
+      font-size: 13px; font-weight: 600; opacity: 0; transition: all .3s; z-index: 999;
+      white-space: nowrap; pointer-events: none;
+    }
+
+    @media(max-width: 900px) {
+      .shop-layout { grid-template-columns: 1fr; }
+      .filter-sidebar { position: static; }
+      .zone-bar { padding: 0 16px; }
+    }
+    @media(max-width: 600px) {
+      .shop-hero { padding: 50px 20px 40px; }
+      .shop-layout { padding: 24px 16px 60px; }
+      .gear-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:rgba(255,255,255,.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Услуги</a>
+    <a href="gear-shop.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">🎒 Снаряжение</a>
+    <a href="tour-builder.html" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;">Собрать тур</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="shop-hero">
+  <div class="hero-tag">Магазин снаряжения PIK</div>
+  <h1>Снаряжение с доставкой<br>прямо на место тура</h1>
+  <p>Заказывай через Ozon или WB — PIK организует доставку в ближайший пункт выдачи у базы. Или возьми в прокат у наших партнёров.</p>
+  <div class="hero-badges">
+    <div class="hero-badge"><span class="dot"></span>Доставка к началу тура</div>
+    <div class="hero-badge"><span class="dot"></span>Прокат у партнёров PIK</div>
+    <div class="hero-badge"><span class="dot"></span>Размеры на всю семью</div>
+    <div class="hero-badge"><span class="dot"></span>Возврат после тура</div>
+  </div>
+</div>
+
+<!-- ZONE TAB BAR -->
+<div class="zone-bar">
+  <div class="zone-tab active" data-zone="all" onclick="setZoneTab(this,'all')">Всё снаряжение</div>
+  <div class="zone-tab" data-zone="ski" onclick="setZoneTab(this,'ski')">⛷️ Горные / Лыжи</div>
+  <div class="zone-tab" data-zone="trek" onclick="setZoneTab(this,'trek')">🥾 Пешеходные / Треккинг</div>
+  <div class="zone-tab" data-zone="water" onclick="setZoneTab(this,'water')">🌊 Водные / Море</div>
+  <div class="zone-tab" data-zone="camp" onclick="setZoneTab(this,'camp')">⛺ Кемпинг / Базовый лагерь</div>
+  <div class="zone-tab" data-zone="summer" onclick="setZoneTab(this,'summer')">☀️ Луга / Лето</div>
+</div>
+
+<div class="shop-layout">
+
+  <!-- SIDEBAR FILTERS -->
+  <aside class="filter-sidebar">
+    <div class="filter-section">
+      <div class="filter-section-title">Категория</div>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Одежда</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Обувь</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Снаряжение</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Аксессуары</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Безопасность</label>
+    </div>
+    <div class="filter-section">
+      <div class="filter-section-title">Доступность</div>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Купить (Ozon / WB)</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Прокат у партнёра PIK</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Доставка на место</label>
+    </div>
+    <div class="filter-section">
+      <div class="filter-section-title">Цена, ₽</div>
+      <div class="price-range">
+        <input class="price-input" type="number" placeholder="от" id="priceMin" onchange="applyFilters()"/>
+        <input class="price-input" type="number" placeholder="до" id="priceMax" onchange="applyFilters()"/>
+      </div>
+    </div>
+    <div class="filter-section">
+      <div class="filter-section-title">Для кого</div>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Взрослые</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Дети</label>
+      <label class="filter-check checked"><input type="checkbox" checked onchange="applyFilters()"> Семейные комплекты</label>
+    </div>
+    <a href="tour-builder.html" style="display:block;background:#2A7A4A;color:#fff;text-align:center;padding:12px;border-radius:12px;font-size:12px;font-weight:700;text-decoration:none;font-family:'Unbounded',sans-serif;">
+      Собрать тур →
+    </a>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <div>
+
+    <!-- PROMO -->
+    <div class="promo-block">
+      <div class="promo-icon">📦</div>
+      <div class="promo-text">
+        <h3>Заказывай — мы доставим к туру</h3>
+        <p>Выбери снаряжение, оформи заказ на Ozon или Wildberries. В комментарии к заказу укажи адрес ближайшей базы из своего тура — или выбери <a href="catalog.html">прокат у наших партнёров</a>. Не подошло — вернёшь в пункте выдачи после тура.</p>
+      </div>
+    </div>
+
+    <div class="results-bar">
+      <div class="results-count" id="resultsCount">Показано 0 товаров</div>
+      <select class="sort-select" onchange="applyFilters()">
+        <option>По популярности</option>
+        <option>Сначала дешевле</option>
+        <option>Сначала дороже</option>
+      </select>
+    </div>
+
+    <div class="gear-grid" id="gearGrid"></div>
+  </div>
+
+</div>
+
+<div id="cartToast"></div>
+
+<script>
+/* ══════════════════════════════════
+   GEAR DATABASE
+══════════════════════════════════ */
+const GEAR = [
+  // ── ГОРНЫЕ / ЛЫЖИ ──
+  {
+    id:1, zone:['ski'], emoji:'🧥', name:'Горнолыжная куртка', cat:'Одежда',
+    desc:'Мембрана 10 000 мм, утеплитель Primaloft 80г. Снегозащитная юбка, проклеенные швы. Ветро- и влагозащита.',
+    specs:['10 000мм мембрана','S–3XL','-20°C'],
+    price:12900, rent:'1 200 ₽/день',
+    zones_label:'⛷️ Горы',
+    ozon:'https://www.ozon.ru/category/gornolyzhnyye-kurtki/',
+    wb:'https://www.wildberries.ru/catalog/muzhchinam/odezhda/kurtki/gornolyzhnyye-kurtki',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:2, zone:['ski'], emoji:'🎿', name:'Лыжи + крепления', cat:'Снаряжение',
+    desc:'Универсальные All-Mountain лыжи. Крепления в комплекте, настройка по весу. Уровень: новичок–средний.',
+    specs:['155–175см','Marker крепления','All-Mountain'],
+    price:24900, rent:'1 800 ₽/день',
+    zones_label:'⛷️ Горы',
+    ozon:'https://www.ozon.ru/category/lyzhi/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/zimnie-vidy-sporta/lyzhi',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:3, zone:['ski'], emoji:'🥽', name:'Горнолыжная маска', cat:'Аксессуары',
+    desc:'Цилиндрическая линза, антифог покрытие, совместима со шлемом. 100% UV-защита.',
+    specs:['Антифог','UV400','OTG (очки)'],
+    price:4200, rent:null,
+    zones_label:'⛷️ Горы',
+    ozon:'https://www.ozon.ru/category/gornolyzhnyye-maski/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/zimnie-vidy-sporta/maski-i-ochki',
+    hasRent:false, delivery:true, new:false, family:false
+  },
+  {
+    id:4, zone:['ski'], emoji:'🧤', name:'Горнолыжные перчатки', cat:'Одежда',
+    desc:'Водонепроницаемые мембранные перчатки. Усиление ладони, регулируемые манжеты.',
+    specs:['Мембрана','XS–XXL','Утеплитель'],
+    price:2800, rent:null,
+    zones_label:'⛷️ Горы',
+    ozon:'https://www.ozon.ru/category/gornolyzhnyye-perchatki/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/zimnie-vidy-sporta/perchatki-i-varezki',
+    hasRent:false, delivery:true, new:false, family:false
+  },
+  {
+    id:5, zone:['ski'], emoji:'🪖', name:'Горнолыжный шлем', cat:'Безопасность',
+    desc:'Сертифицирован EN 1077. Регулируемая вентиляция, система подгонки по голове. Совместим с маской.',
+    specs:['EN 1077','S/M/L/XL','Вентиляция'],
+    price:6500, rent:'500 ₽/день',
+    zones_label:'⛷️ Горы',
+    ozon:'https://www.ozon.ru/category/gornolyzhnyye-shlemy/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/zimnie-vidy-sporta/shlemy',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:6, zone:['ski','trek'], emoji:'🩳', name:'Термобельё (комплект)', cat:'Одежда',
+    desc:'Базовый слой: футболка + кальсоны. Быстрый отвод влаги, антибактериальная обработка. На всю семью.',
+    specs:['120–220г/м²','XS–3XL','Детские S–L'],
+    price:3200, rent:null,
+    zones_label:'⛷️ Горы / 🥾 Треккинг',
+    ozon:'https://www.ozon.ru/category/termobilyo/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/odejda-i-obuv/termobele',
+    hasRent:false, delivery:true, new:false, family:true
+  },
+
+  // ── ПЕШЕХОДНЫЕ / ТРЕККИНГ ──
+  {
+    id:7, zone:['trek'], emoji:'🥾', name:'Трекинговые ботинки', cat:'Обувь',
+    desc:'Водонепроницаемая мембрана Gore-Tex. Подошва Vibram с зацепами. Поддержка голеностопа. Мужские, женские, детские.',
+    specs:['Gore-Tex','Vibram','36–47'],
+    price:8900, rent:null,
+    zones_label:'🥾 Треккинг',
+    ozon:'https://www.ozon.ru/category/trekingovyye-botinki/',
+    wb:'https://www.wildberries.ru/catalog/obuv/sport/treking',
+    hasRent:false, delivery:true, new:false, family:true
+  },
+  {
+    id:8, zone:['trek'], emoji:'🎒', name:'Трекинговый рюкзак 35–50 л', cat:'Снаряжение',
+    desc:'Система подвески с алюминиевыми рёбрами, дождевик в комплекте. Крепление ледоруба и трекинговых палок.',
+    specs:['35–50 л','Дождевик','Поясной ремень'],
+    price:6200, rent:'400 ₽/день',
+    zones_label:'🥾 Треккинг',
+    ozon:'https://www.ozon.ru/category/ryukzaki-turisticheskie/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/turisticheskoe-snaryazhenie/ryukzaki',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:9, zone:['trek'], emoji:'🪄', name:'Трекинговые палки (пара)', cat:'Снаряжение',
+    desc:'Алюминиевые телескопические, регулировка 105–135 см. Антишок система. Кольца для земли и снега.',
+    specs:['105–135см','Антишок','Алюминий'],
+    price:3400, rent:'200 ₽/день',
+    zones_label:'🥾 Треккинг',
+    ozon:'https://www.ozon.ru/category/trekingovyye-palki/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/turisticheskoe-snaryazhenie/palki-trekingovye',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:10, zone:['trek','camp'], emoji:'⛺', name:'Палатка 3–4 местная', cat:'Снаряжение',
+    desc:'Двухслойная туристическая палатка. Ветроустойчивость до 20 м/с. Вес 2.8 кг. Быстрая установка — 10 мин.',
+    specs:['3–4 места','2.8 кг','Ветер до 20 м/с'],
+    price:14900, rent:'800 ₽/день',
+    zones_label:'🥾 Треккинг / ⛺ Кемпинг',
+    ozon:'https://www.ozon.ru/category/palatki-turisticheskie/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/turisticheskoe-snaryazhenie/palatki',
+    hasRent:true, delivery:true, new:false, family:true
+  },
+  {
+    id:11, zone:['trek','camp'], emoji:'😴', name:'Спальный мешок', cat:'Снаряжение',
+    desc:'Синтетический утеплитель Hollofil, комфорт до -10°C. Компрессионный мешок в комплекте.',
+    specs:['Комфорт -10°C','1.3 кг','Молния 2-сторонняя'],
+    price:5800, rent:'300 ₽/день',
+    zones_label:'🥾 Треккинг / ⛺ Кемпинг',
+    ozon:'https://www.ozon.ru/category/spalniki/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/turisticheskoe-snaryazhenie/spalniki',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:12, zone:['trek'], emoji:'🧥', name:'Мембранная куртка', cat:'Одежда',
+    desc:'Лёгкая штормовая куртка. Мембрана 5 000 мм, швы проклеены. Упаковывается в собственный карман.',
+    specs:['5 000мм','280г','XS–3XL'],
+    price:6900, rent:null,
+    zones_label:'🥾 Треккинг',
+    ozon:'https://www.ozon.ru/category/vetrovki/',
+    wb:'https://www.wildberries.ru/catalog/muzhchinam/odezhda/kurtki/membrannyye',
+    hasRent:false, delivery:true, new:false, family:false
+  },
+
+  // ── ВОДНЫЕ / МОРЕ ──
+  {
+    id:13, zone:['water'], emoji:'🤿', name:'Гидрокостюм 3 мм', cat:'Снаряжение',
+    desc:'Неопрен 3 мм для воды от +18°C. Плоский шов без давления. Для серфинга, дайвинга, рафтинга.',
+    specs:['3 мм неопрен','XS–3XL','+18°C и выше'],
+    price:7900, rent:'600 ₽/день',
+    zones_label:'🌊 Море / Вода',
+    ozon:'https://www.ozon.ru/category/gidrokostyumy/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/vodnye-vidy-sporta/gidrokostyumy',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:14, zone:['water'], emoji:'🏄', name:'Набор для сноркелинга', cat:'Снаряжение',
+    desc:'Полупанорамная маска силиконовая + трубка + ласты. Чехол в комплекте. Детские и взрослые размеры.',
+    specs:['Силикон','S/M/L/XL','Детский S–M'],
+    price:3400, rent:'250 ₽/день',
+    zones_label:'🌊 Море',
+    ozon:'https://www.ozon.ru/category/maski-dlya-snorkelinga/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/vodnye-vidy-sporta/maski-i-trubki',
+    hasRent:true, delivery:true, new:false, family:true
+  },
+  {
+    id:15, zone:['water'], emoji:'🪸', name:'Аквашузы', cat:'Обувь',
+    desc:'Защита от острых камней и кораллов. Быстросохнущие, гибкая подошва. Взрослые и детские.',
+    specs:['30–46р.','Быстросохнущие','Антискользящие'],
+    price:1600, rent:null,
+    zones_label:'🌊 Море',
+    ozon:'https://www.ozon.ru/category/akvashuzyi/',
+    wb:'https://www.wildberries.ru/catalog/obuv/sport/aqua',
+    hasRent:false, delivery:true, new:false, family:true
+  },
+  {
+    id:16, zone:['water'], emoji:'🚣', name:'Спасательный жилет', cat:'Безопасность',
+    desc:'Сертифицирован ISO 12402. Для рафтинга и каякинга. Регулировка обхвата, свисток.',
+    specs:['ISO 12402','25–90кг','Детский до 30кг'],
+    price:4200, rent:'300 ₽/день',
+    zones_label:'🌊 Вода / Рафтинг',
+    ozon:'https://www.ozon.ru/category/spasatelnyy-zhilet/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/vodnye-vidy-sporta/zhilety',
+    hasRent:true, delivery:true, new:false, family:true
+  },
+  {
+    id:17, zone:['water'], emoji:'🧴', name:'Солнцезащита SPF 50+', cat:'Аксессуары',
+    desc:'Водостойкий крем SPF 50+, лосьон после загара, бальзам для губ SPF 30. Набор на всю семью.',
+    specs:['SPF 50+','Водостойкий','200мл + 200мл + 15мл'],
+    price:1800, rent:null,
+    zones_label:'🌊 Море / ☀️ Лето',
+    ozon:'https://www.ozon.ru/category/solntsezashchitnyye-sredstva/',
+    wb:'https://www.wildberries.ru/catalog/krasota/ukhodovaya-kosmetika/dlya-lica/zashhita-ot-solnca',
+    hasRent:false, delivery:true, new:false, family:true
+  },
+
+  // ── КЕМПИНГ / БАЗОВЫЙ ЛАГЕРЬ ──
+  {
+    id:18, zone:['camp'], emoji:'🔦', name:'Налобный фонарь', cat:'Аксессуары',
+    desc:'350 люмен, 3 режима, водозащита IPX6. Аккумулятор USB-C. Вес 85г. До 100 часов работы.',
+    specs:['350 Лм','IPX6','USB-C зарядка'],
+    price:2200, rent:null,
+    zones_label:'⛺ Кемпинг / Треккинг',
+    ozon:'https://www.ozon.ru/category/nalobnye-fonariki/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/turisticheskoe-snaryazhenie/fonariki',
+    hasRent:false, delivery:true, new:false, family:false
+  },
+  {
+    id:19, zone:['camp','trek'], emoji:'🍳', name:'Набор посуды туриста', cat:'Снаряжение',
+    desc:'Котелок 1.5л, сковорода, крышка, кружка, столовые приборы. Алюминий с антипригарным покрытием.',
+    specs:['8 предметов','Алюминий','Складные ручки'],
+    price:2800, rent:'150 ₽/день',
+    zones_label:'⛺ Кемпинг',
+    ozon:'https://www.ozon.ru/category/turisticheskaya-posuda/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/turisticheskoe-snaryazhenie/posuda-turisticheskaya',
+    hasRent:true, delivery:true, new:false, family:false
+  },
+  {
+    id:20, zone:['camp'], emoji:'🔥', name:'Газовая горелка + баллоны (3шт)', cat:'Снаряжение',
+    desc:'Пьезоподжиг, ветрозащитная конструкция. Совместима со стандартными резьбовыми баллонами. 3 баллона 230г.',
+    specs:['Пьезоподжиг','Ветрозащита','230г × 3'],
+    price:3600, rent:null,
+    zones_label:'⛺ Кемпинг',
+    ozon:'https://www.ozon.ru/category/turisticheskie-gorelki/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/turisticheskoe-snaryazhenie/gorelki',
+    hasRent:false, delivery:true, new:false, family:false
+  },
+
+  // ── ЛУГА / ЛЕТО ──
+  {
+    id:21, zone:['summer'], emoji:'🧢', name:'Панама с UPF 50+', cat:'Аксессуары',
+    desc:'Широкополая шляпа с защитой UPF 50+. Регулируемый подбородочный ремешок. Быстросохнущая.',
+    specs:['UPF 50+','S/M/L','Водоотталкивающая'],
+    price:1600, rent:null,
+    zones_label:'☀️ Луга / Лето',
+    ozon:'https://www.ozon.ru/category/panamy/',
+    wb:'https://www.wildberries.ru/catalog/aksessuary/golovnye-ubory/panamy',
+    hasRent:false, delivery:true, new:false, family:true
+  },
+  {
+    id:22, zone:['summer'], emoji:'👖', name:'Штаны-трансформеры', cat:'Одежда',
+    desc:'Отстёгивающиеся штанины, быстросохнущий материал. 4 кармана на молниях. Мужские и женские.',
+    specs:['Быстросохнущие','S–3XL','4 кармана'],
+    price:3400, rent:null,
+    zones_label:'☀️ Луга / Треккинг',
+    ozon:'https://www.ozon.ru/category/turisticheskie-shtany/',
+    wb:'https://www.wildberries.ru/catalog/sportivnyy-inveniar/odejda-i-obuv/bryuki',
+    hasRent:false, delivery:true, new:false, family:false
+  },
+  {
+    id:23, zone:['summer','trek'], emoji:'👟', name:'Трекинговые кроссовки', cat:'Обувь',
+    desc:'Дышащий верх, протектор Vibram. Для луговых и лесных троп. Мужские, женские, детские.',
+    specs:['Vibram','36–46р.','Дышащие'],
+    price:6200, rent:null,
+    zones_label:'☀️ Луга / 🥾 Треккинг',
+    ozon:'https://www.ozon.ru/category/trekingovyye-krossovki/',
+    wb:'https://www.wildberries.ru/catalog/obuv/sport/treking',
+    hasRent:false, delivery:true, new:false, family:true
+  },
+  {
+    id:24, zone:['summer','water'], emoji:'🧴', name:'Репеллент от насекомых', cat:'Аксессуары',
+    desc:'Защита от клещей, комаров и мошки. Для взрослых и детей от 2 лет. Спрей 150мл + крем 50мл.',
+    specs:['ДЭТА 30%','Детский состав','150 + 50мл'],
+    price:980, rent:null,
+    zones_label:'☀️ Луга / 🥾 Треккинг',
+    ozon:'https://www.ozon.ru/category/repellenty/',
+    wb:'https://www.wildberries.ru/catalog/krasota/ukhodovaya-kosmetika/repellenty',
+    hasRent:false, delivery:true, new:false, family:true
+  },
+];
+
+/* ══════════════════════════════════
+   RENDER
+══════════════════════════════════ */
+let activeZone = 'all';
+
+function setZoneTab(el, zone){
+  document.querySelectorAll('.zone-tab').forEach(t=>t.classList.remove('active'));
+  el.classList.add('active');
+  activeZone = zone;
+  applyFilters();
+}
+
+function applyFilters(){
+  const zone = activeZone;
+  let list = zone==='all' ? GEAR : GEAR.filter(g=>g.zone.includes(zone));
+  const min = +document.getElementById('priceMin').value||0;
+  const max = +document.getElementById('priceMax').value||Infinity;
+  list = list.filter(g=>g.price>=min && g.price<=max);
+  renderGear(list);
+}
+
+function renderGear(list){
+  const grid = document.getElementById('gearGrid');
+  document.getElementById('resultsCount').textContent = `Показано ${list.length} товаров`;
+  if(!list.length){
+    grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div>Ничего не найдено — попробуй изменить фильтры</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(g=>`
+    <div class="gear-card" data-id="${g.id}">
+      <div class="gear-thumb">
+        ${g.emoji}
+        <div class="gear-badge-wrap">
+          <span class="gear-badge gb-zone">${g.zones_label}</span>
+          ${g.delivery?'<span class="gear-badge gb-delivery">📦 доставка</span>':''}
+          ${g.hasRent?'<span class="gear-badge gb-rent">🔄 прокат</span>':''}
+          ${g.new?'<span class="gear-badge gb-new">new</span>':''}
+          ${g.family?'<span class="gear-badge gb-zone" style="background:rgba(100,180,120,.2);color:#a0f0c0;border-color:rgba(100,180,120,.35);">👨‍👩‍👧 семья</span>':''}
+        </div>
+      </div>
+      <div class="gear-body">
+        <div class="gear-cat">${g.cat}</div>
+        <div class="gear-name">${g.name}</div>
+        <div class="gear-desc">${g.desc}</div>
+        <div class="gear-specs">${g.specs.map(s=>`<span class="gear-spec">${s}</span>`).join('')}</div>
+        <div class="gear-footer">
+          <div class="gear-price-wrap">
+            <span class="gear-price">${g.price.toLocaleString()} ₽</span>
+            ${g.hasRent?`<div class="gear-price-rent">или ${g.rent}</div>`:''}
+          </div>
+          <div class="gear-actions">
+            ${g.hasRent?`<button class="btn-rent-sm" onclick="showToast('🔄 Прокат «${g.name}» — партнёр свяжется с вами')">Прокат</button>`:''}
+            <a class="btn-buy" href="${g.ozon}" target="_blank">🛒 Ozon</a>
+          </div>
+        </div>
+      </div>
+      <div class="delivery-strip">
+        📦 <span><b>Доставка к туру:</b> укажи адрес базы при заказе — организуем получение</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function showToast(msg){
+  const t=document.getElementById('cartToast');
+  t.textContent=msg; t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},2800);
+}
+
+// Init
+applyFilters();
+
+// Handle URL param ?zone=ski etc
+const params = new URLSearchParams(location.search);
+if(params.get('zone')){
+  const zt = document.querySelector(`.zone-tab[data-zone="${params.get('zone')}"]`);
+  if(zt) setZoneTab(zt, params.get('zone'));
+}
+</script>
+</body>
+</html>

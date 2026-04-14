@@ -419,6 +419,7 @@
   <div style="display:flex;gap:8px;align-items:center;">
     <a href="catalog.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Каталог</a>
     <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Собрать тур</a>
+    <a href="gear-shop.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🎒 Снаряжение</a>
   </div>
 </nav>
 
@@ -499,6 +500,30 @@
 
 <!-- ═══ STEP 3: SERVICES ═══ -->
 <div class="wizard-panel" id="step3">
+
+  <!-- SMART GEAR RECOMMENDATIONS -->
+  <div id="gearRecommendBlock" style="display:none;">
+    <div style="
+      background: linear-gradient(135deg, rgba(42,122,74,.12), rgba(0,91,255,.07));
+      border: 1px solid rgba(42,122,74,.28);
+      border-radius: 16px; padding: 22px 24px; margin-bottom: 18px;
+    ">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:16px;">
+        <div>
+          <div style="font-size:10px;font-weight:700;color:#5fc48a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;">🎒 Рекомендуем для этого тура</div>
+          <div style="font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:#fff;" id="gearRecommendTitle">Снаряжение</div>
+        </div>
+        <a id="gearShopLink" href="gear-shop.html" target="_blank"
+           style="background:rgba(0,91,255,.2);border:1px solid rgba(0,91,255,.4);color:#7cb3ff;
+                  padding:8px 18px;border-radius:9px;font-size:11px;font-weight:700;
+                  text-decoration:none;white-space:nowrap;">
+          Весь магазин снаряжения →
+        </a>
+      </div>
+      <div id="gearRecommendItems" style="display:flex;flex-direction:column;gap:10px;"></div>
+    </div>
+  </div>
+
   <div class="panel-card">
     <div class="panel-title">Добавь услуги в тур</div>
     <div class="panel-sub">Выбери, что включить — на следующем шаге расставишь по расписанию</div>
@@ -715,7 +740,7 @@ function goStep(n){
     if(sn===n) s.classList.add('active');
     else if(sn<n) s.classList.add('done');
   });
-  if(n===3) renderServices('all');
+  if(n===3){ renderServices('all'); renderGearRecommendations(); }
   if(n===4) initTimeline();
   if(n===6) renderSummary();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -1158,6 +1183,118 @@ function renderSummary(){
 }
 
 function publishTour(){ document.getElementById('successOverlay').classList.add('show'); }
+
+/* ════════════════════════════════
+   SMART GEAR RECOMMENDATIONS
+════════════════════════════════ */
+const GEAR_RECS = {
+  ski: {
+    title: 'Горнолыжное снаряжение',
+    shopZone: 'ski',
+    items: [
+      { emoji:'🧥', name:'Горнолыжная куртка', why:'Защита от ветра и влаги в горах', price:'12 900 ₽', ozon:'https://www.ozon.ru/category/gornolyzhnyye-kurtki/' },
+      { emoji:'🎿', name:'Лыжи + крепления', why:'В прокат или свои — доставим к базе', price:'24 900 ₽', ozon:'https://www.ozon.ru/category/lyzhi/' },
+      { emoji:'🥽', name:'Горнолыжный шлем', why:'Обязательная защита, EN 1077', price:'6 500 ₽', ozon:'https://www.ozon.ru/category/gornolyzhnyye-shlemy/' },
+      { emoji:'🧤', name:'Термобельё на семью', why:'Базовый слой — взрослые и дети', price:'3 200 ₽', ozon:'https://www.ozon.ru/category/termobilyo/' },
+      { emoji:'🦔', name:'Маска + перчатки', why:'Защита лица от холода и уФ', price:'7 000 ₽', ozon:'https://www.ozon.ru/category/gornolyzhnyye-maski/' },
+    ]
+  },
+  river: {
+    title: 'Снаряжение для воды',
+    shopZone: 'water',
+    items: [
+      { emoji:'🧥', name:'Гидрокостюм 3 мм', why:'Для рафтинга и каякинга на холодных реках', price:'7 900 ₽', ozon:'https://www.ozon.ru/category/gidrokostyumy/' },
+      { emoji:'🚣', name:'Спасательный жилет', why:'Обязателен при сплаве, есть прокат', price:'4 200 ₽', ozon:'https://www.ozon.ru/category/spasatelnyy-zhilet/' },
+      { emoji:'🦷', name:'Мембранная ветровка', why:'От брызг у водопадов и переходов', price:'6 900 ₽', ozon:'https://www.ozon.ru/category/vetrovki/' },
+      { emoji:'👟', name:'Трекинговые ботинки', why:'Для подъёмов к водопадам', price:'8 900 ₽', ozon:'https://www.ozon.ru/category/trekingovyye-botinki/' },
+      { emoji:'🎒', name:'Рюкзак 35 л + дождевик', why:'Водозащитный, для походов вдоль реки', price:'6 200 ₽', ozon:'https://www.ozon.ru/category/ryukzaki-turisticheskie/' },
+    ]
+  },
+  meadow: {
+    title: 'Снаряжение для луговых маршрутов',
+    shopZone: 'summer',
+    items: [
+      { emoji:'👟', name:'Трекинговые кроссовки', why:'Для луговых и лесных троп', price:'6 200 ₽', ozon:'https://www.ozon.ru/category/trekingovyye-krossovki/' },
+      { emoji:'🧢', name:'Панама UPF 50+', why:'Защита от солнца для всей семьи', price:'1 600 ₽', ozon:'https://www.ozon.ru/category/panamy/' },
+      { emoji:'👖', name:'Штаны-трансформеры', why:'Быстросохнущие, для жары и прохлады', price:'3 400 ₽', ozon:'https://www.ozon.ru/category/turisticheskie-shtany/' },
+      { emoji:'🪲', name:'Репеллент от насекомых', why:'Клещи, мошка — обязательно!', price:'980 ₽', ozon:'https://www.ozon.ru/category/repellenty/' },
+      { emoji:'🎒', name:'Дневной рюкзак 20 л', why:'Для однодневных вылазок', price:'2 800 ₽', ozon:'https://www.ozon.ru/category/ryukzaki-turisticheskie/' },
+    ]
+  },
+  sea: {
+    title: 'Снаряжение для моря',
+    shopZone: 'water',
+    items: [
+      { emoji:'🤿', name:'Гидрокостюм 3 мм', why:'Для дайвинга, сноркелинга, серфинга', price:'7 900 ₽', ozon:'https://www.ozon.ru/category/gidrokostyumy/' },
+      { emoji:'🏄', name:'Набор для сноркелинга', why:'Маска + трубка + ласты', price:'3 400 ₽', ozon:'https://www.ozon.ru/category/maski-dlya-snorkelinga/' },
+      { emoji:'🪸', name:'Аквашузы', why:'Для каменистого дна, детские тоже есть', price:'1 600 ₽', ozon:'https://www.ozon.ru/category/akvashuzyi/' },
+      { emoji:'🧴', name:'Солнцезащита SPF 50+', why:'Водостойкий, для всей семьи', price:'1 800 ₽', ozon:'https://www.ozon.ru/category/solntsezashchitnyye-sredstva/' },
+      { emoji:'🚣', name:'Спасательный жилет', why:'Обязателен при водных активностях', price:'4 200 ₽', ozon:'https://www.ozon.ru/category/spasatelnyy-zhilet/' },
+    ]
+  },
+};
+
+function renderGearRecommendations(){
+  const block = document.getElementById('gearRecommendBlock');
+  if(!S.zones.length){ block.style.display='none'; return; }
+
+  // Merge recs for all selected zones
+  const allItems = [];
+  const seenNames = new Set();
+  const titles = [];
+  S.zones.forEach(zone=>{
+    const rec = GEAR_RECS[zone];
+    if(!rec) return;
+    titles.push(rec.title);
+    rec.items.forEach(item=>{
+      if(!seenNames.has(item.name)){
+        allItems.push({...item, zone});
+        seenNames.add(item.name);
+      }
+    });
+  });
+
+  document.getElementById('gearRecommendTitle').textContent =
+    titles.length===1 ? titles[0] : titles.join(' + ');
+
+  // Link to shop filtered by first zone
+  const firstRec = GEAR_RECS[S.zones[0]];
+  document.getElementById('gearShopLink').href =
+    `gear-shop.html?zone=${firstRec?.shopZone||'all'}`;
+
+  const container = document.getElementById('gearRecommendItems');
+  container.innerHTML = allItems.map(item=>`
+    <div style="
+      display:flex; align-items:center; gap:14px;
+      background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.07);
+      border-radius:12px; padding:13px 16px;
+    ">
+      <span style="font-size:24px;flex-shrink:0;">${item.emoji}</span>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:13px;font-weight:600;color:#fff;margin-bottom:2px;">${item.name}</div>
+        <div style="font-size:11px;color:rgba(255,255,255,.4);">${item.why}</div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:6px;">${item.price}</div>
+        <div style="display:flex;gap:6px;">
+          <a href="${item.ozon}" target="_blank" style="
+            background:#005bff;color:#fff;border:none;
+            padding:5px 11px;border-radius:7px;font-size:10px;font-weight:700;
+            text-decoration:none;white-space:nowrap;
+          ">🛒 Ozon</a>
+          <a href="catalog.html" style="
+            background:rgba(255,255,255,.07);color:rgba(255,255,255,.7);
+            border:1px solid rgba(255,255,255,.12);
+            padding:5px 10px;border-radius:7px;font-size:10px;font-weight:600;
+            text-decoration:none;white-space:nowrap;
+          ">🔄 Прокат</a>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  block.style.display = 'block';
+}
 </script>
 </body>
 </html>
