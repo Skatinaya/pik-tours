@@ -8,6 +8,154 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="tour.css"/>
+  <style>
+  /* ── GEAR SECTION ── */
+  .gear-section {
+    margin-top: 60px; padding: 36px 32px;
+    background: rgba(255,255,255,0.02);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 18px;
+  }
+  .gear-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    gap: 20px; flex-wrap: wrap; margin-bottom: 28px;
+  }
+  .gear-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: clamp(17px, 2.5vw, 22px);
+    font-weight: 700; color: #fff;
+  }
+  .gear-delivery {
+    display: flex; align-items: center; gap: 12px;
+    background: rgba(42,122,74,0.1); border: 1px solid rgba(42,122,74,0.25);
+    border-radius: 12px; padding: 12px 18px; max-width: 380px;
+  }
+  .gear-delivery-icon { font-size: 24px; flex-shrink: 0; }
+  .gear-delivery-text strong { display: block; font-size: 12px; color: #5fc48a; font-weight: 600; margin-bottom: 2px; }
+  .gear-delivery-text span { font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.4; }
+  .gear-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+  .gear-card {
+    display: flex; gap: 14px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; padding: 18px 16px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .gear-card:hover {
+    border-color: rgba(42,122,74,0.4);
+    background: rgba(42,122,74,0.05);
+  }
+  .gear-icon {
+    font-size: 28px; flex-shrink: 0; margin-top: 2px;
+  }
+  .gear-body { flex: 1; min-width: 0; }
+  .gear-name {
+    font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px;
+  }
+  .gear-desc {
+    font-size: 11px; color: rgba(255,255,255,0.45); line-height: 1.5; margin-bottom: 12px;
+  }
+  .gear-footer {
+    display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+  }
+  .gear-price {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 14px; font-weight: 700; color: #fff;
+  }
+  .gear-btns { display: flex; gap: 6px; }
+  .gear-buy {
+    background: #005bff; color: #fff; border: none;
+    padding: 5px 12px; border-radius: 7px;
+    font-size: 10px; font-weight: 600; text-decoration: none;
+    transition: background 0.15s; white-space: nowrap;
+  }
+  .gear-buy:hover { background: #004ad6; }
+  .gear-rent {
+    background: rgba(255,255,255,0.07); color: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.12);
+    padding: 5px 12px; border-radius: 7px;
+    font-size: 10px; font-weight: 600; text-decoration: none;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .gear-rent:hover { background: rgba(255,255,255,0.12); color: #fff; }
+  .gear-note {
+    margin-top: 18px; text-align: center;
+    font-size: 11px; color: rgba(255,255,255,0.3);
+    padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  @media (max-width: 600px) {
+    .gear-section { padding: 24px 16px; }
+    .gear-card { flex-direction: column; gap: 8px; }
+    .gear-delivery { max-width: 100%; }
+  }
+
+  </style>
+  <style>
+  /* ── SEARCH OVERLAY ── */
+  .search-overlay {
+    display:none; position:fixed; inset:0; z-index:9999;
+    background:rgba(8,15,11,0.85); backdrop-filter:blur(8px);
+    align-items:flex-start; justify-content:center; padding-top:12vh;
+  }
+  .search-overlay.open { display:flex; }
+  .search-modal {
+    background:#111e16; border:1px solid rgba(255,255,255,0.1);
+    border-radius:18px; width:580px; max-width:92vw;
+    max-height:70vh; overflow:hidden;
+    display:flex; flex-direction:column;
+    animation:searchIn 0.2s ease;
+  }
+  @keyframes searchIn { from{transform:translateY(-12px);opacity:0} to{transform:translateY(0);opacity:1} }
+  .search-input-wrap {
+    display:flex; align-items:center; gap:10px;
+    padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.08);
+  }
+  .search-icon-inner { font-size:18px; flex-shrink:0; }
+  .search-input {
+    flex:1; background:none; border:none; outline:none;
+    color:#fff; font-size:16px; font-family:'Inter',sans-serif;
+  }
+  .search-input::placeholder { color:rgba(255,255,255,0.25); }
+  .search-esc {
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.12);
+    color:rgba(255,255,255,0.4); font-size:10px; font-weight:600;
+    padding:3px 8px; border-radius:5px; cursor:pointer;
+  }
+  .search-results {
+    overflow-y:auto; padding:8px 12px 12px;
+  }
+  .sr-empty {
+    text-align:center; padding:32px 20px;
+    color:rgba(255,255,255,0.3); font-size:13px;
+  }
+  .sr-item {
+    display:flex; align-items:center; gap:12px;
+    padding:10px 12px; border-radius:10px; cursor:pointer;
+    transition:background 0.12s; text-decoration:none;
+  }
+  .sr-item:hover { background:rgba(42,122,74,0.12); }
+  .sr-badge {
+    font-size:10px; font-weight:600; padding:3px 9px; border-radius:8px;
+    white-space:nowrap; flex-shrink:0;
+  }
+  .sr-badge.tour { background:rgba(42,122,74,0.2); color:#5fc48a; }
+  .sr-badge.service { background:rgba(255,255,255,0.06); color:rgba(255,255,255,0.55); }
+  .sr-info { min-width:0; }
+  .sr-title { font-size:13px; font-weight:600; color:#fff; }
+  .sr-zone { font-size:11px; color:rgba(255,255,255,0.35); margin-top:1px; }
+  .nav-search-btn {
+    background:rgba(255,255,255,0.07); border:1px solid rgba(255,255,255,0.1);
+    color:rgba(255,255,255,0.5); width:34px; height:34px;
+    border-radius:8px; display:flex; align-items:center; justify-content:center;
+    cursor:pointer; font-size:15px; transition:all 0.15s; flex-shrink:0;
+  }
+  .nav-search-btn:hover { background:rgba(255,255,255,0.12); color:#fff; }
+
+  </style>
 </head>
 <body>
 
@@ -19,7 +167,8 @@
   <div style="display:flex;gap:8px;align-items:center;">
     <a class="back-btn" href="index.html" style="margin:0;">← Карта</a>
     <a href="catalog.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Каталог</a>
-    <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 16px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;white-space:nowrap;">+ Услуга</a>
+    <button class="nav-search-btn" onclick="openSearch()" title="Поиск (⌘K)">🔍</button>
+      <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 16px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;white-space:nowrap;">+ Услуга</a>
   </div>
 </nav>
 
@@ -119,6 +268,85 @@
 
   </div>
 
+  
+  <!-- GEAR SECTION -->
+  <div class="gear-section">
+    <div class="gear-header">
+      <div>
+        <div class="section-label" style="margin-bottom:8px;">🎒 Снаряжение</div>
+        <div class="gear-title">Что взять в луга и степи</div>
+      </div>
+      <div class="gear-delivery">
+        <div class="gear-delivery-icon">📦</div>
+        <div class="gear-delivery-text">
+          <strong>Доставим к началу тура</strong>
+          <span>Закажите на Ozon — привезём в ближайший пункт выдачи или прямо на базу</span>
+        </div>
+      </div>
+    </div>
+    <div class="gear-grid">
+    <div class="gear-card">
+      <div class="gear-icon">🧢</div>
+      <div class="gear-body">
+        <div class="gear-name">Панама + солнцезащита</div>
+        <div class="gear-desc">Панама с UPF 50+, солнцезащитный крем SPF 50, очки с поляризацией.</div>
+        <div class="gear-footer">
+          <div class="gear-price">2 100 ₽</div>
+          <div class="gear-btns">
+            <a href="https://www.ozon.ru/category/panamy/" target="_blank" class="gear-buy">Купить на Ozon</a>
+            <a href="catalog.html?type=gear" class="gear-rent">Прокат</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="gear-card">
+      <div class="gear-icon">👖</div>
+      <div class="gear-body">
+        <div class="gear-name">Штаны-трансформеры</div>
+        <div class="gear-desc">Быстросохнущие штаны с отстёгивающимися штанинами — для жары и прохлады.</div>
+        <div class="gear-footer">
+          <div class="gear-price">3 200 ₽</div>
+          <div class="gear-btns">
+            <a href="https://www.ozon.ru/category/turisticheskie-shtany/" target="_blank" class="gear-buy">Купить на Ozon</a>
+            <a href="catalog.html?type=gear" class="gear-rent">Прокат</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="gear-card">
+      <div class="gear-icon">🥾</div>
+      <div class="gear-body">
+        <div class="gear-name">Лёгкие трекинговые кроссовки</div>
+        <div class="gear-desc">Дышащие кроссовки для лугов и троп. Подошва Vibram, поддержка стопы.</div>
+        <div class="gear-footer">
+          <div class="gear-price">5 500 ₽</div>
+          <div class="gear-btns">
+            <a href="https://www.ozon.ru/category/trekingovyye-krossovki/" target="_blank" class="gear-buy">Купить на Ozon</a>
+            <a href="catalog.html?type=gear" class="gear-rent">Прокат</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="gear-card">
+      <div class="gear-icon">🎒</div>
+      <div class="gear-body">
+        <div class="gear-name">Рюкзак + бутылка</div>
+        <div class="gear-desc">Лёгкий дневной рюкзак 20 л + термобутылка 0.75 л. Для однодневных вылазок.</div>
+        <div class="gear-footer">
+          <div class="gear-price">2 900 ₽</div>
+          <div class="gear-btns">
+            <a href="https://www.ozon.ru/category/ryukzaki-turisticheskie/" target="_blank" class="gear-buy">Купить на Ozon</a>
+            <a href="catalog.html?type=gear" class="gear-rent">Прокат</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="gear-note">
+      Размеры на всю семью — укажите в заказе. Не подошло? Вернёте в пункте выдачи после тура.
+    </div>
+  </div>
+
   <div class="amb-strip">
     <div class="amb-strip-text">
       <h3>Ты блогер или гид? Создай свой тур на лугах</h3>
@@ -127,6 +355,57 @@
     <button class="amb-strip-btn" onclick="window.location.href='index.html'">Стать партнёром PIK →</button>
   </div>
 </div>
+
+
+<!-- SEARCH OVERLAY -->
+<div id="searchOverlay" class="search-overlay" onclick="if(event.target===this)closeSearch()">
+  <div class="search-modal">
+    <div class="search-input-wrap">
+      <span class="search-icon-inner">🔍</span>
+      <input type="text" id="searchInput" class="search-input" placeholder="Туры, услуги, активности..." autocomplete="off" oninput="doSearch(this.value)"/>
+      <kbd class="search-esc" onclick="closeSearch()">ESC</kbd>
+    </div>
+    <div id="searchResults" class="search-results"></div>
+  </div>
+</div>
+
+<script>
+const PIK_INDEX = [{"title": "Фрирайд по целине", "type": "tour", "zone": "ski", "url": "ski.html", "tags": "горы лыжи фрирайд снег целина"}, {"title": "Ски-тур на рассвете", "type": "tour", "zone": "ski", "url": "ski.html", "tags": "горы лыжи ски-тур рассвет"}, {"title": "Сноуборд-парк", "type": "tour", "zone": "ski", "url": "ski.html", "tags": "горы сноуборд парк фигуры трамплин"}, {"title": "Снегоходы — ночной драйв", "type": "tour", "zone": "ski", "url": "ski.html", "tags": "горы снегоход ночь адреналин"}, {"title": "Ночёвка на высоте 3000 м", "type": "tour", "zone": "ski", "url": "ski.html", "tags": "горы ночёвка высота палатка"}, {"title": "Лыжный ски-тур — неделя в горах", "type": "tour", "zone": "ski", "url": "ski.html", "tags": "горы лыжи неделя шале пакет"}, {"title": "Рафтинг по горной реке", "type": "tour", "zone": "river", "url": "river.html", "tags": "река рафтинг сплав вода"}, {"title": "Каякинг на закате", "type": "tour", "zone": "river", "url": "river.html", "tags": "река каяк закат вода"}, {"title": "Поход к водопадам", "type": "tour", "zone": "river", "url": "river.html", "tags": "река водопад поход треккинг"}, {"title": "Рыбалка на форель", "type": "tour", "zone": "river", "url": "river.html", "tags": "река рыбалка форель"}, {"title": "Каньонинг — спуск по ущельям", "type": "tour", "zone": "river", "url": "river.html", "tags": "река каньон ущелье верёвки"}, {"title": "Сплав на SUP", "type": "tour", "zone": "river", "url": "river.html", "tags": "река sup доска стоя"}, {"title": "Конная прогулка по лугам", "type": "tour", "zone": "meadow", "url": "meadow.html", "tags": "луг лошади конная прогулка"}, {"title": "Квадроциклы — горный маршрут", "type": "tour", "zone": "meadow", "url": "meadow.html", "tags": "луг квадроцикл ATV горы"}, {"title": "Параплан — полёт над долиной", "type": "tour", "zone": "meadow", "url": "meadow.html", "tags": "луг параплан полёт долина"}, {"title": "Пикник с видом на горы", "type": "tour", "zone": "meadow", "url": "meadow.html", "tags": "луг пикник вид горы еда"}, {"title": "Велотрейл — лесные тропы", "type": "tour", "zone": "meadow", "url": "meadow.html", "tags": "луг велосипед трейл лес тропы"}, {"title": "Йога-ретрит на высокогорье", "type": "tour", "zone": "meadow", "url": "meadow.html", "tags": "луг йога ретрит медитация"}, {"title": "Дайвинг у скал", "type": "tour", "zone": "sea", "url": "sea.html", "tags": "море дайвинг скалы подводный"}, {"title": "Прогулка на яхте", "type": "tour", "zone": "sea", "url": "sea.html", "tags": "море яхта прогулка закат"}, {"title": "Серфинг для начинающих", "type": "tour", "zone": "sea", "url": "sea.html", "tags": "море серфинг волны обучение"}, {"title": "Морская рыбалка", "type": "tour", "zone": "sea", "url": "sea.html", "tags": "море рыбалка катер"}, {"title": "Каякинг вдоль скал", "type": "tour", "zone": "sea", "url": "sea.html", "tags": "море каяк скалы пещеры"}, {"title": "Фотосессия на побережье", "type": "tour", "zone": "sea", "url": "sea.html", "tags": "море фото побережье закат"}, {"title": "Горное шале «Вершина»", "type": "service", "zone": "hotel", "url": "catalog.html", "tags": "жильё гостиница шале горы"}, {"title": "Глэмпинг «Река»", "type": "service", "zone": "camp", "url": "catalog.html", "tags": "кемпинг глэмпинг река шатры"}, {"title": "Гид Алексей — треккинг", "type": "service", "zone": "guide", "url": "catalog.html", "tags": "гид треккинг горы поход"}, {"title": "Прокат квадроциклов", "type": "service", "zone": "rental", "url": "catalog.html", "tags": "прокат квадроцикл ATV"}, {"title": "Конная прогулка «Рассвет»", "type": "service", "zone": "rental", "url": "catalog.html", "tags": "прокат лошади конная"}, {"title": "Кафе «Горный воздух»", "type": "service", "zone": "food", "url": "catalog.html", "tags": "питание кафе еда доставка"}, {"title": "Трансфер в горы", "type": "service", "zone": "transfer", "url": "catalog.html", "tags": "трансфер такси минивэн аэропорт"}, {"title": "Инструктор по дайвингу", "type": "service", "zone": "guide", "url": "catalog.html", "tags": "гид дайвинг инструктор PADI море"}, {"title": "Домики у моря «Бухта»", "type": "service", "zone": "hotel", "url": "catalog.html", "tags": "жильё домик море побережье"}];
+const ZONE_LABELS = {"ski": "⛷️ Горы", "river": "🏞️ Река", "meadow": "🌿 Луга", "sea": "🌊 Море", "hotel": "🏨 Жильё", "camp": "⛺ Кемпинг", "guide": "🧭 Гид", "rental": "🏍️ Прокат", "food": "🍽️ Питание", "transfer": "🚐 Трансфер"};
+
+function openSearch() {
+  document.getElementById('searchOverlay').classList.add('open');
+  setTimeout(()=>document.getElementById('searchInput').focus(), 100);
+}
+function closeSearch() {
+  document.getElementById('searchOverlay').classList.remove('open');
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchResults').innerHTML = '';
+}
+document.addEventListener('keydown', e => {
+  if ((e.metaKey||e.ctrlKey) && e.key==='k') { e.preventDefault(); openSearch(); }
+  if (e.key==='Escape') closeSearch();
+});
+
+function doSearch(q) {
+  const box = document.getElementById('searchResults');
+  q = q.trim().toLowerCase();
+  if (!q) { box.innerHTML = '<div class="sr-empty">Начните вводить — покажем туры и услуги</div>'; return; }
+  const results = PIK_INDEX.filter(item =>
+    item.title.toLowerCase().includes(q) || item.tags.toLowerCase().includes(q)
+  );
+  if (!results.length) { box.innerHTML = '<div class="sr-empty">Ничего не найдено — попробуйте другой запрос</div>'; return; }
+  box.innerHTML = results.slice(0, 8).map(r => `
+    <a class="sr-item" href="${r.url}">
+      <span class="sr-badge ${r.type}">${r.type==='tour'?'Тур':'Услуга'}</span>
+      <div class="sr-info">
+        <div class="sr-title">${r.title}</div>
+        <div class="sr-zone">${ZONE_LABELS[r.zone]||r.zone}</div>
+      </div>
+    </a>
+  `).join('');
+}
+</script>
 
 </body>
 </html>
