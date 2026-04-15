@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📸 Фотосафари — PIK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #2A7A4A;
+      --green-muted: #5fc48a;
+      --gold: #f0a500;
+      --bg: #080f0b;
+      --card: #0f1a14;
+      --border: rgba(90,180,120,0.15);
+      --text: #e8f5ee;
+      --text-muted: rgba(232,245,238,0.55);
+      --easy: #5fc48a;
+      --medium: #f0a500;
+      --hard: #e85c5c;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 56px;
+      background: rgba(8,15,11,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(90,180,120,0.1);
+    }
+    .logo { display: flex; align-items: center; gap: 8px; text-decoration: none; }
+    .logo span { font-family:'Unbounded',sans-serif; font-size:15px; font-weight:700; color:#fff; letter-spacing:0.5px; }
+    nav .links { display: flex; gap: 8px; align-items: center; }
+    nav .links a { color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 600; text-decoration: none; padding: 8px 14px; transition: color .2s; }
+    nav .links a:hover { color: #fff; }
+    nav .links a.accent-green { color: #5fc48a; }
+    nav .links a.accent-gold { color: #f0a500; }
+    nav .links a.btn-green { background: #2A7A4A; color: #fff; padding: 8px 18px; font-size: 12px; border-radius: 8px; font-weight: 600; white-space: nowrap; }
+    nav .links a.btn-green:hover { background: #348f5a; }
+    nav .links a.active-page { color: #f0a500 !important; }
+
+    /* ─── HERO ─── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center;
+      padding: 100px 24px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 30%, rgba(42,122,74,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 20% 80%, rgba(15,50,30,0.4) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 60%, rgba(8,15,11,0.6) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 1px solid rgba(95,196,138,0.3);
+      border-radius: 100px;
+      padding: 6px 16px;
+      font-size: 12px; font-weight: 600;
+      color: var(--green-muted);
+      background: rgba(42,122,74,0.1);
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(40px, 7vw, 80px);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -1px;
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .hero h1 span { color: var(--green-muted); }
+    .hero p {
+      font-size: clamp(16px, 2.2vw, 20px);
+      color: var(--text-muted);
+      max-width: 600px;
+      line-height: 1.6;
+      margin-bottom: 52px;
+    }
+    .hero-stats {
+      display: flex; gap: 48px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .hero-stat { text-align: center; }
+    .hero-stat .num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 700;
+      color: #fff;
+      display: block;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .hero-stat .num.gold { color: var(--gold); }
+    .hero-stat .label { font-size: 13px; color: var(--text-muted); font-weight: 500; }
+    .hero-stat-divider { width: 1px; background: var(--border); align-self: stretch; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px; font-weight: 700;
+      padding: 16px 36px;
+      border-radius: 12px;
+      text-decoration: none;
+      border: none; cursor: pointer;
+      transition: background .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 24px rgba(42,122,74,0.35);
+    }
+    .btn-primary:hover { background: #348f5a; transform: translateY(-2px); box-shadow: 0 8px 32px rgba(42,122,74,0.45); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ─── SECTION ─── */
+    section { padding: 100px 24px; }
+    .section-label {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 11px; font-weight: 600;
+      color: var(--green-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .section-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 16px;
+    }
+    .section-sub {
+      font-size: 16px;
+      color: var(--text-muted);
+      max-width: 560px;
+      line-height: 1.6;
+      margin-bottom: 56px;
+    }
+    .container { max-width: 1180px; margin: 0 auto; }
+
+    /* ─── HOW IT WORKS ─── */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2px;
+    }
+    .step-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 36px 28px;
+      position: relative;
+      transition: border-color .2s;
+    }
+    .step-card:first-child { border-radius: 16px 0 0 16px; }
+    .step-card:last-child { border-radius: 0 16px 16px 0; }
+    .step-card:hover { border-color: rgba(95,196,138,0.35); }
+    .step-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 11px; font-weight: 700;
+      color: var(--green-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .step-icon {
+      font-size: 36px;
+      margin-bottom: 20px;
+      display: block;
+    }
+    .step-card h3 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: #fff;
+      margin-bottom: 12px;
+      line-height: 1.3;
+    }
+    .step-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* ─── CHALLENGES ─── */
+    #challenges { background: transparent; }
+    .challenges-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .difficulty-group-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      padding: 0 4px;
+    }
+    .difficulty-group-title.easy { color: var(--easy); }
+    .difficulty-group-title.medium { color: var(--medium); }
+    .difficulty-group-title.hard { color: var(--hard); }
+
+    .challenge-col { display: flex; flex-direction: column; gap: 16px; }
+
+    .challenge-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color .2s, transform .15s;
+    }
+    .challenge-card:hover { border-color: rgba(95,196,138,0.3); transform: translateY(-2px); }
+    .challenge-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 4px;
+    }
+    .challenge-card.easy::before { background: var(--easy); }
+    .challenge-card.medium::before { background: var(--medium); }
+    .challenge-card.hard::before { background: var(--hard); }
+
+    .challenge-header {
+      display: flex; align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .challenge-icon { font-size: 24px; flex-shrink: 0; }
+    .pik-badge {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px; font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 100px;
+      white-space: nowrap;
+    }
+    .pik-badge.easy { background: rgba(95,196,138,0.12); color: var(--easy); border: 1px solid rgba(95,196,138,0.25); }
+    .pik-badge.medium { background: rgba(240,165,0,0.12); color: var(--medium); border: 1px solid rgba(240,165,0,0.25); }
+    .pik-badge.hard { background: rgba(232,92,92,0.12); color: var(--hard); border: 1px solid rgba(232,92,92,0.25); }
+
+    .challenge-card h3 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .challenge-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+    .diff-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 100px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .diff-badge.easy { background: rgba(95,196,138,0.1); color: var(--easy); }
+    .diff-badge.medium { background: rgba(240,165,0,0.1); color: var(--medium); }
+    .diff-badge.hard { background: rgba(232,92,92,0.1); color: var(--hard); }
+
+    .btn-upload {
+      margin-top: auto;
+      background: transparent;
+      border: 1px solid rgba(95,196,138,0.3);
+      color: var(--green-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600;
+      padding: 11px 20px;
+      border-radius: 9px;
+      cursor: pointer;
+      transition: all .2s;
+      text-align: center;
+    }
+    .btn-upload:hover {
+      background: rgba(42,122,74,0.2);
+      border-color: rgba(95,196,138,0.6);
+      color: #fff;
+    }
+
+    /* ─── LEADERBOARD ─── */
+    #leaderboard { background: rgba(15,26,20,0.5); }
+    .leaderboard-list { display: flex; flex-direction: column; gap: 12px; max-width: 760px; }
+    .leader-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      transition: border-color .2s, transform .15s;
+    }
+    .leader-card:hover { transform: translateX(4px); border-color: rgba(95,196,138,0.3); }
+    .leader-card.gold-rank { border-color: rgba(255,200,0,0.3); background: rgba(255,200,0,0.03); }
+    .leader-card.silver-rank { border-color: rgba(180,180,200,0.25); }
+    .leader-card.bronze-rank { border-color: rgba(180,100,50,0.25); }
+
+    .rank-icon { font-size: 28px; width: 40px; text-align: center; flex-shrink: 0; }
+    .rank-num {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: var(--text-muted);
+      width: 32px; text-align: center; flex-shrink: 0;
+    }
+    .leader-info { flex: 1; }
+    .leader-name {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 15px; font-weight: 700;
+      color: #fff; margin-bottom: 4px;
+    }
+    .leader-tour { font-size: 12px; color: var(--text-muted); }
+    .leader-stats { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .leader-pik {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: var(--gold);
+    }
+    .leader-photos { font-size: 12px; color: var(--text-muted); }
+
+    /* ─── GALLERY ─── */
+    #gallery { background: transparent; }
+    .gallery-grid {
+      columns: 3;
+      column-gap: 16px;
+    }
+    .gallery-item {
+      break-inside: avoid;
+      margin-bottom: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+      cursor: pointer;
+      transition: transform .2s, border-color .2s;
+    }
+    .gallery-item:hover { transform: scale(1.02); border-color: rgba(95,196,138,0.35); }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-photo-bg {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .gallery-camera-icon {
+      font-size: 32px;
+      opacity: 0.3;
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .gallery-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+      opacity: 0;
+      transition: opacity .2s;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+    }
+    .gallery-caption {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      padding: 32px 16px 14px;
+      background: linear-gradient(to top, rgba(8,15,11,0.92) 0%, transparent 100%);
+    }
+    .gallery-title { font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 4px; }
+    .gallery-likes { font-size: 12px; color: var(--text-muted); }
+
+    /* ─── PRIZES ─── */
+    #prizes { background: rgba(8,12,9,0.8); }
+    .prizes-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      max-width: 760px;
+    }
+    .prize-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      transition: border-color .2s;
+    }
+    .prize-card:hover { border-color: rgba(240,165,0,0.25); }
+    .prize-icon { font-size: 40px; }
+    .prize-pik {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 22px; font-weight: 700;
+      color: var(--gold);
+    }
+    .prize-pik span { font-size: 14px; color: var(--text-muted); font-weight: 500; font-family: 'Inter', sans-serif; }
+    .prize-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .btn-exchange {
+      background: rgba(240,165,0,0.08);
+      border: 1px solid rgba(240,165,0,0.2);
+      color: var(--gold);
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600;
+      padding: 11px 20px;
+      border-radius: 9px;
+      cursor: not-allowed;
+      opacity: 0.5;
+      position: relative;
+      text-align: center;
+    }
+    .btn-exchange[title]:hover::after {
+      content: attr(title);
+      position: absolute;
+      bottom: calc(100% + 8px); left: 50%;
+      transform: translateX(-50%);
+      background: rgba(8,15,11,0.95);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 12px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    /* ─── CTA ─── */
+    #cta {
+      background: linear-gradient(135deg, rgba(42,122,74,0.12) 0%, rgba(8,15,11,0) 60%);
+      border-top: 1px solid var(--border);
+      text-align: center;
+    }
+    #cta .section-title { font-size: clamp(28px, 4vw, 48px); }
+    #cta .section-sub { margin: 0 auto 40px; }
+
+    /* ─── MODAL ─── */
+    .modal-backdrop {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      padding: 24px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .25s;
+    }
+    .modal-backdrop.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #111d15;
+      border: 1px solid rgba(95,196,138,0.2);
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 520px;
+      width: 100%;
+      position: relative;
+      transform: translateY(20px) scale(0.97);
+      transition: transform .25s;
+    }
+    .modal-backdrop.open .modal { transform: translateY(0) scale(1); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.1); color: #fff; }
+    .modal h2 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px; font-weight: 700;
+      color: #fff; margin-bottom: 8px;
+    }
+    .modal-task-name {
+      font-size: 13px; color: var(--green-muted);
+      margin-bottom: 28px;
+      font-weight: 600;
+    }
+    .dropzone {
+      border: 2px dashed rgba(95,196,138,0.3);
+      border-radius: 14px;
+      padding: 40px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      margin-bottom: 20px;
+      background: rgba(42,122,74,0.03);
+    }
+    .dropzone.drag-over {
+      border-color: var(--green-muted);
+      background: rgba(42,122,74,0.12);
+    }
+    .dropzone-icon { font-size: 40px; margin-bottom: 12px; }
+    .dropzone-text { font-size: 14px; color: var(--text-muted); line-height: 1.5; }
+    .dropzone-text strong { color: var(--green-muted); }
+    .dropzone input[type=file] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer;
+      width: 100%; height: 100%;
+    }
+    .preview-wrap {
+      display: none;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .preview-wrap img {
+      width: 100%; max-height: 220px;
+      object-fit: cover; display: block;
+    }
+    .preview-remove {
+      position: absolute; top: 10px; right: 10px;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #fff;
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 14px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .modal-desc {
+      width: 100%;
+      background: rgba(8,15,11,0.8);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 12px 16px;
+      outline: none;
+      resize: none;
+      margin-bottom: 20px;
+      transition: border-color .2s;
+    }
+    .modal-desc:focus { border-color: rgba(95,196,138,0.4); }
+    .modal-desc::placeholder { color: var(--text-muted); }
+    .modal-footer {
+      display: flex; gap: 12px;
+    }
+    .btn-submit {
+      flex: 1;
+      background: var(--green);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 700;
+      padding: 14px 24px;
+      border-radius: 10px;
+      border: none; cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-submit:hover { background: #348f5a; }
+    .btn-cancel {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px; font-weight: 600;
+      padding: 14px 20px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-cancel:hover { border-color: rgba(95,196,138,0.3); color: #fff; }
+
+    /* ─── TOAST ─── */
+    .toast {
+      position: fixed;
+      bottom: 32px; right: 32px;
+      z-index: 300;
+      background: #1a3a25;
+      border: 1px solid rgba(95,196,138,0.4);
+      border-radius: 14px;
+      padding: 16px 24px;
+      display: flex; align-items: center; gap: 12px;
+      font-size: 15px; font-weight: 600;
+      color: #fff;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all .35s cubic-bezier(0.34,1.56,0.64,1);
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .toast-icon { font-size: 22px; }
+
+    /* ─── MOBILE ─── */
+    @media (max-width: 900px) {
+      .steps-grid { grid-template-columns: repeat(2, 1fr); }
+      .step-card:first-child { border-radius: 16px 0 0 0; }
+      .step-card:nth-child(2) { border-radius: 0 16px 0 0; }
+      .step-card:nth-child(3) { border-radius: 0 0 0 16px; }
+      .step-card:last-child { border-radius: 0 0 16px 0; }
+      .gallery-grid { columns: 2; }
+    }
+    @media (max-width: 680px) {
+      nav .links { display: none; }
+      .hero-stats { gap: 24px; }
+      .hero-stat-divider { display: none; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .step-card:first-child, .step-card:nth-child(2), .step-card:nth-child(3), .step-card:last-child { border-radius: 0; }
+      .step-card:first-child { border-radius: 16px 16px 0 0; }
+      .step-card:last-child { border-radius: 0 0 16px 16px; }
+      .challenges-grid { grid-template-columns: 1fr; }
+      .prizes-grid { grid-template-columns: 1fr; }
+      .gallery-grid { columns: 1; }
+      .hero-stats { flex-direction: column; gap: 20px; }
+      section { padding: 72px 20px; }
+    }
+    @media (max-width: 400px) {
+      .modal { padding: 28px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" width="28" height="28" fill="none">
+      <polygon points="14,2 27,26 1,26" fill="#2A7A4A"/>
+      <polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/>
+    </svg>
+    <span>PIK</span>
+  </a>
+  <div class="links">
+    <a href="catalog.html">Каталог</a>
+    <a href="group-tours.html" class="accent-green">👥 Группы</a>
+    <a href="tour-builder.html" class="accent-green">Собрать тур</a>
+    <a href="gear-shop.html" class="accent-gold">🎒 Снаряжение</a>
+    <a href="photo-safari.html" class="active-page">📸 Фотосафари</a>
+    <a href="partner.html" class="btn-green">+ Услуга</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">🏕 Новый формат туров</div>
+  <h1>📸 <span>Фото</span>сафари</h1>
+  <p>Фотографируй маршрут — получай бонусы. Лучшие снимки попадают в галерею PIK</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <span class="num" id="stat-photos">0</span>
+      <span class="label">фото загружено</span>
+    </div>
+    <div class="hero-stat-divider"></div>
+    <div class="hero-stat">
+      <span class="num" id="stat-users">0</span>
+      <span class="label">участников</span>
+    </div>
+    <div class="hero-stat-divider"></div>
+    <div class="hero-stat">
+      <span class="num gold" id="stat-coins">0</span>
+      <span class="label">PIK-коинов выдано</span>
+    </div>
+  </div>
+  <a class="btn-primary" href="#challenges">Участвовать →</a>
+</section>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="container">
+    <div class="section-label">Механика</div>
+    <div class="section-title">Как это работает</div>
+    <p class="section-sub">Четыре простых шага от задания до бонусных коинов</p>
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">Шаг 01</div>
+        <span class="step-icon">📍</span>
+        <h3>Получи задание</h3>
+        <p>Список точек и объектов для съёмки формируется по маршруту твоего тура автоматически</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Шаг 02</div>
+        <span class="step-icon">📷</span>
+        <h3>Сфотографируй</h3>
+        <p>В нужном месте, с нужным ракурсом. Следуй условиям задания — они важны для начисления баллов</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Шаг 03</div>
+        <span class="step-icon">📤</span>
+        <h3>Загрузи фото</h3>
+        <p>Прямо в приложении или на сайте. Drag-and-drop или обычный выбор файла — как удобно</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">Шаг 04</div>
+        <span class="step-icon">🏆</span>
+        <h3>Получи бонусы</h3>
+        <p>PIK-коины за каждый снимок, бонус за лучшее фото дня и место в галерее лучших работ</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHALLENGES -->
+<section id="challenges">
+  <div class="container">
+    <div class="section-label">Геймификация</div>
+    <div class="section-title">Активные задания</div>
+    <p class="section-sub">Чем сложнее задание — тем больше PIK-коинов. Выбирай по силам или рискуй ради большой награды</p>
+
+    <div class="challenges-grid">
+      <!-- EASY COLUMN -->
+      <div class="challenge-col">
+        <div class="difficulty-group-title easy">🟢 Лёгкие</div>
+        <div class="challenge-card easy">
+          <div class="challenge-header">
+            <span class="challenge-icon">📸</span>
+            <span class="pik-badge easy">+50 PIK</span>
+          </div>
+          <h3>Рассвет на перевале</h3>
+          <p>Сфотографировать восход солнца из точки выше 2000 м. Дедлайн: любой день тура до 08:00.</p>
+          <span class="diff-badge easy">🟢 Лёгкое</span>
+          <button class="btn-upload" onclick="openModal('Рассвет на перевале', 'easy', '+50 PIK')">📤 Загрузить фото</button>
+        </div>
+        <div class="challenge-card easy">
+          <div class="challenge-header">
+            <span class="challenge-icon">📸</span>
+            <span class="pik-badge easy">+50 PIK</span>
+          </div>
+          <h3>Отражение в горном озере</h3>
+          <p>Поймать отражение горы в озере. Без фильтров — только честный кадр.</p>
+          <span class="diff-badge easy">🟢 Лёгкое</span>
+          <button class="btn-upload" onclick="openModal('Отражение в горном озере', 'easy', '+50 PIK')">📤 Загрузить фото</button>
+        </div>
+      </div>
+
+      <!-- MEDIUM COLUMN -->
+      <div class="challenge-col">
+        <div class="difficulty-group-title medium">🟡 Средние</div>
+        <div class="challenge-card medium">
+          <div class="challenge-header">
+            <span class="challenge-icon">📸</span>
+            <span class="pik-badge medium">+150 PIK</span>
+          </div>
+          <h3>Групповое фото на вершине</h3>
+          <p>Вся группа вместе на фоне панорамы. Минимум 4 участника в кадре.</p>
+          <span class="diff-badge medium">🟡 Среднее</span>
+          <button class="btn-upload" onclick="openModal('Групповое фото на вершине', 'medium', '+150 PIK')">📤 Загрузить фото</button>
+        </div>
+        <div class="challenge-card medium">
+          <div class="challenge-header">
+            <span class="challenge-icon">📸</span>
+            <span class="pik-badge medium">+150 PIK</span>
+          </div>
+          <h3>Дикая природа</h3>
+          <p>Снять птицу, зверя или насекомое крупным планом. Домашние животные не считаются.</p>
+          <span class="diff-badge medium">🟡 Среднее</span>
+          <button class="btn-upload" onclick="openModal('Дикая природа', 'medium', '+150 PIK')">📤 Загрузить фото</button>
+        </div>
+      </div>
+
+      <!-- HARD COLUMN -->
+      <div class="challenge-col">
+        <div class="difficulty-group-title hard">🔴 Сложные</div>
+        <div class="challenge-card hard">
+          <div class="challenge-header">
+            <span class="challenge-icon">📸</span>
+            <span class="pik-badge hard">+300 PIK</span>
+          </div>
+          <h3>Млечный путь</h3>
+          <p>Ночная съёмка звёздного неба. Должны быть отчётливо видны звёзды — без пересветки.</p>
+          <span class="diff-badge hard">🔴 Сложное</span>
+          <button class="btn-upload" onclick="openModal('Млечный путь', 'hard', '+300 PIK')">📤 Загрузить фото</button>
+        </div>
+        <div class="challenge-card hard">
+          <div class="challenge-header">
+            <span class="challenge-icon">📸</span>
+            <span class="pik-badge hard">+300 PIK</span>
+          </div>
+          <h3>Водопад в движении</h3>
+          <p>Длинная выдержка, шёлковая вода. Смаз воды обязателен для зачёта задания.</p>
+          <span class="diff-badge hard">🔴 Сложное</span>
+          <button class="btn-upload" onclick="openModal('Водопад в движении', 'hard', '+300 PIK')">📤 Загрузить фото</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LEADERBOARD -->
+<section id="leaderboard">
+  <div class="container">
+    <div class="section-label">Рейтинг</div>
+    <div class="section-title">Топ фотографов</div>
+    <p class="section-sub">Лидеры по количеству заработанных PIK-коинов среди всех участников платформы</p>
+    <div class="leaderboard-list">
+      <div class="leader-card gold-rank">
+        <span class="rank-icon">🥇</span>
+        <div class="leader-info">
+          <div class="leader-name">Алексей М.</div>
+          <div class="leader-tour">Горнолыжный тур, апрель</div>
+        </div>
+        <div class="leader-stats">
+          <div class="leader-pik">1 240 PIK</div>
+          <div class="leader-photos">8 фото</div>
+        </div>
+      </div>
+      <div class="leader-card silver-rank">
+        <span class="rank-icon">🥈</span>
+        <div class="leader-info">
+          <div class="leader-name">Мария К.</div>
+          <div class="leader-tour">Сплав по реке, март</div>
+        </div>
+        <div class="leader-stats">
+          <div class="leader-pik" style="color:#c0c0c8;">890 PIK</div>
+          <div class="leader-photos">6 фото</div>
+        </div>
+      </div>
+      <div class="leader-card bronze-rank">
+        <span class="rank-icon">🥉</span>
+        <div class="leader-info">
+          <div class="leader-name">Дмитрий Р.</div>
+          <div class="leader-tour">Кемпинг, апрель</div>
+        </div>
+        <div class="leader-stats">
+          <div class="leader-pik" style="color:#cd8c5c;">720 PIK</div>
+          <div class="leader-photos">5 фото</div>
+        </div>
+      </div>
+      <div class="leader-card">
+        <span class="rank-num">4</span>
+        <div class="leader-info">
+          <div class="leader-name">Анна С.</div>
+          <div class="leader-tour">—</div>
+        </div>
+        <div class="leader-stats">
+          <div class="leader-pik" style="color:var(--text-muted); font-size:16px;">480 PIK</div>
+          <div class="leader-photos">4 фото</div>
+        </div>
+      </div>
+      <div class="leader-card">
+        <span class="rank-num">5</span>
+        <div class="leader-info">
+          <div class="leader-name">Сергей В.</div>
+          <div class="leader-tour">—</div>
+        </div>
+        <div class="leader-stats">
+          <div class="leader-pik" style="color:var(--text-muted); font-size:16px;">350 PIK</div>
+          <div class="leader-photos">3 фото</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<section id="gallery">
+  <div class="container">
+    <div class="section-label">Галерея</div>
+    <div class="section-title">Лучшие снимки</div>
+    <p class="section-sub">Работы, получившие наибольшее количество лайков от сообщества PIK</p>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+</section>
+
+<!-- PRIZES -->
+<section id="prizes">
+  <div class="container">
+    <div class="section-label">Обмен бонусов</div>
+    <div class="section-title">На что потратить PIK-коины</div>
+    <p class="section-sub">Обменивай накопленные коины на реальные преимущества в следующих турах</p>
+    <div class="prizes-grid">
+      <div class="prize-card">
+        <div class="prize-icon">🎫</div>
+        <div class="prize-pik">500 PIK <span>/ скидка</span></div>
+        <div class="prize-desc">Скидка 10% на стоимость следующего тура в каталоге PIK</div>
+        <div class="btn-exchange" title="Войдите в аккаунт">Обменять</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">🎒</div>
+        <div class="prize-pik">1 000 PIK <span>/ снаряжение</span></div>
+        <div class="prize-desc">Бесплатная аренда снаряжения на весь период следующего тура</div>
+        <div class="btn-exchange" title="Войдите в аккаунт">Обменять</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">⛺</div>
+        <div class="prize-pik">2 000 PIK <span>/ место</span></div>
+        <div class="prize-desc">Гарантированное место в эксклюзивном туре с ограниченным числом участников</div>
+        <div class="btn-exchange" title="Войдите в аккаунт">Обменять</div>
+      </div>
+      <div class="prize-card">
+        <div class="prize-icon">🌟</div>
+        <div class="prize-pik">5 000 PIK <span>/ статус</span></div>
+        <div class="prize-desc">Статус PIK Ambassador: приоритетная запись, скидки навсегда, эксклюзивный мерч</div>
+        <div class="btn-exchange" title="Войдите в аккаунт">Обменять</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="cta">
+  <div class="container" style="text-align:center;">
+    <div class="section-label" style="text-align:center;">Следующий тур</div>
+    <div class="section-title">Присоединись к следующему фотосафари</div>
+    <p class="section-sub" style="margin: 0 auto 40px;">Выбирай тур с флагом 📸 — в нём уже подготовлены задания для съёмки</p>
+    <a class="btn-primary" href="group-tours.html" style="font-size:16px; padding:18px 44px;">
+      Выбрать тур с фотосафари →
+    </a>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modal" onclick="handleBackdropClick(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">×</button>
+    <h2>Загрузить фото</h2>
+    <div class="modal-task-name" id="modalTaskName">Название задания</div>
+
+    <div class="dropzone" id="dropzone">
+      <input type="file" accept="image/*" id="fileInput" onchange="handleFile(this.files[0])">
+      <div class="dropzone-icon">🖼️</div>
+      <div class="dropzone-text">Перетащи фото сюда или <strong>нажми для выбора</strong></div>
+    </div>
+
+    <div class="preview-wrap" id="previewWrap">
+      <img id="previewImg" src="" alt="Превью">
+      <button class="preview-remove" onclick="removePreview()">×</button>
+    </div>
+
+    <textarea class="modal-desc" id="modalDesc" rows="3" placeholder="Описание (необязательно) — расскажи о снимке..."></textarea>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal()">Отмена</button>
+      <button class="btn-submit" id="submitBtn" onclick="submitPhoto()">Отправить фото</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon">🎉</span>
+  <span id="toastMsg">+150 PIK начислено!</span>
+</div>
+
+<script>
+  /* ── CountUp ── */
+  function countUp(el, target, duration, formatter) {
+    let start = 0;
+    const step = target / (duration / 16);
+    const timer = setInterval(() => {
+      start = Math.min(start + step, target);
+      el.textContent = formatter(Math.floor(start));
+      if (start >= target) clearInterval(timer);
+    }, 16);
+  }
+
+  function formatNum(n) {
+    return n.toLocaleString('ru-RU');
+  }
+
+  // Start counts when hero visible
+  const observer = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting) {
+      countUp(document.getElementById('stat-photos'), 1240, 2000, n => formatNum(n) + ' фото');
+      countUp(document.getElementById('stat-users'), 320, 2000, n => formatNum(n) + ' участника');
+      countUp(document.getElementById('stat-coins'), 48000, 2000, n => formatNum(n) + ' PIK');
+      observer.disconnect();
+    }
+  }, { threshold: 0.3 });
+  observer.observe(document.querySelector('.hero'));
+
+  /* ── Gallery generation ── */
+  const galleryData = [
+    { title: 'Рассвет над Эльбрусом', likes: 84, h: 260, grad: 'linear-gradient(135deg, #1a3a2a, #0a1f14)' },
+    { title: 'Млечный путь, Кавказ', likes: 127, h: 340, grad: 'linear-gradient(135deg, #0d2535, #071520)' },
+    { title: 'Отражение Белухи', likes: 61, h: 200, grad: 'linear-gradient(135deg, #1a3a2a, #0a1f14)' },
+    { title: 'Закатная гора', likes: 93, h: 300, grad: 'linear-gradient(135deg, #2a1a0a, #150d05)' },
+    { title: 'Озеро Рица, вечер', likes: 55, h: 230, grad: 'linear-gradient(135deg, #0d1f35, #071020)' },
+    { title: 'Орёл над перевалом', likes: 112, h: 280, grad: 'linear-gradient(135deg, #1a3a2a, #0a1f14)' },
+    { title: 'Водопад в шёлке', likes: 78, h: 320, grad: 'linear-gradient(135deg, #0d2535, #071520)' },
+    { title: 'Ночной лагерь', likes: 45, h: 220, grad: 'linear-gradient(135deg, #0d1f35, #071020)' },
+    { title: 'Горная группа', likes: 69, h: 260, grad: 'linear-gradient(135deg, #2a1a0a, #150d05)' }
+  ];
+
+  const grid = document.getElementById('galleryGrid');
+  galleryData.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'gallery-item';
+    div.innerHTML = `
+      <div class="gallery-photo-bg" style="height:${item.h}px; background:${item.grad};">
+        <span class="gallery-camera-icon">📷</span>
+        <div class="gallery-caption">
+          <div class="gallery-title">${item.title}</div>
+          <div class="gallery-likes">❤️ ${item.likes}</div>
+        </div>
+      </div>`;
+    grid.appendChild(div);
+  });
+
+  /* ── Modal ── */
+  let currentPik = '+150 PIK';
+
+  function openModal(taskName, difficulty, pik) {
+    currentPik = pik;
+    document.getElementById('modalTaskName').textContent = '📸 ' + taskName;
+    document.getElementById('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    removePreview();
+    document.getElementById('modalDesc').value = '';
+  }
+
+  function closeModal() {
+    document.getElementById('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function handleBackdropClick(e) {
+    if (e.target === e.currentTarget) closeModal();
+  }
+
+  /* ── Drag & Drop ── */
+  const dropzone = document.getElementById('dropzone');
+  dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('drag-over');
+  });
+  dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag-over'));
+  dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) handleFile(file);
+  });
+
+  function handleFile(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      document.getElementById('previewImg').src = e.target.result;
+      document.getElementById('previewWrap').style.display = 'block';
+      dropzone.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removePreview() {
+    document.getElementById('previewWrap').style.display = 'none';
+    document.getElementById('previewImg').src = '';
+    dropzone.style.display = 'block';
+    document.getElementById('fileInput').value = '';
+  }
+
+  /* ── Submit ── */
+  function submitPhoto() {
+    closeModal();
+    showToast(currentPik + ' начислено! 🎉');
+  }
+
+  /* ── Toast ── */
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3200);
+  }
+
+  /* ── Keyboard close ── */
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+  });
+</script>
+</body>
+</html>

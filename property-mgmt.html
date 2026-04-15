@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PIK — Управление объектами без администратора</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #2A7A4A;
+      --green-muted: #5fc48a;
+      --gold: #f0a500;
+      --bg: #080f0b;
+      --card: #0f1a14;
+      --card-alt: #0a1208;
+      --border: rgba(90,180,120,0.15);
+      --border-hover: rgba(90,180,120,0.35);
+      --text: #e8f5ee;
+      --text-muted: rgba(232,245,238,0.55);
+      --text-dim: rgba(232,245,238,0.35);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── NAV ─── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 56px;
+      background: rgba(8,15,11,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(90,180,120,0.1);
+    }
+    nav a { transition: all 0.2s ease; }
+
+    /* ─── COMMON ─── */
+    .section { padding: 100px 24px; max-width: 1180px; margin: 0 auto; }
+    .section-sm { padding: 70px 24px; max-width: 1180px; margin: 0 auto; }
+
+    .label {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--green-muted); margin-bottom: 16px;
+    }
+    .label::before {
+      content: ''; display: inline-block; width: 18px; height: 2px;
+      background: var(--green-muted); border-radius: 2px;
+    }
+
+    h1, h2, h3 { font-family: 'Unbounded', sans-serif; line-height: 1.15; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green); color: #fff;
+      padding: 14px 28px; border-radius: 10px;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: all 0.2s ease; white-space: nowrap;
+    }
+    .btn-primary:hover { background: #35956e; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(42,122,74,0.35); }
+
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent; color: var(--green-muted);
+      padding: 14px 28px; border-radius: 10px;
+      font-family: 'Inter', sans-serif; font-size: 14px; font-weight: 700;
+      text-decoration: none; border: 1.5px solid rgba(95,196,138,0.45); cursor: pointer;
+      transition: all 0.2s ease; white-space: nowrap;
+    }
+    .btn-outline:hover { border-color: var(--green-muted); background: rgba(95,196,138,0.08); }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      transition: all 0.2s ease;
+    }
+    .card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+
+    /* ─── HERO ─── */
+    #hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding-top: 80px;
+      background:
+        radial-gradient(ellipse 60% 50% at 70% 50%, rgba(42,122,74,0.12) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 60% at 10% 80%, rgba(42,122,74,0.07) 0%, transparent 60%),
+        var(--bg);
+    }
+    .hero-inner {
+      max-width: 1180px; margin: 0 auto; padding: 0 24px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;
+    }
+    .hero-title {
+      font-size: clamp(28px, 4vw, 52px); font-weight: 800;
+      color: #fff; margin-bottom: 20px; letter-spacing: -0.5px;
+    }
+    .hero-title span { color: var(--green-muted); }
+    .hero-sub {
+      font-size: 16px; color: var(--text-muted); line-height: 1.75;
+      margin-bottom: 28px; max-width: 480px;
+    }
+    .badges {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      margin-bottom: 32px;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(42,122,74,0.15);
+      border: 1px solid rgba(95,196,138,0.25);
+      border-radius: 100px; padding: 7px 14px;
+      font-size: 12px; font-weight: 600; color: var(--green-muted);
+    }
+    .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+    /* Phone mockup */
+    .phone-wrap {
+      display: flex; justify-content: center; align-items: center;
+    }
+    .phone {
+      width: 220px; height: 400px;
+      background: #0a1208;
+      border: 2px solid rgba(90,180,120,0.3);
+      border-radius: 24px;
+      display: flex; flex-direction: column;
+      overflow: hidden;
+      box-shadow:
+        0 0 0 1px rgba(90,180,120,0.08),
+        0 32px 80px rgba(0,0,0,0.6),
+        inset 0 1px 0 rgba(255,255,255,0.05);
+      position: relative;
+    }
+    .phone::before {
+      content: '';
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 60px; height: 4px; border-radius: 4px;
+      background: rgba(90,180,120,0.2);
+    }
+    .phone-screen {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; padding: 36px 16px 20px;
+      gap: 0;
+    }
+    .phone-label {
+      font-size: 10px; font-weight: 600; color: var(--text-dim);
+      letter-spacing: 1.5px; text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .phone-code {
+      display: flex; gap: 12px; margin-bottom: 16px;
+    }
+    .phone-digit {
+      width: 42px; height: 54px;
+      background: rgba(42,122,74,0.15);
+      border: 1.5px solid rgba(95,196,138,0.3);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', monospace;
+      font-size: 26px; font-weight: 700;
+      color: var(--green-muted);
+      box-shadow: 0 0 16px rgba(95,196,138,0.12);
+    }
+    .phone-instruction {
+      font-size: 11px; color: var(--text-muted); text-align: center;
+      margin-bottom: 6px;
+    }
+    .phone-time {
+      font-size: 11px; color: var(--gold);
+      margin-bottom: 24px; font-weight: 600;
+    }
+    .phone-divider {
+      width: 100%; height: 1px; background: rgba(90,180,120,0.1);
+      margin-bottom: 18px;
+    }
+    .phone-meta {
+      font-size: 10px; color: var(--text-dim);
+      text-align: center; margin-bottom: 16px;
+      line-height: 1.5;
+    }
+    .phone-btn {
+      width: 100%; padding: 12px;
+      background: var(--green); color: #fff;
+      border: none; border-radius: 10px;
+      font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .phone-btn:hover { background: #35956e; }
+
+    /* ─── FOR WHOM ─── */
+    #for-whom { background: linear-gradient(180deg, var(--bg) 0%, #060d09 100%); }
+    .for-whom-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;
+      margin-top: 48px;
+    }
+    .whom-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: all 0.2s ease; }
+    .whom-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+    .whom-icon { font-size: 36px; margin-bottom: 14px; }
+    .whom-title { font-family: 'Unbounded', sans-serif; font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 6px; }
+    .whom-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 18px; line-height: 1.6; }
+    .whom-tags { display: flex; flex-direction: column; gap: 8px; }
+    .whom-tag {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 12px; color: var(--green-muted); font-weight: 500;
+    }
+    .whom-tag::before {
+      content: ''; width: 5px; height: 5px; border-radius: 50%;
+      background: var(--green-muted); flex-shrink: 0;
+    }
+
+    /* ─── TIMELINE ─── */
+    #timeline { position: relative; }
+    .timeline-heading { text-align: center; margin-bottom: 64px; }
+    .timeline-container {
+      position: relative;
+      max-width: 820px; margin: 0 auto;
+    }
+    .timeline-line {
+      position: absolute;
+      left: 50%; transform: translateX(-50%);
+      top: 0; bottom: 0;
+      width: 2px;
+      background: linear-gradient(180deg, rgba(42,122,74,0.05) 0%, var(--green) 15%, var(--green) 85%, rgba(42,122,74,0.05) 100%);
+    }
+    .timeline-step {
+      display: flex; align-items: flex-start;
+      gap: 32px; margin-bottom: 48px;
+      position: relative;
+    }
+    .timeline-step:nth-child(odd) { flex-direction: row; }
+    .timeline-step:nth-child(even) { flex-direction: row-reverse; }
+    .timeline-side {
+      flex: 1;
+    }
+    .timeline-step:nth-child(odd) .timeline-side { text-align: right; }
+    .timeline-step:nth-child(even) .timeline-side { text-align: left; }
+    .timeline-center {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 0; position: relative; z-index: 2; flex-shrink: 0;
+    }
+    .timeline-node {
+      width: 52px; height: 52px;
+      background: var(--green);
+      border: 3px solid var(--bg);
+      border-radius: 50%;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      box-shadow: 0 0 0 1px rgba(95,196,138,0.3), 0 0 20px rgba(42,122,74,0.4);
+    }
+    .timeline-num { font-family: 'Unbounded', sans-serif; font-size: 9px; font-weight: 700; color: rgba(255,255,255,0.6); line-height: 1; }
+    .timeline-icon { font-size: 18px; line-height: 1; }
+    .timeline-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 14px; font-weight: 700; color: #fff;
+      margin-bottom: 6px;
+    }
+    .timeline-desc {
+      font-size: 13px; color: var(--text-muted); line-height: 1.6;
+    }
+    .timeline-note {
+      display: inline-block; margin-top: 8px;
+      font-size: 11px; color: var(--green-muted);
+      background: rgba(42,122,74,0.12);
+      border: 1px solid rgba(95,196,138,0.2);
+      border-radius: 6px; padding: 4px 10px;
+    }
+    .timeline-spacer { flex: 1; }
+
+    /* ─── DASHBOARD ─── */
+    #dashboard { background: linear-gradient(180deg, #060d09 0%, var(--bg) 100%); }
+    .dashboard-heading { text-align: center; margin-bottom: 48px; }
+    .dashboard-ui {
+      background: var(--card-alt);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.5);
+    }
+    .dash-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(42,122,74,0.05);
+    }
+    .dash-header-title {
+      font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: #fff;
+    }
+    .dash-header-actions { display: flex; gap: 10px; }
+    .dash-btn {
+      padding: 7px 14px; border-radius: 8px; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s ease; border: none;
+    }
+    .dash-btn-green { background: var(--green); color: #fff; }
+    .dash-btn-green:hover { background: #35956e; }
+    .dash-btn-outline { background: transparent; color: var(--green-muted); border: 1px solid rgba(95,196,138,0.3); }
+    .dash-btn-outline:hover { background: rgba(95,196,138,0.08); }
+    .dash-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+      background: var(--border);
+    }
+    .dash-card {
+      background: var(--card-alt); padding: 22px;
+      transition: background 0.2s ease;
+    }
+    .dash-card:hover { background: #0d1a10; }
+    .dash-card-title {
+      font-family: 'Unbounded', sans-serif; font-size: 13px; font-weight: 700;
+      color: #fff; margin-bottom: 12px;
+    }
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      padding: 4px 10px; border-radius: 100px;
+      font-size: 11px; font-weight: 700; margin-bottom: 14px;
+    }
+    .status-occupied { background: rgba(42,122,74,0.2); color: var(--green-muted); border: 1px solid rgba(95,196,138,0.25); }
+    .status-cleaning { background: rgba(240,165,0,0.15); color: var(--gold); border: 1px solid rgba(240,165,0,0.25); }
+    .status-free { background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.5); border: 1px solid rgba(255,255,255,0.1); }
+    .dash-info { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; line-height: 1.5; }
+    .dash-info strong { color: var(--text); }
+    .dash-photo-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; color: var(--green-muted);
+      background: rgba(42,122,74,0.1);
+      border-radius: 6px; padding: 4px 8px; margin-bottom: 14px;
+    }
+    .dash-view-btn {
+      display: block; width: 100%; text-align: center;
+      padding: 8px; border-radius: 8px;
+      font-size: 12px; font-weight: 600;
+      background: transparent; color: var(--green-muted);
+      border: 1px solid rgba(95,196,138,0.2);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+    .dash-view-btn:hover { background: rgba(95,196,138,0.08); border-color: rgba(95,196,138,0.35); }
+    .dash-stats {
+      display: flex; align-items: center; gap: 0;
+      border-top: 1px solid var(--border);
+    }
+    .dash-stat {
+      flex: 1; padding: 16px 22px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .dash-stat:last-child { border-right: none; }
+    .dash-stat-val {
+      font-family: 'Unbounded', sans-serif; font-size: 18px; font-weight: 700;
+      color: #fff; display: block; margin-bottom: 4px;
+    }
+    .dash-stat-label { font-size: 11px; color: var(--text-muted); }
+
+    /* ─── PHOTO SECTION ─── */
+    #photos { background: linear-gradient(180deg, var(--bg) 0%, #060d09 100%); }
+    .photos-heading { text-align: center; margin-bottom: 48px; }
+    .photos-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    }
+    .photo-group { background: var(--card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+    .photo-group-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .photo-group-icon { font-size: 18px; }
+    .photo-group-role { font-size: 12px; font-weight: 700; color: var(--text); }
+    .photo-group-sub { font-size: 10px; color: var(--text-muted); margin-top: 2px; }
+    .photo-cards { padding: 14px; display: flex; flex-direction: column; gap: 10px; }
+    .photo-card {
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card-alt);
+    }
+    .photo-placeholder {
+      height: 90px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      position: relative; overflow: hidden;
+    }
+    .ph-kitchen {
+      background: linear-gradient(135deg, #0d2016 0%, #122b1a 50%, #0f2213 100%);
+    }
+    .ph-living {
+      background: linear-gradient(135deg, #14200d 0%, #1a2b10 50%, #162312 100%);
+    }
+    .ph-bath {
+      background: linear-gradient(135deg, #0c1e18 0%, #122419 50%, #0e1d16 100%);
+    }
+    .photo-placeholder::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(45deg, transparent 40%, rgba(95,196,138,0.04) 60%, transparent 70%);
+    }
+    .photo-card-footer {
+      padding: 8px 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .photo-timestamp { font-size: 10px; color: var(--text-dim); }
+    .photo-status {
+      font-size: 10px; font-weight: 600; padding: 3px 7px; border-radius: 5px;
+    }
+    .ps-ok { background: rgba(42,122,74,0.2); color: var(--green-muted); }
+    .ps-ai { background: rgba(240,165,0,0.15); color: var(--gold); }
+
+    /* ─── BENEFITS ─── */
+    #benefits {
+      background: linear-gradient(180deg, #060d09 0%, var(--bg) 100%);
+    }
+    .benefits-heading { text-align: center; margin-bottom: 48px; }
+    .benefits-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .benefit-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 28px; transition: all 0.2s ease; }
+    .benefit-card:hover { border-color: var(--border-hover); transform: translateY(-2px); box-shadow: 0 12px 32px rgba(0,0,0,0.35); }
+    .benefit-role { font-size: 24px; margin-bottom: 12px; }
+    .benefit-title { font-family: 'Unbounded', sans-serif; font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+    .benefit-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .benefit-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      font-size: 13px; color: var(--text-muted); line-height: 1.5;
+    }
+    .benefit-list li::before {
+      content: '✓'; color: var(--green-muted); font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+
+    /* ─── FORM ─── */
+    #register {
+      background: linear-gradient(180deg, var(--bg) 0%, #060d09 100%);
+    }
+    .register-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;
+    }
+    .register-heading { margin-bottom: 32px; }
+    .register-heading h2 { font-size: clamp(22px, 3vw, 36px); color: #fff; margin-bottom: 8px; }
+    .register-heading p { color: var(--green-muted); font-size: 14px; font-weight: 600; }
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-bottom: 6px; letter-spacing: 0.3px; }
+    .form-group input,
+    .form-group select {
+      width: 100%; padding: 12px 14px;
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: 'Inter', sans-serif; font-size: 14px;
+      outline: none; transition: all 0.2s ease;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-group select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%235fc48a' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 14px center;
+      padding-right: 36px;
+    }
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: rgba(95,196,138,0.5);
+      box-shadow: 0 0 0 3px rgba(95,196,138,0.08);
+    }
+    .form-group input::placeholder { color: var(--text-dim); }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .form-submit {
+      width: 100%; padding: 15px;
+      background: var(--green); color: #fff;
+      border: none; border-radius: 10px;
+      font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 700;
+      cursor: pointer; transition: all 0.2s ease; margin-top: 6px;
+    }
+    .form-submit:hover { background: #35956e; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(42,122,74,0.35); }
+    .form-note { font-size: 11px; color: var(--text-dim); text-align: center; margin-top: 10px; }
+    .register-aside { padding-top: 12px; }
+    .aside-title { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 20px; }
+    .aside-list { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .aside-list li {
+      display: flex; align-items: flex-start; gap: 12px;
+      font-size: 14px; color: var(--text-muted); line-height: 1.5;
+    }
+    .aside-check { color: var(--green-muted); font-weight: 700; font-size: 16px; flex-shrink: 0; }
+    .aside-decorbox {
+      margin-top: 36px;
+      background: rgba(42,122,74,0.1);
+      border: 1px solid rgba(95,196,138,0.2);
+      border-radius: 14px; padding: 22px;
+    }
+    .aside-decorbox-title { font-family: 'Unbounded', sans-serif; font-size: 12px; font-weight: 700; color: var(--green-muted); margin-bottom: 10px; }
+    .aside-decorbox p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+    /* ─── CTA ─── */
+    #cta {
+      text-align: center; padding: 100px 24px;
+      background:
+        radial-gradient(ellipse 70% 60% at 50% 100%, rgba(42,122,74,0.18) 0%, transparent 70%),
+        var(--bg);
+    }
+    .cta-title { font-family: 'Unbounded', sans-serif; font-size: clamp(24px, 4vw, 44px); font-weight: 800; color: #fff; margin-bottom: 14px; }
+    .cta-title span { color: var(--green-muted); }
+    .cta-sub { font-size: 15px; color: var(--text-muted); margin-bottom: 36px; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+    .cta-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; }
+
+    /* ─── FOOTER ─── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 28px 24px;
+      text-align: center;
+      font-size: 12px; color: var(--text-dim);
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 900px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+      .phone-wrap { order: -1; }
+      .for-whom-grid { grid-template-columns: 1fr; }
+      .dash-cards { grid-template-columns: 1fr; }
+      .photos-grid { grid-template-columns: 1fr; }
+      .benefits-grid { grid-template-columns: 1fr; }
+      .register-inner { grid-template-columns: 1fr; gap: 40px; }
+      .dash-stats { flex-wrap: wrap; }
+      .dash-stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .dash-stat:last-child { border-bottom: none; }
+    }
+    @media (max-width: 700px) {
+      .timeline-line { display: none; }
+      .timeline-step,
+      .timeline-step:nth-child(even) { flex-direction: column; align-items: flex-start; }
+      .timeline-step:nth-child(odd) .timeline-side { text-align: left; }
+      .timeline-center { flex-direction: row; }
+      .timeline-spacer { display: none; }
+      nav { padding: 0 14px; }
+      nav > div:last-child { display: none; }
+      .form-row { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─── NAV ─── -->
+<nav>
+  <a href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <svg viewBox="0 0 28 28" width="28" height="28" fill="none">
+      <polygon points="14,2 27,26 1,26" fill="#2A7A4A"/>
+      <polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/>
+    </svg>
+    <span style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Каталог</a>
+    <a href="group-tours.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">👥 Группы</a>
+    <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Собрать тур</a>
+    <a href="gear-shop.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">🎒 Снаряжение</a>
+    <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">📸 Фотосафари</a>
+    <a href="property-mgmt.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">🏠 Объекты</a>
+    <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;">+ Услуга</a>
+  </div>
+</nav>
+
+<!-- ─── 1. HERO ─── -->
+<section id="hero">
+  <div class="hero-inner">
+    <!-- Left -->
+    <div>
+      <div class="label">Бесконтактное размещение</div>
+      <h1 class="hero-title">
+        Управление жильём<br>
+        <span>без администратора</span>
+      </h1>
+      <p class="hero-sub">
+        Гость получает код → заселяется сам → фото при заезде и выезде → клининг по уведомлению. Арендодатель контролирует всё онлайн.
+      </p>
+      <div class="badges">
+        <span class="badge">🔑 Умный замок</span>
+        <span class="badge">📸 Фотофиксация</span>
+        <span class="badge">🧹 Авто-клининг</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">
+          Зарегистрировать объект
+        </button>
+        <button class="btn-outline" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">
+          Войти как гость
+        </button>
+      </div>
+    </div>
+    <!-- Phone mockup -->
+    <div class="phone-wrap">
+      <div class="phone">
+        <div class="phone-screen">
+          <div class="phone-label">PIK — Заселение</div>
+          <div class="phone-code">
+            <div class="phone-digit">4</div>
+            <div class="phone-digit">7</div>
+            <div class="phone-digit">2</div>
+            <div class="phone-digit">9</div>
+          </div>
+          <div class="phone-instruction">Введите на панели замка</div>
+          <div class="phone-time">⏱ Действует до 16:00</div>
+          <div class="phone-divider"></div>
+          <div class="phone-meta">
+            Домик у реки #1<br>
+            ул. Лесная, 4 · пос. Усть-Ива
+          </div>
+          <button class="phone-btn">📸 Сфоткать номер</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 2. ДЛЯ КОГО ─── -->
+<section id="for-whom">
+  <div class="section">
+    <div class="label">Типы объектов</div>
+    <h2 style="font-size:clamp(22px,3vw,36px);color:#fff;margin-bottom:8px;">Подходит для любого формата</h2>
+    <p style="font-size:14px;color:var(--text-muted);">От городской квартиры до удалённого глэмпинга</p>
+    <div class="for-whom-grid">
+      <!-- Hotel -->
+      <div class="whom-card">
+        <div class="whom-icon">🏨</div>
+        <div class="whom-title">Гостиница / Отель</div>
+        <div class="whom-desc">Несколько номеров, разные коды для каждого, единый дашборд управления. Идеально для мини-отелей от 3 до 50 номеров.</div>
+        <div class="whom-tags">
+          <div class="whom-tag">Синхронизация с бронированием</div>
+          <div class="whom-tag">Клининг по расписанию</div>
+          <div class="whom-tag">Детальные отчёты по номерам</div>
+        </div>
+      </div>
+      <!-- Glamping -->
+      <div class="whom-card">
+        <div class="whom-icon">🏕️</div>
+        <div class="whom-title">Глэмпинг / Кемпинг</div>
+        <div class="whom-desc">Удалённые объекты без постоянного персонала. Работает там, где нет стабильного интернета и ежедневного обслуживания.</div>
+        <div class="whom-tags">
+          <div class="whom-tag">Офлайн-режим умных замков</div>
+          <div class="whom-tag">Геолокация объектов на карте</div>
+          <div class="whom-tag">Фото на слабом интернете</div>
+        </div>
+      </div>
+      <!-- House -->
+      <div class="whom-card">
+        <div class="whom-icon">🏠</div>
+        <div class="whom-title">Дом / Коттедж</div>
+        <div class="whom-desc">Посуточная аренда со сменой гостей каждые 1–3 дня. Автоматизируйте передачу ключей и контроль состояния без личного присутствия.</div>
+        <div class="whom-tags">
+          <div class="whom-tag">Авто-уведомления клинингу</div>
+          <div class="whom-tag">Полная история гостей</div>
+          <div class="whom-tag">Страховой депозит онлайн</div>
+        </div>
+      </div>
+      <!-- Apartment -->
+      <div class="whom-card">
+        <div class="whom-icon">🏢</div>
+        <div class="whom-title">Квартира посуточно</div>
+        <div class="whom-desc">Многоквартирный дом, бесконтактная передача без консьержей и соседей. Максимальная конфиденциальность для гостя и хозяина.</div>
+        <div class="whom-tags">
+          <div class="whom-tag">Цифровой ключ на телефон</div>
+          <div class="whom-tag">Шумовой сенсор (опционально)</div>
+          <div class="whom-tag">Отзывы сразу после выезда</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 3. ТАЙМЛАЙН ─── -->
+<section id="timeline">
+  <div class="section">
+    <div class="timeline-heading">
+      <div class="label">Процесс</div>
+      <h2 style="font-size:clamp(22px,3vw,36px);color:#fff;margin-bottom:8px;">Как это работает</h2>
+      <p style="font-size:14px;color:var(--text-muted);">Полный цикл от регистрации до следующего гостя — без единого звонка</p>
+    </div>
+    <div class="timeline-container">
+      <div class="timeline-line"></div>
+
+      <!-- Step 1 -->
+      <div class="timeline-step">
+        <div class="timeline-side">
+          <div class="timeline-title">Арендодатель регистрирует объект</div>
+          <div class="timeline-desc">Загружает фото, описание, устанавливает правила: тихий час, домашние животные, количество гостей и прочие условия проживания.</div>
+        </div>
+        <div class="timeline-center">
+          <div class="timeline-node">
+            <div class="timeline-num">01</div>
+            <div class="timeline-icon">🏠</div>
+          </div>
+        </div>
+        <div class="timeline-spacer"></div>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="timeline-step">
+        <div class="timeline-spacer"></div>
+        <div class="timeline-center">
+          <div class="timeline-node">
+            <div class="timeline-num">02</div>
+            <div class="timeline-icon">📅</div>
+          </div>
+        </div>
+        <div class="timeline-side">
+          <div class="timeline-title">Гость бронирует</div>
+          <div class="timeline-desc">Выбирает даты, оплачивает онлайн, указывает планируемое время заезда. Подтверждение — мгновенно.</div>
+        </div>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="timeline-step">
+        <div class="timeline-side">
+          <div class="timeline-title">Получает одноразовый код</div>
+          <div class="timeline-desc">За 2 часа до заезда на телефон приходит PIN-код для умного замка.</div>
+          <span class="timeline-note">🔑 Код действителен только в период бронирования</span>
+        </div>
+        <div class="timeline-center">
+          <div class="timeline-node">
+            <div class="timeline-num">03</div>
+            <div class="timeline-icon">🔑</div>
+          </div>
+        </div>
+        <div class="timeline-spacer"></div>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="timeline-step">
+        <div class="timeline-spacer"></div>
+        <div class="timeline-center">
+          <div class="timeline-node">
+            <div class="timeline-num">04</div>
+            <div class="timeline-icon">📸</div>
+          </div>
+        </div>
+        <div class="timeline-side">
+          <div class="timeline-title">Фото при заезде</div>
+          <div class="timeline-desc">Гость фотографирует каждую комнату через приложение. Снимки автоматически уходят арендодателю с геометкой и временем.</div>
+          <span class="timeline-note">Снято: 8 фото, 14:32, 12 апреля ✅</span>
+        </div>
+      </div>
+
+      <!-- Step 5 -->
+      <div class="timeline-step">
+        <div class="timeline-side">
+          <div class="timeline-title">Проживание</div>
+          <div class="timeline-desc">Гость живёт, при необходимости — чат с поддержкой. Арендодатель видит статус объекта в реальном времени.</div>
+        </div>
+        <div class="timeline-center">
+          <div class="timeline-node">
+            <div class="timeline-num">05</div>
+            <div class="timeline-icon">🌙</div>
+          </div>
+        </div>
+        <div class="timeline-spacer"></div>
+      </div>
+
+      <!-- Step 6 -->
+      <div class="timeline-step">
+        <div class="timeline-spacer"></div>
+        <div class="timeline-center">
+          <div class="timeline-node">
+            <div class="timeline-num">06</div>
+            <div class="timeline-icon">📸</div>
+          </div>
+        </div>
+        <div class="timeline-side">
+          <div class="timeline-title">Фото при выезде</div>
+          <div class="timeline-desc">Гость снова фотографирует всё. AI сравнивает снимки заезда и выезда, автоматически отмечая любые изменения.</div>
+          <span class="timeline-note">🤖 AI: без повреждений</span>
+        </div>
+      </div>
+
+      <!-- Step 7 -->
+      <div class="timeline-step">
+        <div class="timeline-side">
+          <div class="timeline-title">Клининг получает уведомление</div>
+          <div class="timeline-desc">Код доступа на 4 часа. После уборки клинер загружает финальные фото — объект автоматически помечается как готовый к следующему гостю.</div>
+          <span class="timeline-note">🧹 Уведомление отправлено в 11:00</span>
+        </div>
+        <div class="timeline-center">
+          <div class="timeline-node" style="background: var(--gold); box-shadow: 0 0 0 1px rgba(240,165,0,0.3), 0 0 20px rgba(240,165,0,0.25);">
+            <div class="timeline-num">07</div>
+            <div class="timeline-icon">🧹</div>
+          </div>
+        </div>
+        <div class="timeline-spacer"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── 4. ДАШБОРД ─── -->
+<section id="dashboard">
+  <div class="section">
+    <div class="dashboard-heading">
+      <div class="label">Дашборд</div>
+      <h2 style="font-size:clamp(22px,3vw,36px);color:#fff;margin-bottom:8px;">Все объекты — в одном экране</h2>
+      <p style="font-size:14px;color:var(--text-muted);">Статус в реальном времени, история фото, управление клинингом</p>
+    </div>
+    <div class="dashboard-ui">
+      <!-- Header -->
+      <div class="dash-header">
+        <div class="dash-header-title">Мои объекты (3)</div>
+        <div class="dash-header-actions">
+          <button class="dash-btn dash-btn-green">+ Добавить объект</button>
+          <button class="dash-btn dash-btn-outline">📊 Отчёт</button>
+        </div>
+      </div>
+      <!-- Cards -->
+      <div class="dash-cards">
+        <!-- Card 1 -->
+        <div class="dash-card">
+          <div class="dash-card-title">Домик у реки #1</div>
+          <span class="status-badge status-occupied">🟢 Занят</span>
+          <div class="dash-info"><strong>Гость:</strong> Иванов А.</div>
+          <div class="dash-info"><strong>Заезд:</strong> 12 апр → <strong>Выезд:</strong> 15 апр</div>
+          <div class="dash-photo-badge">📸 14:32 — фото заезда ✅</div>
+          <div class="dash-info"><strong>Клининг:</strong> Ожидает (15 апр, 12:00)</div>
+          <button class="dash-view-btn" style="margin-top:12px;">Просмотр →</button>
+        </div>
+        <!-- Card 2 -->
+        <div class="dash-card">
+          <div class="dash-card-title">Номер 204</div>
+          <span class="status-badge status-cleaning">🟡 Уборка</span>
+          <div class="dash-info"><strong>Клинер:</strong> Мария К.</div>
+          <div class="dash-info"><strong>Начато:</strong> 11:15</div>
+          <div class="dash-photo-badge" style="background:rgba(240,165,0,0.1);color:var(--gold);">📸 11:47 — в процессе</div>
+          <div class="dash-info" style="color:var(--text-dim);">Завершение: ~13:00</div>
+          <button class="dash-view-btn" style="margin-top:12px;">Просмотр →</button>
+        </div>
+        <!-- Card 3 -->
+        <div class="dash-card">
+          <div class="dash-card-title">Шале Альпийский</div>
+          <span class="status-badge status-free">⚪ Свободен</span>
+          <div class="dash-info"><strong>Следующий заезд:</strong> 17 апреля</div>
+          <div class="dash-info"><strong>Гость:</strong> Петров С.</div>
+          <div class="dash-info"><strong>Код будет выслан:</strong> 17 апр в 12:00</div>
+          <div class="dash-info" style="color:var(--text-dim);">Объект готов ✅</div>
+          <button class="dash-view-btn" style="margin-top:12px;">Редактировать →</button>
+        </div>
+      </div>
+      <!-- Stats -->
+      <div class="dash-stats">
+        <div class="dash-stat">
+          <span class="dash-stat-val">24</span>
+          <span class="dash-stat-label">📸 Фото сегодня</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat-val">2</span>
+          <span class="dash-stat-label">🧹 Уборок завершено</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat-val" style="color:var(--gold);">4.8</span>
+          <span class="dash-stat-label">⭐ Средний рейтинг</span>
+        </div>
+        <div class="dash-stat">
+          <span class="dash-stat-val" style="color:var(--green-muted);">84 200 ₽</span>
+          <span class="dash-stat-label">💰 Доход за месяц</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 5. ФОТОФИКСАЦИЯ ─── -->
+<section id="photos">
+  <div class="section">
+    <div class="photos-heading">
+      <div class="label">Документация</div>
+      <h2 style="font-size:clamp(22px,3vw,36px);color:#fff;margin-bottom:8px;">Каждое заселение — задокументировано</h2>
+      <p style="font-size:14px;color:var(--text-muted);">Три точки контроля, неизменяемые метаданные, AI-анализ повреждений</p>
+    </div>
+    <div class="photos-grid">
+      <!-- Before -->
+      <div class="photo-group">
+        <div class="photo-group-header">
+          <div class="photo-group-icon">🧹</div>
+          <div>
+            <div class="photo-group-role">До заезда</div>
+            <div class="photo-group-sub">Клининг · 10:23, 11 апр</div>
+          </div>
+        </div>
+        <div class="photo-cards">
+          <div class="photo-card">
+            <div class="photo-placeholder ph-kitchen">🍳</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">10:23 · Кухня</span>
+              <span class="photo-status ps-ok">✅ Принято</span>
+            </div>
+          </div>
+          <div class="photo-card">
+            <div class="photo-placeholder ph-living">🛋️</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">10:28 · Гостиная</span>
+              <span class="photo-status ps-ok">✅ Принято</span>
+            </div>
+          </div>
+          <div class="photo-card">
+            <div class="photo-placeholder ph-bath">🚿</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">10:31 · Санузел</span>
+              <span class="photo-status ps-ok">✅ Принято</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Check-in -->
+      <div class="photo-group">
+        <div class="photo-group-header">
+          <div class="photo-group-icon">🧳</div>
+          <div>
+            <div class="photo-group-role">При заезде</div>
+            <div class="photo-group-sub">Гость · 14:32, 12 апр</div>
+          </div>
+        </div>
+        <div class="photo-cards">
+          <div class="photo-card">
+            <div class="photo-placeholder ph-kitchen">🍳</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">14:32 · Кухня</span>
+              <span class="photo-status ps-ok">✅ Принято</span>
+            </div>
+          </div>
+          <div class="photo-card">
+            <div class="photo-placeholder ph-living">🛋️</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">14:37 · Гостиная</span>
+              <span class="photo-status ps-ok">✅ Принято</span>
+            </div>
+          </div>
+          <div class="photo-card">
+            <div class="photo-placeholder ph-bath">🚿</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">14:40 · Санузел</span>
+              <span class="photo-status ps-ok">✅ Принято</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Check-out -->
+      <div class="photo-group">
+        <div class="photo-group-header">
+          <div class="photo-group-icon">🚪</div>
+          <div>
+            <div class="photo-group-role">При выезде</div>
+            <div class="photo-group-sub">Гость · 11:05, 15 апр</div>
+          </div>
+        </div>
+        <div class="photo-cards">
+          <div class="photo-card">
+            <div class="photo-placeholder ph-kitchen">🍳</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">11:05 · Кухня</span>
+              <span class="photo-status ps-ai">🤖 AI: норма</span>
+            </div>
+          </div>
+          <div class="photo-card">
+            <div class="photo-placeholder ph-living">🛋️</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">11:08 · Гостиная</span>
+              <span class="photo-status ps-ai">🤖 AI: норма</span>
+            </div>
+          </div>
+          <div class="photo-card">
+            <div class="photo-placeholder ph-bath">🚿</div>
+            <div class="photo-card-footer">
+              <span class="photo-timestamp">11:12 · Санузел</span>
+              <span class="photo-status ps-ai">🤖 без повреждений</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ─── 6. ПРЕИМУЩЕСТВА ─── -->
+<section id="benefits">
+  <div class="section">
+    <div class="benefits-heading">
+      <div class="label">Для всех участников</div>
+      <h2 style="font-size:clamp(22px,3vw,36px);color:#fff;margin-bottom:8px;">Выигрывает каждый</h2>
+      <p style="font-size:14px;color:var(--text-muted);">Система выстроена с учётом интересов арендодателя, гостя и клинера</p>
+    </div>
+    <div class="benefits-grid">
+      <!-- Owner -->
+      <div class="benefit-card">
+        <div class="benefit-role">💼</div>
+        <div class="benefit-title">Для арендодателя</div>
+        <ul class="benefit-list">
+          <li>Нет администратора — экономия 30 000–80 000 ₽/мес</li>
+          <li>Полная история каждого заселения с фото и метками времени</li>
+          <li>Страховая защита на основе документальных фотоснимков</li>
+          <li>Управление из любой точки мира через браузер</li>
+        </ul>
+      </div>
+      <!-- Guest -->
+      <div class="benefit-card">
+        <div class="benefit-role">🧳</div>
+        <div class="benefit-title">Для гостя</div>
+        <ul class="benefit-list">
+          <li>Заселение в любое время суток, 24/7, без ожидания</li>
+          <li>Никаких очередей, звонков и личных встреч</li>
+          <li>Полная конфиденциальность без постороннего присутствия</li>
+          <li>Фотоотчёт при въезде защищает от необоснованных претензий</li>
+        </ul>
+      </div>
+      <!-- Cleaning -->
+      <div class="benefit-card">
+        <div class="benefit-role">🧹</div>
+        <div class="benefit-title">Для клининга</div>
+        <ul class="benefit-list">
+          <li>Чёткие задачи с уведомлением сразу после выезда гостя</li>
+          <li>Подтверждение выполненной работы через фотоотчёт</li>
+          <li>Удобное расписание загрузки на неделю вперёд</li>
+          <li>Оплата автоматически начисляется после сдачи фотоотчёта</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 7. ФОРМА РЕГИСТРАЦИИ ─── -->
+<section id="register">
+  <div class="section">
+    <div class="register-inner">
+      <!-- Form -->
+      <div>
+        <div class="register-heading">
+          <h2>Зарегистрируйте свой объект</h2>
+          <p>Первый месяц бесплатно — без абонентской платы</p>
+        </div>
+        <form onsubmit="event.preventDefault();alert('Заявка принята! Мы свяжемся в течение 1 рабочего дня и настроим вашу систему.');">
+          <div class="form-group">
+            <label>Тип объекта</label>
+            <select>
+              <option value="" disabled selected>Выберите тип</option>
+              <option>Гостиница / Отель</option>
+              <option>Глэмпинг / Кемпинг</option>
+              <option>Дом / Коттедж</option>
+              <option>Квартира посуточно</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Название объекта</label>
+            <input type="text" placeholder="Домик у реки, Шале Альпийский...">
+          </div>
+          <div class="form-group">
+            <label>Адрес / Локация</label>
+            <input type="text" placeholder="Город, район или GPS-координаты">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Количество номеров / юнитов</label>
+              <select>
+                <option value="" disabled selected>Выберите</option>
+                <option>1</option>
+                <option>2–5</option>
+                <option>6–20</option>
+                <option>20+</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Имя владельца</label>
+              <input type="text" placeholder="Иван Петров">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Телефон</label>
+              <input type="tel" placeholder="+7 (___) ___-__-__">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" placeholder="owner@example.com">
+            </div>
+          </div>
+          <button type="submit" class="form-submit">Начать бесплатно →</button>
+          <p class="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных</p>
+        </form>
+      </div>
+      <!-- Aside -->
+      <div class="register-aside">
+        <div class="aside-title">Что входит в подключение</div>
+        <ul class="aside-list">
+          <li>
+            <span class="aside-check">✅</span>
+            <span>Интеграция с умными замками — Nuki, Yale, Aqara и другими</span>
+          </li>
+          <li>
+            <span class="aside-check">✅</span>
+            <span>Без абонентской платы в первый месяц — протестируйте бесплатно</span>
+          </li>
+          <li>
+            <span class="aside-check">✅</span>
+            <span>Поддержка 24/7 — чат, телефон, видеозвонок с менеджером</span>
+          </li>
+          <li>
+            <span class="aside-check">✅</span>
+            <span>Мобильное приложение для клининга с GPS-трекингом задач</span>
+          </li>
+          <li>
+            <span class="aside-check">✅</span>
+            <span>Персональный менеджер по настройке на первые 30 дней</span>
+          </li>
+        </ul>
+        <div class="aside-decorbox">
+          <div class="aside-decorbox-title">⚡ Быстрый старт</div>
+          <p>Настройка занимает от 2 часов. Подключите замок, загрузите фото объекта и уже завтра принимайте первого гостя без личного присутствия.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── 8. CTA ─── -->
+<section id="cta">
+  <div class="label" style="justify-content:center;">Следующий шаг</div>
+  <h2 class="cta-title">Готовы убрать <span>посредников?</span></h2>
+  <p class="cta-sub">Первый объект — бесплатно на месяц. Настройка за 2 часа. Поддержка 24/7.</p>
+  <div class="cta-actions">
+    <button class="btn-primary" onclick="document.getElementById('register').scrollIntoView({behavior:'smooth'})">
+      Зарегистрировать объект
+    </button>
+    <button class="btn-outline" onclick="alert('Демо-версия дашборда скоро будет доступна. Оставьте заявку выше.')">
+      Смотреть демо
+    </button>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:10px;">
+    <svg viewBox="0 0 28 28" width="20" height="20" fill="none">
+      <polygon points="14,2 27,26 1,26" fill="#2A7A4A"/>
+      <polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/>
+    </svg>
+    <span style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.5);">PIK</span>
+  </div>
+  <p>© 2024 PIK Platform — Бесконтактное управление размещением</p>
+  <p style="margin-top:4px;">Умные замки · Фотофиксация · Авто-клининг · Дашборд арендодателя</p>
+</footer>
+
+</body>
+</html>

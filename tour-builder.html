@@ -420,6 +420,9 @@
     <a href="catalog.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Каталог</a>
     <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Собрать тур</a>
     <a href="gear-shop.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🎒 Снаряжение</a>
+    <a href="group-tours.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👥 Группы</a>
+    <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фото</a>
+    <a href="property-mgmt.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🏠 Жильё</a>
   </div>
 </nav>
 
@@ -462,6 +465,42 @@
       </div>
     </div>
   </div>
+
+  <!-- GROUP TYPE -->
+  <div class="panel-card" style="margin-top:16px;">
+    <div class="panel-title">Формат группы</div>
+    <div class="panel-sub">Выбери тип — это определяет настройки и возможности тура</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px;" id="groupTypeGrid">
+      <div class="group-type-card selected" data-gtype="solo" onclick="selectGroupType(this)" style="background:#0f1a14;border:1.5px solid #2A7A4A;border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="font-size:28px;margin-bottom:6px;">👤</div>
+        <div style="font-size:11px;font-weight:700;color:#fff;">Соло / Пара</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;">1–2 чел.</div>
+      </div>
+      <div class="group-type-card" data-gtype="friends" onclick="selectGroupType(this)" style="background:#0f1a14;border:1.5px solid rgba(90,180,120,.2);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="font-size:28px;margin-bottom:6px;">🤝</div>
+        <div style="font-size:11px;font-weight:700;color:#fff;">Друзья</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;">3–12 чел.</div>
+      </div>
+      <div class="group-type-card" data-gtype="family" onclick="selectGroupType(this)" style="background:#0f1a14;border:1.5px solid rgba(90,180,120,.2);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="font-size:28px;margin-bottom:6px;">👨‍👩‍👧‍👦</div>
+        <div style="font-size:11px;font-weight:700;color:#fff;">Семья</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;">с детьми</div>
+      </div>
+      <div class="group-type-card" data-gtype="corporate" onclick="selectGroupType(this)" style="background:#0f1a14;border:1.5px solid rgba(90,180,120,.2);border-radius:12px;padding:14px 10px;text-align:center;cursor:pointer;transition:all .2s;">
+        <div style="font-size:28px;margin-bottom:6px;">🏢</div>
+        <div style="font-size:11px;font-weight:700;color:#fff;">Корпоратив</div>
+        <div style="font-size:10px;color:rgba(255,255,255,.5);margin-top:3px;">от 10 чел.</div>
+      </div>
+    </div>
+    <!-- corporate hint -->
+    <div id="corporateHint" style="display:none;margin-top:12px;background:rgba(42,122,74,.1);border:1px solid rgba(42,122,74,.25);border-radius:10px;padding:12px 16px;font-size:12px;color:#5fc48a;">
+      🏢 <b>Корпоративный тур</b> — единый счёт для компании, HR-отчёт, именные бейджи, тимбилдинг-активности. <a href="group-tours.html" style="color:#f0a500;text-decoration:none;">Подробнее →</a>
+    </div>
+    <div id="familyHint" style="display:none;margin-top:12px;background:rgba(42,122,74,.1);border:1px solid rgba(42,122,74,.25);border-radius:10px;padding:12px 16px;font-size:12px;color:#5fc48a;">
+      👨‍👩‍👧‍👦 <b>Семейный тур</b> — детские активности, питание по возрасту, трансфер с детскими креслами. <a href="group-tours.html" style="color:#f0a500;text-decoration:none;">Подробнее →</a>
+    </div>
+  </div>
+
   <div class="wizard-nav">
     <div></div>
     <button class="btn-next" id="btn1" disabled onclick="goStep(2)">Далее →</button>
@@ -684,6 +723,7 @@
 ════════════════════════════════ */
 const S = {
   zones: [],
+  groupType: 'solo',
   dateStart: '', dateEnd: '',
   days: [],           // ['2026-05-01', ...]
   participants: '2',
@@ -753,6 +793,19 @@ function toggleZone(el){
   el.classList.toggle('selected');
   S.zones = [...document.querySelectorAll('.zone-card.selected')].map(c=>c.dataset.zone);
   document.getElementById('btn1').disabled = S.zones.length===0;
+}
+
+function selectGroupType(el){
+  document.querySelectorAll('.group-type-card').forEach(c=>{
+    c.style.border='1.5px solid rgba(90,180,120,.2)';
+    c.style.background='#0f1a14';
+  });
+  el.style.border='1.5px solid #2A7A4A';
+  el.style.background='rgba(42,122,74,.12)';
+  S.groupType = el.dataset.gtype;
+  // show/hide hints
+  document.getElementById('corporateHint').style.display = S.groupType==='corporate' ? 'block' : 'none';
+  document.getElementById('familyHint').style.display    = S.groupType==='family'    ? 'block' : 'none';
 }
 
 /* ════════════════════════════════
@@ -1143,6 +1196,7 @@ function renderSummary(){
   const meta = document.getElementById('summaryMeta');
   meta.innerHTML = `
     <div class="summary-row"><span class="summary-emoji">📍</span><div><div class="summary-label">Зона</div><div class="summary-value">${S.zones.map(z=>ZONE_NAMES[z]).join(', ')||'—'}</div></div></div>
+    <div class="summary-row"><span class="summary-emoji">👥</span><div><div class="summary-label">Формат</div><div class="summary-value">${{solo:'👤 Соло / Пара',friends:'🤝 Друзья',family:'👨‍👩‍👧‍👦 Семья',corporate:'🏢 Корпоратив'}[S.groupType]||S.groupType}</div></div></div>
     <div class="summary-row"><span class="summary-emoji">📅</span><div><div class="summary-label">Даты</div><div class="summary-value">${S.dateStart||'?'} — ${S.dateEnd||'?'} (${S.days.length} ${pluralDays(S.days.length)})</div></div></div>
     <div class="summary-row"><span class="summary-emoji">👥</span><div><div class="summary-label">Участники</div><div class="summary-value">${S.participants}</div></div></div>
     <div class="summary-row"><span class="summary-emoji">📨</span><div><div class="summary-label">Приглашение</div><div class="summary-value">${INVITE_NAMES[S.inviteMode]||'Не выбрано'}</div></div></div>

@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Групповые туры — PIK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green: #2A7A4A;
+      --green-hover: #1e5c38;
+      --green-muted: #5fc48a;
+      --gold: #f0a500;
+      --bg: #080f0b;
+      --card: #0f1a14;
+      --border: rgba(90,180,120,0.15);
+      --border-hover: #2A7A4A;
+      --text: #e8f0eb;
+      --text-muted: rgba(232,240,235,0.55);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 24px; height: 56px;
+      background: rgba(8,15,11,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(90,180,120,0.1);
+    }
+    .logo {
+      display: flex; align-items: center; gap: 8px; text-decoration: none;
+    }
+    .nav-links { display: flex; gap: 8px; align-items: center; }
+    .nav-links a { text-decoration: none; transition: color 0.2s; }
+    .nav-links a:hover { color: #fff !important; }
+
+    /* ── HERO ── */
+    .hero {
+      padding-top: 56px;
+      position: relative;
+      min-height: 520px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      background: var(--bg);
+    }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(42,122,74,0.18) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 100%, rgba(42,122,74,0.09) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 40% at 80% 100%, rgba(42,122,74,0.09) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .hero-grain {
+      position: absolute; inset: 0;
+      opacity: 0.04;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      background-size: 300px 300px;
+      pointer-events: none;
+    }
+    /* Mountain silhouette SVG pattern */
+    .hero-mountains {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 160px;
+      pointer-events: none;
+      opacity: 0.12;
+    }
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 80px 24px 72px;
+      max-width: 760px;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(42,122,74,0.18);
+      border: 1px solid rgba(42,122,74,0.35);
+      color: var(--green-muted);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      border-radius: 100px;
+      margin-bottom: 22px;
+    }
+    .hero h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(32px, 5vw, 52px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: #fff;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: var(--green-muted); }
+    .hero-sub {
+      font-size: clamp(14px, 1.8vw, 17px);
+      line-height: 1.65;
+      color: var(--text-muted);
+      max-width: 580px;
+      margin: 0 auto 36px;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--green);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 26px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { background: var(--green-hover); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(42,122,74,0.3); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: transparent;
+      color: var(--green-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 26px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: 1px solid rgba(90,180,120,0.35);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-outline:hover { border-color: var(--green-muted); background: rgba(95,196,138,0.08); color: #fff; }
+    .btn-gold {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: var(--gold);
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 13px 26px;
+      border-radius: 10px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-gold:hover { background: #d99200; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(240,165,0,0.3); }
+
+    /* ── SECTIONS ── */
+    section { padding: 88px 24px; }
+    .container { max-width: 1160px; margin: 0 auto; }
+    .section-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--green-muted);
+      margin-bottom: 12px;
+    }
+    .section-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(22px, 3vw, 34px);
+      font-weight: 700;
+      line-height: 1.2;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .section-sub {
+      font-size: 15px;
+      color: var(--text-muted);
+      max-width: 500px;
+      line-height: 1.6;
+    }
+    .section-header { margin-bottom: 48px; }
+
+    /* ── TYPE CARDS ── */
+    .types-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    .type-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .type-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 40% at 50% 0%, rgba(42,122,74,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .type-card:hover {
+      border-color: var(--green);
+      box-shadow: 0 0 32px rgba(42,122,74,0.22), 0 4px 24px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+    .type-card:hover::before { opacity: 1; }
+    .type-card-emoji {
+      font-size: 56px;
+      line-height: 1;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .type-card-head {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .type-card-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .badge {
+      display: inline-block;
+      background: rgba(42,122,74,0.2);
+      border: 1px solid rgba(42,122,74,0.4);
+      color: var(--green-muted);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 100px;
+    }
+    .badge-gold {
+      background: rgba(240,165,0,0.15);
+      border: 1px solid rgba(240,165,0,0.4);
+      color: var(--gold);
+    }
+    .type-card-desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+    }
+    .type-feats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+    .feat-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+    .feat-icon { font-size: 15px; flex-shrink: 0; margin-top: 0px; }
+
+    /* ── HOW IT WORKS ── */
+    .how-section {
+      background: linear-gradient(180deg, rgba(42,122,74,0.04) 0%, transparent 100%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .steps-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0;
+      position: relative;
+    }
+    .step-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 0 20px;
+      position: relative;
+    }
+    .step-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      top: 24px;
+      right: -4px;
+      width: calc(100% - 56px);
+      left: calc(50% + 24px);
+      height: 1px;
+      border-top: 2px dashed rgba(42,122,74,0.35);
+    }
+    .step-num {
+      width: 48px; height: 48px;
+      background: var(--green);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      flex-shrink: 0;
+      box-shadow: 0 0 20px rgba(42,122,74,0.4);
+      position: relative;
+      z-index: 1;
+    }
+    .step-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── OPEN TOURS ── */
+    .tours-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .tour-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+    }
+    .tour-card:hover {
+      border-color: rgba(90,180,120,0.4);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      transform: translateY(-2px);
+    }
+    .tour-stripe {
+      height: 5px;
+      width: 100%;
+    }
+    .tour-body { padding: 22px 22px 20px; flex: 1; display: flex; flex-direction: column; }
+    .tour-zone {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .tour-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+    .tour-dates {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .seats-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .seats-label {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .seats-count {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--green-muted);
+    }
+    .progress-bar {
+      height: 5px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 100px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .progress-fill {
+      height: 100%;
+      border-radius: 100px;
+      transition: width 0.3s;
+    }
+    .tour-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+    }
+    .tour-price {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .tour-price span {
+      font-family: 'Inter', sans-serif;
+      font-size: 11px;
+      font-weight: 400;
+      color: var(--text-muted);
+      display: block;
+      margin-top: 1px;
+    }
+    .btn-sm {
+      display: inline-flex; align-items: center;
+      background: var(--green);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 9px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .btn-sm:hover { background: var(--green-hover); }
+
+    /* ── CORP FORM ── */
+    .corp-section {
+      background: linear-gradient(135deg, rgba(42,122,74,0.08) 0%, rgba(8,15,11,0) 60%);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .corp-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .corp-form {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 36px 32px;
+    }
+    .form-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 6px;
+    }
+    .form-sub {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .form-group { margin-bottom: 16px; }
+    .form-group label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: rgba(232,240,235,0.7);
+      margin-bottom: 7px;
+      letter-spacing: 0.01em;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(90,180,120,0.2);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      padding: 12px 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: rgba(42,122,74,0.6);
+      box-shadow: 0 0 0 3px rgba(42,122,74,0.12);
+    }
+    .form-input::placeholder { color: rgba(232,240,235,0.3); }
+    .form-select option { background: #0f1a14; color: var(--text); }
+    .form-textarea {
+      resize: vertical;
+      min-height: 90px;
+      line-height: 1.5;
+    }
+    .form-textarea::placeholder { color: rgba(232,240,235,0.3); }
+
+    .corp-benefits { padding-top: 16px; }
+    .corp-benefits-title {
+      font-family: 'Unbounded', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .corp-benefits-sub {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 32px;
+      line-height: 1.6;
+    }
+    .benefit-list { display: flex; flex-direction: column; gap: 14px; }
+    .benefit-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 18px;
+      background: rgba(42,122,74,0.07);
+      border: 1px solid rgba(42,122,74,0.15);
+      border-radius: 12px;
+      transition: all 0.2s;
+    }
+    .benefit-item:hover {
+      background: rgba(42,122,74,0.12);
+      border-color: rgba(42,122,74,0.28);
+    }
+    .benefit-check {
+      width: 22px; height: 22px;
+      background: rgba(42,122,74,0.25);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      margin-top: 1px;
+    }
+    .benefit-text {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+    .benefit-text small {
+      display: block;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center;
+      padding: 96px 24px;
+    }
+    .cta-glow {
+      position: relative;
+      display: inline-block;
+    }
+    .cta-glow::before {
+      content: '';
+      position: absolute;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(42,122,74,0.15) 0%, transparent 70%);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .cta-section .section-label,
+    .cta-section .section-title,
+    .cta-section .section-sub,
+    .cta-section .hero-actions {
+      position: relative; z-index: 1;
+    }
+    .cta-section .section-sub {
+      margin: 0 auto 36px;
+      max-width: 480px;
+      text-align: center;
+    }
+    .cta-section .section-label { text-align: center; }
+    .cta-section .section-title { text-align: center; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 24px;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      .types-grid { grid-template-columns: 1fr; }
+      .tours-grid { grid-template-columns: repeat(2, 1fr); }
+      .corp-inner { grid-template-columns: 1fr; gap: 40px; }
+      .steps-row { flex-direction: column; gap: 32px; align-items: flex-start; }
+      .step-item { flex-direction: row; text-align: left; padding: 0; }
+      .step-item::after { display: none; }
+      .step-num { margin-bottom: 0; margin-right: 16px; flex-shrink: 0; }
+      .nav-links { gap: 2px; }
+      .nav-links a[style*="padding:8px 14px"] { padding: 6px 8px !important; font-size: 11px !important; }
+    }
+    @media (max-width: 640px) {
+      .tours-grid { grid-template-columns: 1fr; }
+      .type-feats { grid-template-columns: 1fr; }
+      .corp-form { padding: 24px 20px; }
+      nav { padding: 0 12px; }
+    }
+    @media (max-width: 480px) {
+      .nav-links a[style*="white-space:nowrap"] { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav style="position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;background:rgba(8,15,11,0.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(90,180,120,0.1);">
+  <a class="logo" href="index.html" style="display:flex;align-items:center;gap:8px;text-decoration:none;">
+    <svg viewBox="0 0 28 28" width="28" height="28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span style="font-family:'Unbounded',sans-serif;font-size:15px;font-weight:700;color:#fff;letter-spacing:0.5px;">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;">Каталог</a>
+    <a href="group-tours.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👥 Группы</a>
+    <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">Собрать тур</a>
+    <a href="gear-shop.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🎒 Снаряжение</a>
+    <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фотосафари</a>
+    <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;white-space:nowrap;">+ Услуга</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grain"></div>
+  <!-- Mountain silhouette -->
+  <svg class="hero-mountains" viewBox="0 0 1440 160" fill="none" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 160L120 80L200 120L320 40L440 100L560 20L680 90L780 50L900 110L1020 30L1140 100L1260 55L1380 90L1440 70V160H0Z" fill="#2A7A4A"/>
+    <path d="M0 160L80 110L160 140L260 80L360 120L480 60L580 110L700 70L800 120L920 50L1040 100L1160 60L1280 100L1440 80V160H0Z" fill="#1e5c38" opacity="0.5"/>
+  </svg>
+  <div class="hero-content">
+    <div class="hero-badge">👥 Групповые приключения</div>
+    <h1>Групповые <span>туры</span></h1>
+    <p class="hero-sub">Корпоративный выезд, семейное путешествие, поездка с друзьями — один организатор, всё удовольствие</p>
+    <div class="hero-actions">
+      <a href="tour-builder.html?group=true" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Создать групповой тур
+      </a>
+      <a href="#open-tours" class="btn-outline">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Найти открытый тур
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ТИПЫ ГРУПП -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Форматы</div>
+      <h2 class="section-title">Выберите тип группы</h2>
+      <p class="section-sub">Под каждый формат — своя логистика, условия оплаты и набор активностей</p>
+    </div>
+
+    <div class="types-grid">
+
+      <!-- Корпоратив -->
+      <div class="type-card">
+        <span class="type-card-emoji">🏢</span>
+        <div class="type-card-head">
+          <span class="type-card-title">Корпоративный</span>
+          <span class="badge">для компаний</span>
+        </div>
+        <p class="type-card-desc">Тимбилдинг, корпоративный отдых и командные активности. Полное сопровождение от бронирования до отчёта для HR.</p>
+        <div class="type-feats">
+          <div class="feat-item">
+            <span class="feat-icon">👥</span>
+            <span>Группа до 200 участников</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">📊</span>
+            <span>HR-отчёт по итогам</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">🎯</span>
+            <span>Тимбилдинг-активности</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">💳</span>
+            <span>Единый счёт для компании</span>
+          </div>
+        </div>
+        <a href="tour-builder.html?group=corporate" class="btn-primary" style="width:fit-content;">Организовать корпоратив</a>
+      </div>
+
+      <!-- Семейный -->
+      <div class="type-card">
+        <span class="type-card-emoji">👨‍👩‍👧‍👦</span>
+        <div class="type-card-head">
+          <span class="type-card-title">Семейный</span>
+          <span class="badge">для семьи</span>
+        </div>
+        <p class="type-card-desc">Путешествие всей семьей с детьми любого возраста. Детские активности, специальное питание и медицинское сопровождение.</p>
+        <div class="type-feats">
+          <div class="feat-item">
+            <span class="feat-icon">👶</span>
+            <span>Дети от 3 лет</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">🍽️</span>
+            <span>Детское меню</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">🚐</span>
+            <span>Трансфер с детскими креслами</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">🏥</span>
+            <span>Мед. сопровождение</span>
+          </div>
+        </div>
+        <a href="tour-builder.html?group=family" class="btn-primary" style="width:fit-content;">Создать семейный тур</a>
+      </div>
+
+      <!-- Друзья -->
+      <div class="type-card">
+        <span class="type-card-emoji">🤝</span>
+        <div class="type-card-head">
+          <span class="type-card-title">С друзьями</span>
+          <span class="badge">для компании</span>
+        </div>
+        <p class="type-card-desc">Свободный формат: каждый голосует за маршрут, оплата делится поровну, все имеют равные права в планировании.</p>
+        <div class="type-feats">
+          <div class="feat-item">
+            <span class="feat-icon">🗳️</span>
+            <span>Голосование за маршрут</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">💸</span>
+            <span>Split-оплата</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">💬</span>
+            <span>Групповой чат</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">🎲</span>
+            <span>Случайные активности</span>
+          </div>
+        </div>
+        <a href="tour-builder.html?group=friends" class="btn-primary" style="width:fit-content;">Поехать с друзьями</a>
+      </div>
+
+      <!-- Открытый тур -->
+      <div class="type-card">
+        <span class="type-card-emoji">🌍</span>
+        <div class="type-card-head">
+          <span class="type-card-title">Открытый тур</span>
+          <span class="badge badge-gold">публичный</span>
+        </div>
+        <p class="type-card-desc">Присоединись к готовому туру — познакомишься с новыми людьми. Идеально для одиночек и пар, желающих путешествовать в группе.</p>
+        <div class="type-feats">
+          <div class="feat-item">
+            <span class="feat-icon">🔓</span>
+            <span>Открытая запись</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">👤</span>
+            <span>Один/пара</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">📍</span>
+            <span>Готовый маршрут</span>
+          </div>
+          <div class="feat-item">
+            <span class="feat-icon">⭐</span>
+            <span>Рейтинг участников</span>
+          </div>
+        </div>
+        <a href="#open-tours" class="btn-gold" style="width:fit-content;">Найти открытый тур</a>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- КАК ЭТО РАБОТАЕТ -->
+<section class="how-section">
+  <div class="container">
+    <div class="section-header" style="text-align:center;">
+      <div class="section-label" style="text-align:center;">Процесс</div>
+      <h2 class="section-title" style="text-align:center;">Как это работает</h2>
+      <p class="section-sub" style="text-align:center; max-width:420px; margin:0 auto;">От идеи до путешествия — четыре простых шага</p>
+    </div>
+    <div class="steps-row">
+      <div class="step-item">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">Выберите<br>тип группы</div>
+          <div class="step-desc">Корпоратив, семья,<br>друзья или открытый тур</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">Создайте тур<br>в конструкторе</div>
+          <div class="step-desc">Маршрут, даты, активности,<br>питание и размещение</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">Пригласите<br>участников</div>
+          <div class="step-desc">Отправьте ссылку или<br>пригласите через Telegram</div>
+        </div>
+      </div>
+      <div class="step-item">
+        <div class="step-num">4</div>
+        <div>
+          <div class="step-title">Путешествуйте<br>вместе</div>
+          <div class="step-desc">Гид, трансфер и поддержка<br>24/7 включены</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ОТКРЫТЫЕ ТУРЫ -->
+<section id="open-tours">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Присоединиться</div>
+      <h2 class="section-title">Открытые туры</h2>
+      <p class="section-sub">Готовые маршруты со свободными местами — записывайся прямо сейчас</p>
+    </div>
+
+    <div class="tours-grid">
+
+      <!-- 1 -->
+      <div class="tour-card">
+        <div class="tour-stripe" style="background:linear-gradient(90deg,#3b7fe8,#5b9cf6);"></div>
+        <div class="tour-body">
+          <div class="tour-zone">⛷️ горы</div>
+          <div class="tour-title">Горный рассвет на Эльбрусе</div>
+          <div class="tour-dates">📅 12–15 мая 2025</div>
+          <div class="seats-row">
+            <span class="seats-label">Свободных мест</span>
+            <span class="seats-count">4 из 12</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:66.7%;background:linear-gradient(90deg,#3b7fe8,#5b9cf6);"></div>
+          </div>
+          <div class="tour-footer">
+            <div class="tour-price">от 24 900 ₽<span>за человека</span></div>
+            <button class="btn-sm" onclick="alert('Записываем вас на «Горный рассвет на Эльбрусе»!')">Присоединиться</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2 -->
+      <div class="tour-card">
+        <div class="tour-stripe" style="background:linear-gradient(90deg,#1db8e0,#5bdcf6);"></div>
+        <div class="tour-body">
+          <div class="tour-zone">🚣 река</div>
+          <div class="tour-title">Сплав по Белой реке</div>
+          <div class="tour-dates">📅 20–22 мая 2025</div>
+          <div class="seats-row">
+            <span class="seats-label">Свободных мест</span>
+            <span class="seats-count">3 из 8</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:62.5%;background:linear-gradient(90deg,#1db8e0,#5bdcf6);"></div>
+          </div>
+          <div class="tour-footer">
+            <div class="tour-price">от 9 800 ₽<span>за человека</span></div>
+            <button class="btn-sm" onclick="alert('Записываем вас на «Сплав по Белой реке»!')">Присоединиться</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 -->
+      <div class="tour-card">
+        <div class="tour-stripe" style="background:linear-gradient(90deg,#2A7A4A,#5fc48a);"></div>
+        <div class="tour-body">
+          <div class="tour-zone">🏕️ кемпинг</div>
+          <div class="tour-title">Кемпинг у Голубых озёр</div>
+          <div class="tour-dates">📅 3–5 июня 2025</div>
+          <div class="seats-row">
+            <span class="seats-label">Свободных мест</span>
+            <span class="seats-count">7 из 10</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:30%;background:linear-gradient(90deg,#2A7A4A,#5fc48a);"></div>
+          </div>
+          <div class="tour-footer">
+            <div class="tour-price">от 7 500 ₽<span>за человека</span></div>
+            <button class="btn-sm" onclick="alert('Записываем вас на «Кемпинг у Голубых озёр»!')">Присоединиться</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 -->
+      <div class="tour-card">
+        <div class="tour-stripe" style="background:linear-gradient(90deg,#12c5a8,#5be6d0);"></div>
+        <div class="tour-body">
+          <div class="tour-zone">🌊 море</div>
+          <div class="tour-title">Морской каяк-тур</div>
+          <div class="tour-dates">📅 10–12 июня 2025</div>
+          <div class="seats-row">
+            <span class="seats-label">Свободных мест</span>
+            <span class="seats-count">2 из 8</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:75%;background:linear-gradient(90deg,#12c5a8,#5be6d0);"></div>
+          </div>
+          <div class="tour-footer">
+            <div class="tour-price">от 14 200 ₽<span>за человека</span></div>
+            <button class="btn-sm" onclick="alert('Записываем вас на «Морской каяк-тур»!')">Присоединиться</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5 -->
+      <div class="tour-card">
+        <div class="tour-stripe" style="background:linear-gradient(90deg,#f0a500,#ffd166);"></div>
+        <div class="tour-body">
+          <div class="tour-zone">📸 фото</div>
+          <div class="tour-title">Фотосафари в горах</div>
+          <div class="tour-dates">📅 18–20 июня 2025</div>
+          <div class="seats-row">
+            <span class="seats-label">Свободных мест</span>
+            <span class="seats-count">4 из 6</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:33.3%;background:linear-gradient(90deg,#f0a500,#ffd166);"></div>
+          </div>
+          <div class="tour-footer">
+            <div class="tour-price">от 18 000 ₽<span>за человека</span></div>
+            <button class="btn-sm" onclick="alert('Записываем вас на «Фотосафари в горах»!')">Присоединиться</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6 -->
+      <div class="tour-card">
+        <div class="tour-stripe" style="background:linear-gradient(90deg,#1a9c6b,#4dd4a0);"></div>
+        <div class="tour-body">
+          <div class="tour-zone">🌿 луга</div>
+          <div class="tour-title">Альпийские луга и водопады</div>
+          <div class="tour-dates">📅 25–27 июня 2025</div>
+          <div class="seats-row">
+            <span class="seats-label">Свободных мест</span>
+            <span class="seats-count">5 из 12</span>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill" style="width:58.3%;background:linear-gradient(90deg,#1a9c6b,#4dd4a0);"></div>
+          </div>
+          <div class="tour-footer">
+            <div class="tour-price">от 8 900 ₽<span>за человека</span></div>
+            <button class="btn-sm" onclick="alert('Записываем вас на «Альпийские луга и водопады»!')">Присоединиться</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- КОРПОРАТИВНАЯ ФОРМА -->
+<section class="corp-section">
+  <div class="container">
+    <div class="corp-inner">
+      <div class="corp-form">
+        <div class="form-title">Организуете корпоратив?</div>
+        <p class="form-sub">Оставьте заявку — менеджер свяжется в течение 2 часов и подберёт оптимальный формат</p>
+
+        <form onsubmit="event.preventDefault(); alert('Заявка принята! Мы свяжемся в течение 2 часов');">
+          <div class="form-group">
+            <label>Название компании</label>
+            <input type="text" class="form-input" placeholder="ООО «Ромашка»">
+          </div>
+          <div class="form-group">
+            <label>Количество участников</label>
+            <select class="form-select">
+              <option value="">Выберите размер группы</option>
+              <option value="10-30">10–30 человек</option>
+              <option value="30-50">30–50 человек</option>
+              <option value="50-100">50–100 человек</option>
+              <option value="100+">100+ человек</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Желаемые даты</label>
+            <input type="text" class="form-input" placeholder="Например: июль 2025, любые даты">
+          </div>
+          <div class="form-group">
+            <label>Телефон или email</label>
+            <input type="text" class="form-input" placeholder="+7 999 000-00-00 или mail@company.ru">
+          </div>
+          <div class="form-group">
+            <label>Комментарий <span style="color:var(--text-muted);font-weight:400;">(необязательно)</span></label>
+            <textarea class="form-textarea" placeholder="Пожелания по маршруту, активностям, бюджету..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="width:100%;justify-content:center;padding:14px;">
+            Отправить заявку
+          </button>
+        </form>
+      </div>
+
+      <div class="corp-benefits">
+        <div class="corp-benefits-title">Почему компании<br>выбирают PIK</div>
+        <p class="corp-benefits-sub">Мы организовали более 400 корпоративных выездов для команд от 10 до 500 человек</p>
+        <div class="benefit-list">
+          <div class="benefit-item">
+            <div class="benefit-check">✅</div>
+            <div class="benefit-text">
+              Персональный менеджер
+              <small>Один контакт от заявки до возвращения домой</small>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check">✅</div>
+            <div class="benefit-text">
+              Скидка от 15% при группе 30+
+              <small>Чем больше группа — тем выгоднее стоимость</small>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check">✅</div>
+            <div class="benefit-text">
+              Единый договор и закрывающие документы
+              <small>Акты, счета и отчёты для бухгалтерии</small>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check">✅</div>
+            <div class="benefit-text">
+              Закрытые корпоративные даты
+              <small>Только ваша команда, без посторонних</small>
+            </div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-check">✅</div>
+            <div class="benefit-text">
+              HR-отчёт с фотографиями
+              <small>Итоги тимбилдинга, статистика активностей</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-glow">
+    <div class="section-label">Начните прямо сейчас</div>
+    <h2 class="section-title" style="margin-bottom:14px;">Готовы создать незабываемый тур?</h2>
+    <p class="section-sub">Конструктор туров PIK — соберите маршрут за 5 минут, пригласите всю группу одной ссылкой</p>
+    <div class="hero-actions">
+      <a href="tour-builder.html?group=true" class="btn-primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 2v12M2 8h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        Создать групповой тур
+      </a>
+      <a href="#open-tours" class="btn-outline">Смотреть открытые туры</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:12px;">
+    <svg viewBox="0 0 28 28" width="22" height="22" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span style="font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;color:rgba(255,255,255,0.6);">PIK</span>
+  </div>
+  <p>© 2025 PIK — платформа приключенческих туров. Все права защищены.</p>
+</footer>
+
+</body>
+</html>
