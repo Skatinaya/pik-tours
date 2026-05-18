@@ -265,6 +265,8 @@
     <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фото</a>
     <a href="property-mgmt.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🏠 Жильё</a>
 
+    <a href="cart.html" id="cartNavBtn" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;position:relative;">🛒 <span id="cartCount" style="background:#2A7A4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;">0</span></a>
+    <a href="profile.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👤 Профиль</a>
     <button class="nav-search-btn" onclick="openSearch()" title="Поиск (⌘K)">🔍</button>
     <a href="partner.html" class="btn-primary" style="padding:8px 18px;font-size:12px;border-radius:8px;">+ Добавить услугу</a>
   </div>
@@ -282,6 +284,18 @@
   </div>
 </div>
 
+<!-- LOCATION HEADER (shown when filtered by location) -->
+<div id="locationHeader" style="display:none;max-width:1100px;margin:0 auto;padding:24px 32px 0;">
+  <div style="display:flex;align-items:center;gap:12px;">
+    <span id="locationIcon" style="font-size:28px;"></span>
+    <div>
+      <div id="locationTitle" style="font-family:'Unbounded',sans-serif;font-size:20px;font-weight:700;color:#fff;"></div>
+      <div style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:2px;">Услуги доступные в этой локации</div>
+    </div>
+    <a href="catalog.html" style="margin-left:auto;font-size:12px;color:#5fc48a;text-decoration:none;border:1px solid rgba(95,196,138,0.3);padding:6px 14px;border-radius:8px;">Все локации</a>
+  </div>
+</div>
+
 <!-- FILTERS -->
 <div class="filters-bar">
   <span class="filter-label">Тип:</span>
@@ -293,6 +307,14 @@
   <button class="filter-btn" onclick="filterCards('camp', this)">⛺ Кемпинги</button>
   <button class="filter-btn" onclick="filterCards('transfer', this)">🚐 Трансфер</button>
   <button class="filter-btn" onclick="filterCards('gear', this)">🎒 Снаряжение</button>
+</div>
+<div class="filters-bar" style="padding-top:10px;">
+  <span class="filter-label">Локация:</span>
+  <button class="filter-btn loc-filter active" onclick="filterByLocation('all', this)">Все</button>
+  <button class="filter-btn loc-filter" onclick="filterByLocation('ski', this)">⛷️ Горы</button>
+  <button class="filter-btn loc-filter" onclick="filterByLocation('river', this)">🏞️ Река</button>
+  <button class="filter-btn loc-filter" onclick="filterByLocation('meadow', this)">🌿 Луга</button>
+  <button class="filter-btn loc-filter" onclick="filterByLocation('sea', this)">🌊 Море</button>
 </div>
 
 <div class="section" style="padding-top:28px;">
@@ -308,7 +330,7 @@
   <div class="catalog-grid" id="catalog-grid">
 
     <!-- ЖИЛЬЁ -->
-    <div class="service-card" data-type="hotel">
+    <div class="service-card" data-type="hotel" data-location="ski" data-id="1">
       <div class="service-thumb">🏨</div>
       <div class="service-body">
         <div class="service-meta">
@@ -321,13 +343,13 @@
           <div class="service-price">4 500 ₽ <span>/ ночь</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Шале «Вершина»')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(1, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="camp">
+    <div class="service-card" data-type="camp" data-location="river" data-id="2">
       <div class="service-thumb">⛺</div>
       <div class="service-body">
         <div class="service-meta">
@@ -340,13 +362,13 @@
           <div class="service-price">2 800 ₽ <span>/ ночь</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Глэмпинг «Река»')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(2, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="guide">
+    <div class="service-card" data-type="guide" data-location="ski" data-id="3">
       <div class="service-thumb">🧭</div>
       <div class="service-body">
         <div class="service-meta">
@@ -359,13 +381,13 @@
           <div class="service-price">3 500 ₽ <span>/ день</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Гид Алексей')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(3, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="rental">
+    <div class="service-card" data-type="rental" data-location="meadow" data-id="4">
       <div class="service-thumb">🏍️</div>
       <div class="service-body">
         <div class="service-meta">
@@ -378,13 +400,13 @@
           <div class="service-price">2 500 ₽ <span>/ час</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Квадроциклы')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(4, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="rental">
+    <div class="service-card" data-type="rental" data-location="meadow" data-id="5">
       <div class="service-thumb">🐴</div>
       <div class="service-body">
         <div class="service-meta">
@@ -397,13 +419,13 @@
           <div class="service-price">1 800 ₽ <span>/ чел</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Конная прогулка')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(5, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="food">
+    <div class="service-card" data-type="food" data-location="ski" data-id="6">
       <div class="service-thumb">🍽️</div>
       <div class="service-body">
         <div class="service-meta">
@@ -416,13 +438,13 @@
           <div class="service-price">800 ₽ <span>/ чел/день</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Питание «Горный воздух»')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(6, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="transfer">
+    <div class="service-card" data-type="transfer" data-location="ski" data-id="7">
       <div class="service-thumb">🚐</div>
       <div class="service-body">
         <div class="service-meta">
@@ -435,13 +457,13 @@
           <div class="service-price">3 200 ₽ <span>/ машина</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Трансфер')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(7, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="guide">
+    <div class="service-card" data-type="guide" data-location="sea" data-id="8">
       <div class="service-thumb">🤿</div>
       <div class="service-body">
         <div class="service-meta">
@@ -454,13 +476,13 @@
           <div class="service-price">5 500 ₽ <span>/ чел</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Дайвинг-инструктор')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(8, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="hotel">
+    <div class="service-card" data-type="hotel" data-location="sea" data-id="9">
       <div class="service-thumb">🏕️</div>
       <div class="service-body">
         <div class="service-meta">
@@ -473,7 +495,7 @@
           <div class="service-price">5 900 ₽ <span>/ ночь</span></div>
           <div class="service-btns">
             <button class="btn-more">Подробнее</button>
-            <button class="btn-add" onclick="addToTour(this, 'Домики «Бухта»')">+ В тур</button>
+            <button class="btn-add" onclick="addToCart(9, this)">+ В тур</button>
           </div>
         </div>
       </div>
@@ -481,7 +503,7 @@
 
 
     <!-- СНАРЯЖЕНИЕ -->
-    <div class="service-card" data-type="gear">
+    <div class="service-card" data-type="gear" data-location="ski" data-id="10">
       <div class="service-thumb">🧥</div>
       <div class="service-body">
         <div class="service-meta">
@@ -494,13 +516,13 @@
           <div class="service-price">15 400 ₽ <span>/ комплект</span></div>
           <div class="service-btns">
             <a href="https://www.ozon.ru/category/gornolyzhnyye-kurtki/" target="_blank" class="btn-add" style="text-decoration:none;">Ozon</a>
-            <button class="btn-more" onclick="addToTour(this,'Горнолыжный комплект')">+ В тур</button>
+            <button class="btn-more" onclick="addToCart(10, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="gear">
+    <div class="service-card" data-type="gear" data-location="river" data-id="11">
       <div class="service-thumb">👟</div>
       <div class="service-body">
         <div class="service-meta">
@@ -513,13 +535,13 @@
           <div class="service-price">7 200 ₽ <span>/ пара</span></div>
           <div class="service-btns">
             <a href="https://www.ozon.ru/category/trekingovyye-botinki/" target="_blank" class="btn-add" style="text-decoration:none;">Ozon</a>
-            <button class="btn-more" onclick="addToTour(this,'Трекинговая обувь')">+ В тур</button>
+            <button class="btn-more" onclick="addToCart(11, this)">+ В тур</button>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="service-card" data-type="gear">
+    <div class="service-card" data-type="gear" data-location="sea" data-id="12">
       <div class="service-thumb">🤿</div>
       <div class="service-body">
         <div class="service-meta">
@@ -532,7 +554,7 @@
           <div class="service-price">3 200 ₽ <span>/ комплект</span></div>
           <div class="service-btns">
             <a href="https://www.ozon.ru/category/maski-dlya-snorkelinga/" target="_blank" class="btn-add" style="text-decoration:none;">Ozon</a>
-            <button class="btn-more" onclick="addToTour(this,'Набор для сноркелинга')">+ В тур</button>
+            <button class="btn-more" onclick="addToCart(12, this)">+ В тур</button>
           </div>
         </div>
       </div>
@@ -560,26 +582,130 @@
 </div>
 
 <script>
+/* SERVICES DATA (shared with tour-builder) */
+const CATALOG_SERVICES = [
+  { id:1,  emoji:'🏨', name:'Горное шале «Вершина»',     type:'hotel',    price:4500,  unit:'ночь',     durH:12, location:'ski',    vendor:'ООО «Вершина»', timeSlots:['14:00'] },
+  { id:2,  emoji:'⛺', name:'Глэмпинг «Река»',           type:'camp',     price:2800,  unit:'ночь',     durH:12, location:'river',  vendor:'Глэмпинг-парк «Река»', timeSlots:['13:00'] },
+  { id:3,  emoji:'🧭', name:'Гид Алексей — треккинг',    type:'guide',    price:3500,  unit:'день',     durH:8,  location:'ski',    vendor:'ИП Алексей Горный', timeSlots:['08:00','09:00','10:00'] },
+  { id:4,  emoji:'🏍️', name:'Прокат квадроциклов',       type:'rental',   price:2500,  unit:'час',      durH:2,  location:'meadow', vendor:'АТВ-прокат «Луга»', timeSlots:['09:00','11:00','14:00','16:00'] },
+  { id:5,  emoji:'🐴', name:'Конная прогулка «Рассвет»', type:'rental',   price:1800,  unit:'чел',      durH:3,  location:'meadow', vendor:'Конюшня «Рассвет»', timeSlots:['07:00','10:00','15:00'] },
+  { id:6,  emoji:'🍽️', name:'Кафе «Горный воздух»',      type:'food',     price:800,   unit:'чел/день', durH:1,  location:'ski',    vendor:'Кафе «Горный воздух»', timeSlots:['07:00','12:00','18:00'] },
+  { id:7,  emoji:'🚐', name:'Трансфер в горы',           type:'transfer', price:3200,  unit:'машина',   durH:3,  location:'ski',    vendor:'Трансфер PIK', timeSlots:['06:00','08:00','10:00','14:00','18:00'] },
+  { id:8,  emoji:'🤿', name:'Инструктор по дайвингу',    type:'guide',    price:5500,  unit:'чел',      durH:4,  location:'sea',    vendor:'DiveCenter PIK', timeSlots:['10:00','14:00'] },
+  { id:9,  emoji:'🏕️', name:'Домики у моря «Бухта»',     type:'hotel',    price:5900,  unit:'ночь',     durH:12, location:'sea',    vendor:'Бухта-резорт', timeSlots:['14:00'] },
+  { id:10, emoji:'🧥', name:'Горнолыжный комплект',      type:'gear',     price:15400, unit:'комплект', durH:1,  location:'ski',    vendor:'PIK Gear', timeSlots:['09:00','12:00','15:00'] },
+  { id:11, emoji:'👟', name:'Трекинговые ботинки',        type:'gear',     price:7200,  unit:'пара',     durH:1,  location:'river',  vendor:'PIK Gear', timeSlots:['09:00','12:00','15:00'] },
+  { id:12, emoji:'🤿', name:'Набор для сноркелинга',     type:'gear',     price:3200,  unit:'комплект', durH:1,  location:'sea',    vendor:'PIK Gear', timeSlots:['09:00','11:00','14:00'] },
+];
+
+const LOC_NAMES = { ski:'⛷️ Горы', river:'🏞️ Реки и водопады', meadow:'🌿 Луга и приключения', sea:'🌊 Море и побережье' };
+const LOC_ICONS = { ski:'⛷️', river:'🏞️', meadow:'🌿', sea:'🌊' };
+let currentTypeFilter = 'all';
+let currentLocFilter = 'all';
+
 function filterCards(type, btn) {
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.filter-btn:not(.loc-filter)').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  currentTypeFilter = type;
+  applyFilters();
+}
+
+function filterByLocation(loc, btn) {
+  document.querySelectorAll('.loc-filter').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentLocFilter = loc;
+  applyFilters();
+}
+
+function applyFilters() {
   document.querySelectorAll('.service-card').forEach(card => {
-    card.style.display = (type === 'all' || card.dataset.type === type) ? '' : 'none';
+    const typeMatch = currentTypeFilter === 'all' || card.dataset.type === currentTypeFilter;
+    const locMatch = currentLocFilter === 'all' || card.dataset.location === currentLocFilter;
+    card.style.display = (typeMatch && locMatch) ? '' : 'none';
   });
 }
 
-function addToTour(btn, name) {
-  const toast = document.getElementById('toast');
-  toast.textContent = '✓ «' + name + '» добавлено в тур';
-  toast.style.opacity = '1';
-  toast.style.transform = 'translateX(-50%) translateY(0)';
+/* CART (localStorage) */
+function getCart() {
+  try { return JSON.parse(localStorage.getItem('pik_cart')) || []; }
+  catch { return []; }
+}
+function saveCart(cart) {
+  localStorage.setItem('pik_cart', JSON.stringify(cart));
+  updateCartCount();
+}
+
+function addToCart(serviceId, btn) {
+  const svc = CATALOG_SERVICES.find(s => s.id === serviceId);
+  if (!svc) return;
+  let cart = getCart();
+  if (cart.find(c => c.id === serviceId)) {
+    showToast('Уже в корзине: «' + svc.name + '»');
+    return;
+  }
+  cart.push({ id: svc.id, emoji: svc.emoji, name: svc.name, type: svc.type, price: svc.price, unit: svc.unit, durH: svc.durH, location: svc.location, vendor: svc.vendor, timeSlots: svc.timeSlots });
+  saveCart(cart);
   btn.textContent = '✓ Добавлено';
   btn.style.background = '#1a5c38';
+  showToast('✓ «' + svc.name + '» добавлено в корзину');
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.style.opacity = '1';
+  toast.style.transform = 'translateX(-50%) translateY(0)';
   setTimeout(() => {
     toast.style.opacity = '0';
     toast.style.transform = 'translateX(-50%) translateY(20px)';
   }, 2500);
 }
+
+function updateCartCount() {
+  const el = document.getElementById('cartCount');
+  if (el) el.textContent = getCart().length;
+}
+
+/* INIT — handle ?location= param */
+(function initCatalog() {
+  const params = new URLSearchParams(window.location.search);
+  const loc = params.get('location');
+  if (loc && LOC_NAMES[loc]) {
+    currentLocFilter = loc;
+    // Show location header
+    document.getElementById('locationHeader').style.display = 'block';
+    document.getElementById('locationIcon').textContent = LOC_ICONS[loc];
+    document.getElementById('locationTitle').textContent = 'Услуги в локации: ' + LOC_NAMES[loc];
+    // Activate location filter button
+    document.querySelectorAll('.loc-filter').forEach(b => {
+      b.classList.remove('active');
+      if (b.textContent.toLowerCase().includes(loc) || b.onclick?.toString().includes("'" + loc + "'")) {
+        b.classList.add('active');
+      }
+    });
+    // Find and activate the right button
+    document.querySelectorAll('.loc-filter').forEach(b => {
+      const onclickStr = b.getAttribute('onclick') || '';
+      if (onclickStr.includes("'" + loc + "'")) b.classList.add('active');
+      else if (!onclickStr.includes("'all'")) b.classList.remove('active');
+      else b.classList.remove('active');
+    });
+    applyFilters();
+  }
+  // Mark already-added items
+  const cart = getCart();
+  document.querySelectorAll('.service-card').forEach(card => {
+    const id = parseInt(card.dataset.id);
+    if (cart.find(c => c.id === id)) {
+      const btn = card.querySelector('.btn-add');
+      if (btn && btn.textContent.includes('В тур')) {
+        btn.textContent = '✓ В корзине';
+        btn.style.background = '#1a5c38';
+      }
+    }
+  });
+  updateCartCount();
+})();
 </script>
 
 <!-- SEARCH OVERLAY -->

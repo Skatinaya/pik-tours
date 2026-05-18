@@ -663,6 +663,8 @@
     <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">Собрать тур</a>
     <a href="gear-shop.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🎒 Снаряжение</a>
     <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фотосафари</a>
+    <a href="cart.html" id="cartNavBtn" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🛒 <span id="cartCount" style="background:#2A7A4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;">0</span></a>
+    <a href="profile.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👤 Профиль</a>
     <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;white-space:nowrap;">+ Услуга</a>
   </div>
 </nav>
@@ -1116,6 +1118,7 @@
   </div>
   <p>© 2025 PIK — платформа приключенческих туров. Все права защищены.</p>
 </footer>
+<script>function updateCartCount(){try{const c=JSON.parse(localStorage.getItem('pik_cart'))||[];const el=document.getElementById('cartCount');if(el)el.textContent=c.length;}catch(e){}}updateCartCount();</script>
 
 </body>
 </html>

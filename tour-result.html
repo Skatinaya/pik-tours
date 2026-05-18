@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Маршрут тура</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="tour.css"/>
+  <style>
+    .result-hero {
+      background: linear-gradient(135deg, #0f1a14 0%, #1a2e1f 60%, #0f1a14 100%);
+      padding: 80px 32px 50px; text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      position: relative; overflow: hidden;
+    }
+    .result-hero::before {
+      content: ''; position: absolute; top: -40%; left: -20%; width: 140%; height: 140%;
+      background: radial-gradient(ellipse at 30% 20%, rgba(42,122,74,0.08) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .result-tag {
+      display: inline-block; background: rgba(240,165,0,0.15);
+      border: 1px solid rgba(240,165,0,0.4); color: #f0a500;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 5px 16px; border-radius: 20px; margin-bottom: 18px;
+    }
+    .result-hero h1 {
+      font-family: 'Unbounded', sans-serif;
+      font-size: clamp(26px, 4vw, 44px); font-weight: 700; color: #fff;
+      margin-bottom: 14px; line-height: 1.15; position: relative;
+    }
+    .result-meta {
+      display: flex; justify-content: center; gap: 24px; flex-wrap: wrap;
+      margin-top: 18px; font-size: 13px; color: rgba(255,255,255,0.5);
+    }
+    .result-meta-item { display: flex; align-items: center; gap: 6px; }
+    .result-meta-icon { font-size: 16px; }
+
+    .result-container { max-width: 800px; margin: 0 auto; padding: 32px; }
+
+    .day-block {
+      margin-bottom: 32px;
+    }
+    .day-title {
+      font-family: 'Unbounded', sans-serif; font-size: 16px;
+      font-weight: 700; color: #fff; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .day-title-line {
+      flex: 1; height: 1px; background: rgba(255,255,255,0.08);
+    }
+
+    .event-card {
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px; padding: 18px 20px; margin-bottom: 12px;
+      display: grid; grid-template-columns: 70px 1fr auto; gap: 16px; align-items: center;
+      transition: border-color 0.2s;
+    }
+    .event-card:hover { border-color: rgba(42,122,74,0.3); }
+    .event-time {
+      font-family: 'Unbounded', sans-serif; font-size: 14px;
+      font-weight: 700; color: #2A7A4A;
+    }
+    .event-time-end { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 2px; }
+    .event-name {
+      font-family: 'Unbounded', sans-serif; font-size: 13px;
+      font-weight: 700; color: #fff; margin-bottom: 4px;
+    }
+    .event-vendor { font-size: 11px; color: rgba(255,255,255,0.4); }
+    .event-status {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 10px; font-weight: 600; color: #f0a500;
+      background: rgba(240,165,0,0.12); padding: 3px 10px; border-radius: 8px;
+      margin-top: 6px;
+    }
+    .event-price {
+      font-family: 'Unbounded', sans-serif; font-size: 14px;
+      font-weight: 700; color: #fff; text-align: right;
+    }
+
+    .result-total {
+      background: rgba(42,122,74,0.08); border: 1px solid rgba(42,122,74,0.2);
+      border-radius: 18px; padding: 28px; margin-top: 16px;
+    }
+    .total-title {
+      font-family: 'Unbounded', sans-serif; font-size: 14px;
+      font-weight: 700; color: #fff; margin-bottom: 16px;
+    }
+    .total-line {
+      display: flex; justify-content: space-between; padding: 6px 0;
+      font-size: 13px; color: rgba(255,255,255,0.5);
+    }
+    .total-grand {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 0 0; margin-top: 12px;
+      border-top: 1px solid rgba(42,122,74,0.3);
+    }
+    .total-grand-label {
+      font-family: 'Unbounded', sans-serif; font-size: 16px; font-weight: 700; color: #fff;
+    }
+    .total-grand-price {
+      font-family: 'Unbounded', sans-serif; font-size: 28px; font-weight: 700; color: #2A7A4A;
+    }
+
+    .result-actions {
+      display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: #2A7A4A; color: #fff; border: none;
+      padding: 12px 28px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #1f5e38; }
+    .btn-telegram {
+      background: #229ED9; color: #fff; border: none;
+      padding: 12px 28px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      transition: background 0.15s;
+    }
+    .btn-telegram:hover { background: #1a8bc4; }
+    .btn-outline {
+      background: transparent; color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 12px 28px; border-radius: 10px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+      transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+    .result-empty {
+      text-align: center; padding: 80px 20px;
+    }
+    .result-empty h2 {
+      font-family: 'Unbounded', sans-serif; font-size: 22px;
+      font-weight: 700; color: #fff; margin-bottom: 12px;
+    }
+    .result-empty p { font-size: 14px; color: rgba(255,255,255,0.4); margin-bottom: 24px; }
+
+    @media (max-width: 600px) {
+      .event-card { grid-template-columns: 60px 1fr; gap: 10px; }
+      .event-price { grid-column: 1 / -1; text-align: left; }
+      .result-container { padding: 16px; }
+      .result-meta { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;">Каталог</a>
+    <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">Собрать тур</a>
+    <a href="gear-shop.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🎒 Снаряжение</a>
+    <a href="group-tours.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👥 Группы</a>
+    <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фото</a>
+    <a href="property-mgmt.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🏠 Жильё</a>
+    <a href="cart.html" id="cartNavBtn" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;position:relative;">🛒 <span id="cartCount" style="background:#2A7A4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;">0</span></a>
+    <a href="profile.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👤 Профиль</a>
+    <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;">+ Добавить услугу</a>
+  </div>
+</nav>
+
+<div id="resultHero" class="result-hero">
+  <div class="result-tag">Готовый маршрут</div>
+  <h1 id="tourTitle">Мой тур на PIK</h1>
+  <div class="result-meta" id="tourMeta"></div>
+</div>
+
+<div class="result-container">
+  <div id="resultContent"></div>
+</div>
+
+<script>
+const LOC_NAMES = { ski:'Горы', river:'Реки и водопады', meadow:'Луга и приключения', sea:'Море и побережье' };
+const LOC_ICONS = { ski:'⛷️', river:'🏞️', meadow:'🌿', sea:'🌊' };
+
+function updateCartCount() {
+  try {
+    const cart = JSON.parse(localStorage.getItem('pik_cart')) || [];
+    const el = document.getElementById('cartCount');
+    if (el) el.textContent = cart.length;
+  } catch {}
+}
+
+function formatDate(str) {
+  if (!str || !str.includes('-')) return str;
+  const d = new Date(str + 'T12:00:00');
+  const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  return d.getDate() + ' ' + months[d.getMonth()] + ' ' + d.getFullYear();
+}
+
+function padTime(h, m) {
+  return String(h).padStart(2, '0') + ':' + String(m || 0).padStart(2, '0');
+}
+
+function shareTour() {
+  const tour = JSON.parse(localStorage.getItem('pik_tour') || '{}');
+  const text = 'Мой тур на PIK: ' + (tour.name || 'Тур') + ' (' + (LOC_NAMES[tour.location] || '') + ')';
+  const url = window.location.href;
+
+  if (navigator.share) {
+    navigator.share({ title: text, url: url }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(url).then(() => {
+      const btn = document.querySelector('.share-btn');
+      if (btn) { btn.textContent = '✓ Ссылка скопирована'; setTimeout(() => btn.textContent = 'Поделиться', 2000); }
+    });
+  }
+}
+
+function openTelegram() {
+  const tour = JSON.parse(localStorage.getItem('pik_tour') || '{}');
+  const text = encodeURIComponent('Мой тур на PIK: ' + (tour.name || 'Тур') + '! 🏔️ Смотри маршрут: ' + window.location.href);
+  window.open('https://t.me/PIKtoursBot?start=tour', '_blank');
+}
+
+function renderResult() {
+  let tour;
+  try { tour = JSON.parse(localStorage.getItem('pik_tour')); } catch {}
+
+  if (!tour || !tour.days) {
+    document.getElementById('resultContent').innerHTML = `
+      <div class="result-empty">
+        <div style="font-size:48px;margin-bottom:16px;">🗺️</div>
+        <h2>Маршрут не найден</h2>
+        <p>Сначала добавьте услуги в корзину и сформируйте маршрут</p>
+        <a href="cart.html" class="btn-primary" style="text-decoration:none;">Перейти в корзину →</a>
+      </div>
+    `;
+    return;
+  }
+
+  // Hero
+  document.getElementById('tourTitle').textContent = tour.name || 'Мой тур на PIK';
+  const locIcon = LOC_ICONS[tour.location] || '📍';
+  const locName = LOC_NAMES[tour.location] || tour.location || '';
+  const dates = tour.dates || [];
+  const dateStr = dates.length > 0
+    ? formatDate(dates[0]) + (dates.length > 1 ? ' — ' + formatDate(dates[dates.length - 1]) : '')
+    : '';
+
+  document.getElementById('tourMeta').innerHTML = `
+    <div class="result-meta-item"><span class="result-meta-icon">${locIcon}</span> ${locName}</div>
+    ${dateStr ? `<div class="result-meta-item"><span class="result-meta-icon">📅</span> ${dateStr}</div>` : ''}
+    <div class="result-meta-item"><span class="result-meta-icon">👥</span> ${tour.participants || 1} чел.</div>
+  `;
+
+  // Days
+  const sortedDates = Object.keys(tour.days).sort();
+  let html = '';
+  let dayNum = 0;
+  let totalBreakdown = [];
+
+  sortedDates.forEach(date => {
+    dayNum++;
+    const events = tour.days[date];
+    const dayLabel = date.includes('-') ? 'День ' + dayNum + ' · ' + formatDate(date) : date;
+
+    html += `<div class="day-block">
+      <div class="day-title">${dayLabel}<div class="day-title-line"></div></div>`;
+
+    events.forEach(ev => {
+      const startMins = ev.time ? parseInt(ev.time.split(':')[0]) * 60 + parseInt(ev.time.split(':')[1] || 0) : 0;
+      const endMins = startMins + (ev.durH || 1) * 60;
+      const endH = Math.floor(endMins / 60);
+      const endM = endMins % 60;
+
+      totalBreakdown.push({ name: ev.name, price: ev.price, persons: ev.persons || 1 });
+
+      html += `<div class="event-card">
+        <div>
+          <div class="event-time">${ev.time || '—'}</div>
+          <div class="event-time-end">до ${padTime(endH, endM)}</div>
+        </div>
+        <div>
+          <div class="event-name">${ev.emoji || ''} ${ev.name}</div>
+          <div class="event-vendor">${ev.vendor || ''}</div>
+          <div class="event-status">⏳ Подтверждается</div>
+        </div>
+        <div class="event-price">${(ev.price || 0).toLocaleString()} ₽</div>
+      </div>`;
+    });
+
+    html += '</div>';
+  });
+
+  // Total
+  html += `<div class="result-total">
+    <div class="total-title">Стоимость маршрута</div>`;
+
+  totalBreakdown.forEach(item => {
+    html += `<div class="total-line">
+      <span>${item.name}${item.persons > 1 ? ' × ' + item.persons : ''}</span>
+      <span style="color:#fff;">${item.price.toLocaleString()} ₽</span>
+    </div>`;
+  });
+
+  html += `<div class="total-grand">
+    <span class="total-grand-label">Итого</span>
+    <span class="total-grand-price">${(tour.total || 0).toLocaleString()} ₽</span>
+  </div></div>`;
+
+  // Actions
+  html += `<div class="result-actions">
+    <button class="btn-primary share-btn" onclick="shareTour()">📤 Поделиться</button>
+    <button class="btn-telegram" onclick="openTelegram()">✈️ Открыть в Telegram</button>
+    <a href="cart.html" class="btn-outline" style="text-decoration:none;">← Назад к конструктору</a>
+  </div>`;
+
+  document.getElementById('resultContent').innerHTML = html;
+}
+
+renderResult();
+updateCartCount();
+</script>
+
+</body>
+</html>

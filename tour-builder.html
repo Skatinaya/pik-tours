@@ -423,6 +423,8 @@
     <a href="group-tours.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👥 Группы</a>
     <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фото</a>
     <a href="property-mgmt.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🏠 Жильё</a>
+    <a href="cart.html" id="cartNavBtn" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;position:relative;">🛒 <span id="cartCount" style="background:#2A7A4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;">0</span></a>
+    <a href="profile.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👤 Профиль</a>
   </div>
 </nav>
 
@@ -742,18 +744,18 @@ const S = {
    SERVICES CATALOG
 ════════════════════════════════ */
 const SERVICES = [
-  { id:1,  emoji:'🏨', name:'Горное шале «Вершина»',        type:'hotel',    price:4500,  unit:'ночь',      durH:12, hint:'заезд 14:00' },
-  { id:2,  emoji:'⛺', name:'Глэмпинг «Река»',              type:'camp',     price:2800,  unit:'ночь',      durH:12, hint:'заезд 13:00' },
-  { id:3,  emoji:'🧭', name:'Гид Алексей — треккинг',       type:'guide',    price:3500,  unit:'день',      durH:8,  hint:'08:00–16:00' },
-  { id:4,  emoji:'🏍️', name:'Прокат квадроциклов',          type:'rental',   price:2500,  unit:'час',       durH:2,  hint:'гибкое время' },
-  { id:5,  emoji:'🐴', name:'Конная прогулка «Рассвет»',    type:'rental',   price:1800,  unit:'чел',       durH:3,  hint:'07:00–10:00' },
-  { id:6,  emoji:'🍽️', name:'Кафе «Горный воздух»',         type:'food',     price:800,   unit:'чел/день',  durH:1,  hint:'7:00–21:00' },
-  { id:7,  emoji:'🚐', name:'Трансфер в горы',              type:'transfer', price:3200,  unit:'машина',    durH:3,  hint:'под запрос' },
-  { id:8,  emoji:'🤿', name:'Инструктор по дайвингу',       type:'guide',    price:5500,  unit:'чел',       durH:4,  hint:'10:00–14:00' },
-  { id:9,  emoji:'🏕️', name:'Домики у моря «Бухта»',        type:'hotel',    price:5900,  unit:'ночь',      durH:12, hint:'заезд 14:00' },
-  { id:10, emoji:'🧥', name:'Горнолыжный комплект',         type:'gear',     price:15400, unit:'комплект',  durH:1,  hint:'пункт выдачи' },
-  { id:11, emoji:'👟', name:'Трекинговые ботинки',           type:'gear',     price:7200,  unit:'пара',      durH:1,  hint:'пункт выдачи' },
-  { id:12, emoji:'🤿', name:'Набор для сноркелинга',        type:'gear',     price:3200,  unit:'комплект',  durH:1,  hint:'пункт выдачи' },
+  { id:1,  emoji:'🏨', name:'Горное шале «Вершина»',        type:'hotel',    price:4500,  unit:'ночь',      durH:12, hint:'заезд 14:00', location:'ski', vendor:'ООО «Вершина»', description:'Уютный домик на 6 человек у подножия горы. Камин, сауна, панорамные окна, завтрак включён.', ageMin:0, capacity:6, timeSlots:['14:00'], address:'пос. Горный, ул. Вершинная 12', available:true, tags:['семейный','комфорт','горы'] },
+  { id:2,  emoji:'⛺', name:'Глэмпинг «Река»',              type:'camp',     price:2800,  unit:'ночь',      durH:12, hint:'заезд 13:00', location:'river', vendor:'Глэмпинг-парк «Река»', description:'Шатры с кроватями прямо у реки. Душ, генератор, барбекю, Wi-Fi. Трансфер от трассы включён.', ageMin:0, capacity:4, timeSlots:['13:00'], address:'Речная долина, км 8 от трассы', available:true, tags:['природа','романтика','река'] },
+  { id:3,  emoji:'🧭', name:'Гид Алексей — треккинг',       type:'guide',    price:3500,  unit:'день',      durH:8,  hint:'08:00–16:00', location:'ski', vendor:'ИП Алексей Горный', description:'10 лет в горах. Веду группы к водопадам, озёрам, на вершины. Есть маршруты для детей и новичков.', ageMin:7, capacity:12, timeSlots:['08:00','09:00','10:00'], address:'Старт от базы «Горная», пос. Горный', available:true, tags:['активный','треккинг','горы'] },
+  { id:4,  emoji:'🏍️', name:'Прокат квадроциклов',          type:'rental',   price:2500,  unit:'час',       durH:2,  hint:'гибкое время', location:'meadow', vendor:'АТВ-прокат «Луга»', description:'5 квадроциклов разных классов. Инструктаж, шлем, защита, маршрутная карта. Аренда от 2 часов.', ageMin:16, capacity:5, timeSlots:['09:00','11:00','14:00','16:00'], address:'Луговая зона, база «Квадро-парк»', available:true, tags:['активный','экстрим','луга'] },
+  { id:5,  emoji:'🐴', name:'Конная прогулка «Рассвет»',    type:'rental',   price:1800,  unit:'чел',       durH:3,  hint:'07:00–10:00', location:'meadow', vendor:'Конюшня «Рассвет»', description:'Прогулка на лошадях по утренним лугам. Инструктор, снаряжение, фото включены. Группы до 8 человек.', ageMin:6, capacity:8, timeSlots:['07:00','10:00','15:00'], address:'Луговая зона, конюшня «Рассвет»', available:true, tags:['семейный','спокойный','луга'] },
+  { id:6,  emoji:'🍽️', name:'Кафе «Горный воздух»',         type:'food',     price:800,   unit:'чел/день',  durH:1,  hint:'7:00–21:00', location:'ski', vendor:'Кафе «Горный воздух»', description:'Горячие блюда, традиционная кухня, ланч-боксы с собой. Работаем с 7:00. Доставка в лагерь.', ageMin:0, capacity:40, timeSlots:['07:00','08:00','12:00','13:00','18:00','19:00'], address:'Центральная база, корпус 1', available:true, tags:['питание','семейный'] },
+  { id:7,  emoji:'🚐', name:'Трансфер в горы',              type:'transfer', price:3200,  unit:'машина',    durH:3,  hint:'под запрос', location:'ski', vendor:'Трансфер PIK', description:'Минивэн до 8 мест. Аэропорт, ж/д вокзал, встреча с табличкой. Детские кресла по запросу.', ageMin:0, capacity:8, timeSlots:['06:00','08:00','10:00','14:00','18:00'], address:'Аэропорт / ж/д вокзал → горная база', available:true, tags:['трансфер','комфорт'] },
+  { id:8,  emoji:'🤿', name:'Инструктор по дайвингу',       type:'guide',    price:5500,  unit:'чел',       durH:4,  hint:'10:00–14:00', location:'sea', vendor:'DiveCenter PIK', description:'Сертифицированный инструктор PADI. Обучение с нуля и погружения для опытных. Снаряжение включено.', ageMin:12, capacity:4, timeSlots:['10:00','14:00'], address:'Побережье, дайв-центр «Бухта»', available:true, tags:['активный','экстрим','море'] },
+  { id:9,  emoji:'🏕️', name:'Домики у моря «Бухта»',        type:'hotel',    price:5900,  unit:'ночь',      durH:12, hint:'заезд 14:00', location:'sea', vendor:'Бухта-резорт', description:'5 деревянных домиков прямо на берегу. Вид на скалы, собственный пляж, мангал. Бронь от 2 ночей.', ageMin:0, capacity:5, timeSlots:['14:00'], address:'Морское побережье, бухта «Тихая»', available:true, tags:['семейный','комфорт','море'] },
+  { id:10, emoji:'🧥', name:'Горнолыжный комплект',         type:'gear',     price:15400, unit:'комплект',  durH:1,  hint:'пункт выдачи', location:'ski', vendor:'PIK Gear', description:'Куртка, штаны, термобельё, перчатки, шлем. Подберём размеры на семью. Доставка к началу тура.', ageMin:0, capacity:50, timeSlots:['09:00','12:00','15:00'], address:'Пункт выдачи снаряжения, горная база', available:true, tags:['снаряжение','горы'] },
+  { id:11, emoji:'👟', name:'Трекинговые ботинки',           type:'gear',     price:7200,  unit:'пара',      durH:1,  hint:'пункт выдачи', location:'river', vendor:'PIK Gear', description:'Водонепроницаемые ботинки с Vibram. Мужские, женские и детские размеры. Возврат после тура.', ageMin:0, capacity:50, timeSlots:['09:00','12:00','15:00'], address:'Пункт выдачи снаряжения, речная база', available:true, tags:['снаряжение','треккинг'] },
+  { id:12, emoji:'🤿', name:'Набор для сноркелинга',        type:'gear',     price:3200,  unit:'комплект',  durH:1,  hint:'пункт выдачи', location:'sea', vendor:'PIK Gear', description:'Маска, трубка, ласты. Силиконовая маска с панорамным обзором. Размеры S–XL.', ageMin:6, capacity:30, timeSlots:['09:00','11:00','14:00'], address:'Пляж «Бухта», пункт проката', available:true, tags:['снаряжение','море'] },
 ];
 
 const PALETTE = [
@@ -1349,6 +1351,10 @@ function renderGearRecommendations(){
 
   block.style.display = 'block';
 }
+</script>
+<script>
+function updateCartCount(){try{const c=JSON.parse(localStorage.getItem('pik_cart'))||[];const el=document.getElementById('cartCount');if(el)el.textContent=c.length;}catch(e){}}
+updateCartCount();
 </script>
 </body>
 </html>

@@ -664,6 +664,8 @@
     <a href="tour-builder.html" class="accent-green">Собрать тур</a>
     <a href="gear-shop.html" class="accent-gold">🎒 Снаряжение</a>
     <a href="photo-safari.html" class="active-page">📸 Фотосафари</a>
+    <a href="cart.html" id="cartNavBtn" class="accent-gold">🛒 <span id="cartCount" style="background:#2A7A4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;">0</span></a>
+    <a href="profile.html">👤 Профиль</a>
     <a href="partner.html" class="btn-green">+ Услуга</a>
   </div>
 </nav>
@@ -1095,6 +1097,9 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeModal();
   });
+
+function updateCartCount(){try{const c=JSON.parse(localStorage.getItem('pik_cart'))||[];const el=document.getElementById('cartCount');if(el)el.textContent=c.length;}catch(e){}}
+updateCartCount();
 </script>
 </body>
 </html>

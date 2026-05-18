@@ -345,6 +345,8 @@
     <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фото</a>
     <a href="property-mgmt.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🏠 Жильё</a>
 
+      <a href="cart.html" id="cartNavBtn" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;position:relative;">🛒 <span id="cartCount" style="background:#2A7A4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;">0</span></a>
+      <a href="profile.html" style="color:rgba(255,255,255,0.6);font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👤 Профиль</a>
       <button class="nav-search-btn" onclick="openSearch()" title="Поиск (⌘K)">🔍</button>
       <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;">+ Добавить услугу</a>
   </div>
@@ -448,12 +450,26 @@
     const name   = zone.dataset.name;
     const tours  = zone.dataset.tours.split('|');
     const page   = zone.dataset.page;
+    const zoneId = zone.id.replace('z-','');
 
     ttIcon.textContent = icon;
     ttName.textContent = name;
     ttItems.innerHTML  = tours.map(t => `<li>${t}</li>`).join('');
     ttCta.href         = page;
     ttCta.textContent  = `Смотреть туры →`;
+
+    // Add "Смотреть услуги" link
+    let svcLink = document.getElementById('tt-svc-link');
+    if (!svcLink) {
+      svcLink = document.createElement('a');
+      svcLink.id = 'tt-svc-link';
+      svcLink.style.cssText = 'display:block;margin-top:6px;padding:8px 0;background:#f0a500;color:#080f0b;text-align:center;font-size:11px;font-weight:600;letter-spacing:0.07em;text-transform:uppercase;border-radius:7px;text-decoration:none;pointer-events:auto;transition:background 0.15s;';
+      ttCta.parentNode.appendChild(svcLink);
+      svcLink.addEventListener('mouseover', function(){ this.style.background='#d4920a'; });
+      svcLink.addEventListener('mouseout', function(){ this.style.background='#f0a500'; });
+    }
+    svcLink.href = `catalog.html?location=${zoneId}`;
+    svcLink.textContent = '→ Смотреть услуги';
 
     tooltip.classList.add('show');
     posTip(mx, my);
@@ -465,7 +481,7 @@
     const W = window.innerWidth, H = window.innerHeight;
     const tip = tooltip.getBoundingClientRect();
     const tw = tip.width  || 240;
-    const th = tip.height || 220;
+    const th = tip.height || 260;
     const MARGIN = 16;
     let left = mx + 20;
     let top  = my - th / 2;
@@ -578,6 +594,15 @@ function doSearch(q) {
     </a>
   `).join('');
 }
+
+function updateCartCount() {
+  try {
+    const cart = JSON.parse(localStorage.getItem('pik_cart')) || [];
+    const el = document.getElementById('cartCount');
+    if (el) el.textContent = cart.length;
+  } catch(e) {}
+}
+updateCartCount();
 </script>
 
 </body>

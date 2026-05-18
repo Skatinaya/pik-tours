@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PIK — Личный кабинет</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="tour.css"/>
+  <style>
+    .page-hero {
+      background: linear-gradient(135deg, #0f1a14 0%, #1a2e1f 100%);
+      padding: 70px 32px 50px; text-align: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+    .page-hero-tag {
+      display: inline-block; background: rgba(42,122,74,0.18);
+      border: 1px solid rgba(42,122,74,0.4); color: #5fc48a;
+      font-size: 11px; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; padding: 5px 16px; border-radius: 20px; margin-bottom: 18px;
+    }
+
+    .profile-container { max-width: 800px; margin: 0 auto; padding: 32px; }
+
+    .profile-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 32px; margin-bottom: 24px;
+      display: flex; align-items: center; gap: 24px;
+    }
+    .avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      background: linear-gradient(135deg, #2A7A4A 0%, #1a5c38 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Unbounded', sans-serif; font-size: 24px;
+      font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .profile-info { flex: 1; }
+    .profile-name {
+      font-family: 'Unbounded', sans-serif; font-size: 20px;
+      font-weight: 700; color: #fff; margin-bottom: 4px;
+    }
+    .profile-email { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .btn-edit {
+      background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6); padding: 8px 16px; border-radius: 8px;
+      font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-edit:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    .edit-form {
+      display: none; margin-top: 16px;
+    }
+    .edit-form.show { display: block; }
+    .edit-field {
+      margin-bottom: 12px;
+    }
+    .edit-field label {
+      display: block; font-size: 10px; font-weight: 600;
+      color: rgba(255,255,255,0.45); letter-spacing: 0.06em;
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+    .edit-field input {
+      width: 100%; background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      padding: 8px 12px; color: #fff; font-size: 13px;
+      font-family: 'Inter', sans-serif; outline: none; box-sizing: border-box;
+    }
+    .edit-field input:focus { border-color: rgba(42,122,74,0.6); }
+    .btn-primary {
+      background: #2A7A4A; color: #fff; border: none;
+      padding: 10px 22px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-block; transition: background 0.15s;
+    }
+    .btn-primary:hover { background: #1f5e38; }
+    .btn-outline {
+      background: transparent; color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 10px 22px; border-radius: 8px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      text-decoration: none; display: inline-block; transition: all 0.15s;
+    }
+    .btn-outline:hover { border-color: rgba(255,255,255,0.5); color: #fff; }
+
+    .section-card {
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 18px; padding: 28px; margin-bottom: 24px;
+    }
+    .section-title {
+      font-family: 'Unbounded', sans-serif; font-size: 16px;
+      font-weight: 700; color: #fff; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .section-title-icon { font-size: 20px; }
+
+    .coins-display {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .coins-amount {
+      font-family: 'Unbounded', sans-serif; font-size: 36px;
+      font-weight: 700; color: #f0a500;
+    }
+    .coins-label { font-size: 13px; color: rgba(255,255,255,0.4); }
+    .coins-hint { font-size: 12px; color: rgba(255,255,255,0.3); margin-top: 12px; line-height: 1.6; }
+
+    .tour-history-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+      cursor: pointer; transition: background 0.12s; border-radius: 8px;
+    }
+    .tour-history-item:hover { background: rgba(42,122,74,0.06); }
+    .tour-history-item:last-child { border-bottom: none; }
+    .tour-history-icon { font-size: 24px; }
+    .tour-history-info { flex: 1; }
+    .tour-history-name {
+      font-size: 13px; font-weight: 600; color: #fff; margin-bottom: 2px;
+    }
+    .tour-history-meta { font-size: 11px; color: rgba(255,255,255,0.35); }
+    .tour-history-price {
+      font-family: 'Unbounded', sans-serif; font-size: 14px;
+      font-weight: 700; color: #2A7A4A;
+    }
+
+    .empty-state {
+      text-align: center; padding: 32px 20px;
+      color: rgba(255,255,255,0.3); font-size: 13px;
+    }
+    .empty-state-icon { font-size: 32px; margin-bottom: 10px; }
+
+    .quick-actions {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px;
+    }
+    .quick-action {
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px; padding: 16px; cursor: pointer;
+      text-decoration: none; transition: all 0.2s;
+    }
+    .quick-action:hover { border-color: rgba(42,122,74,0.4); background: rgba(42,122,74,0.06); }
+    .quick-action-icon { font-size: 24px; }
+    .quick-action-text {
+      font-size: 13px; font-weight: 600; color: #fff;
+    }
+    .quick-action-desc { font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+
+    @media (max-width: 600px) {
+      .profile-card { flex-direction: column; text-align: center; }
+      .quick-actions { grid-template-columns: 1fr; }
+      .profile-container { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">
+    <svg viewBox="0 0 28 28" fill="none"><polygon points="14,2 27,26 1,26" fill="#2A7A4A"/><polygon points="14,9 21,23 7,23" fill="rgba(255,255,255,0.15)"/></svg>
+    <span class="logo-text">PIK</span>
+  </a>
+  <div style="display:flex;gap:8px;align-items:center;">
+    <a href="catalog.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;">Каталог</a>
+    <a href="tour-builder.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">Собрать тур</a>
+    <a href="gear-shop.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🎒 Снаряжение</a>
+    <a href="group-tours.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👥 Группы</a>
+    <a href="photo-safari.html" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">📸 Фото</a>
+    <a href="property-mgmt.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">🏠 Жильё</a>
+    <a href="cart.html" id="cartNavBtn" style="color:#f0a500;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;position:relative;">🛒 <span id="cartCount" style="background:#2A7A4A;color:#fff;font-size:10px;padding:1px 6px;border-radius:10px;margin-left:2px;">0</span></a>
+    <a href="profile.html" style="color:#5fc48a;font-size:13px;font-weight:600;text-decoration:none;padding:8px 14px;white-space:nowrap;">👤 Профиль</a>
+    <a href="partner.html" style="background:#2A7A4A;color:#fff;padding:8px 18px;font-size:12px;border-radius:8px;font-weight:600;text-decoration:none;">+ Добавить услугу</a>
+  </div>
+</nav>
+
+<div class="page-hero">
+  <div class="page-hero-tag">Личный кабинет</div>
+</div>
+
+<div class="profile-container">
+
+  <!-- PROFILE CARD -->
+  <div class="profile-card">
+    <div class="avatar" id="avatarEl">П</div>
+    <div class="profile-info">
+      <div class="profile-name" id="profileName">Путешественник</div>
+      <div class="profile-email" id="profileEmail">Укажите имя для персонализации</div>
+    </div>
+    <button class="btn-edit" onclick="toggleEdit()">Редактировать</button>
+  </div>
+
+  <div class="edit-form" id="editForm">
+    <div class="section-card">
+      <div class="edit-field">
+        <label>Имя</label>
+        <input type="text" id="editName" placeholder="Ваше имя"/>
+      </div>
+      <div class="edit-field">
+        <label>Email</label>
+        <input type="email" id="editEmail" placeholder="email@example.com"/>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px;">
+        <button class="btn-primary" onclick="saveProfile()">Сохранить</button>
+        <button class="btn-outline" onclick="toggleEdit()">Отмена</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- PIK COINS -->
+  <div class="section-card">
+    <div class="section-title"><span class="section-title-icon">🪙</span> PIK-коины</div>
+    <div class="coins-display">
+      <div>
+        <div class="coins-amount" id="coinsAmount">0</div>
+        <div class="coins-label">накоплено</div>
+      </div>
+    </div>
+    <div class="coins-hint">Зарабатывайте PIK-коины, участвуя в фотосафари и выполняя задания. Коины можно использовать для скидок на туры.</div>
+  </div>
+
+  <!-- MY TOURS -->
+  <div class="section-card">
+    <div class="section-title"><span class="section-title-icon">🗺️</span> Мои туры</div>
+    <div id="toursHistory"></div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div class="section-card">
+    <div class="section-title"><span class="section-title-icon">⚡</span> Быстрые действия</div>
+    <div class="quick-actions">
+      <a href="tour-builder.html" class="quick-action">
+        <span class="quick-action-icon">🏗️</span>
+        <div>
+          <div class="quick-action-text">Создать тур</div>
+          <div class="quick-action-desc">Собрать маршрут с нуля</div>
+        </div>
+      </a>
+      <a href="photo-safari.html" class="quick-action">
+        <span class="quick-action-icon">📸</span>
+        <div>
+          <div class="quick-action-text">Фотосафари</div>
+          <div class="quick-action-desc">Задания и PIK-коины</div>
+        </div>
+      </a>
+      <a href="catalog.html" class="quick-action">
+        <span class="quick-action-icon">📋</span>
+        <div>
+          <div class="quick-action-text">Каталог услуг</div>
+          <div class="quick-action-desc">Найти услуги по локации</div>
+        </div>
+      </a>
+      <a href="cart.html" class="quick-action">
+        <span class="quick-action-icon">🛒</span>
+        <div>
+          <div class="quick-action-text">Корзина</div>
+          <div class="quick-action-desc">Настроить и оформить тур</div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const LOC_NAMES = { ski:'Горы', river:'Реки', meadow:'Луга', sea:'Море' };
+const LOC_ICONS = { ski:'⛷️', river:'🏞️', meadow:'🌿', sea:'🌊' };
+
+function getProfile() {
+  try { return JSON.parse(localStorage.getItem('pik_profile')) || {}; } catch { return {}; }
+}
+function saveProfileData(data) {
+  localStorage.setItem('pik_profile', JSON.stringify(data));
+}
+
+function loadProfile() {
+  const p = getProfile();
+  const name = p.name || 'Путешественник';
+  document.getElementById('profileName').textContent = name;
+  document.getElementById('profileEmail').textContent = p.email || 'Укажите имя для персонализации';
+  document.getElementById('avatarEl').textContent = name.charAt(0).toUpperCase();
+  document.getElementById('editName').value = p.name || '';
+  document.getElementById('editEmail').value = p.email || '';
+}
+
+function toggleEdit() {
+  document.getElementById('editForm').classList.toggle('show');
+}
+
+function saveProfile() {
+  const name = document.getElementById('editName').value.trim();
+  const email = document.getElementById('editEmail').value.trim();
+  const data = { name: name || 'Путешественник', email: email };
+  saveProfileData(data);
+  loadProfile();
+  toggleEdit();
+}
+
+function loadCoins() {
+  let coins = 0;
+  try { coins = parseInt(localStorage.getItem('pik_coins')) || 0; } catch {}
+  document.getElementById('coinsAmount').textContent = coins;
+}
+
+function loadTours() {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('pik_tours_history')) || []; } catch {}
+
+  const container = document.getElementById('toursHistory');
+
+  if (history.length === 0) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-icon">🗺️</div>
+        <div>У вас пока нет сохранённых туров</div>
+        <div style="margin-top:12px;">
+          <a href="tour-builder.html" class="btn-primary" style="text-decoration:none;font-size:12px;padding:8px 18px;">Создать первый тур</a>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = history.slice(0, 10).map((tour, i) => {
+    const icon = LOC_ICONS[tour.location] || '📍';
+    const locName = LOC_NAMES[tour.location] || '';
+    const dates = tour.dates || [];
+    const dateStr = dates.length > 0 ? formatDate(dates[0]) : '';
+    return `<div class="tour-history-item" onclick="viewTour(${i})">
+      <span class="tour-history-icon">${icon}</span>
+      <div class="tour-history-info">
+        <div class="tour-history-name">${tour.name || 'Тур'} · ${locName}</div>
+        <div class="tour-history-meta">${dateStr} · ${tour.participants || 1} чел.</div>
+      </div>
+      <div class="tour-history-price">${(tour.total || 0).toLocaleString()} ₽</div>
+    </div>`;
+  }).join('');
+}
+
+function viewTour(index) {
+  let history = [];
+  try { history = JSON.parse(localStorage.getItem('pik_tours_history')) || []; } catch {}
+  if (history[index]) {
+    localStorage.setItem('pik_tour', JSON.stringify(history[index]));
+    window.location.href = 'tour-result.html';
+  }
+}
+
+function formatDate(str) {
+  if (!str || !str.includes('-')) return str;
+  const d = new Date(str + 'T12:00:00');
+  const months = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+  return d.getDate() + ' ' + months[d.getMonth()];
+}
+
+function updateCartCount() {
+  try {
+    const cart = JSON.parse(localStorage.getItem('pik_cart')) || [];
+    const el = document.getElementById('cartCount');
+    if (el) el.textContent = cart.length;
+  } catch {}
+}
+
+loadProfile();
+loadCoins();
+loadTours();
+updateCartCount();
+</script>
+
+</body>
+</html>
